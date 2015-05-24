@@ -1,18 +1,31 @@
 // Master Control Program 
 
+var FlynnDevPacingMode = {
+	NORMAL:  0,
+	SLOW_MO: 1,
+	FPS_20:  2,
+};
+
 var FlynnMcp = Class.extend({
 
-	init: function(canvasWidth, canvasHeight, input, noChangeState, developerModeEnabled) {
+	init: function(canvasWidth, canvasHeight, input, noChangeState, gameSpeedFactor) {
 		"use strict";
 
 		this.canvasWidth = canvasWidth;
 		this.canvasHeight = canvasHeight;
-		this.developerModeEnabled = developerModeEnabled;
 		this.input = input;
 		this.noChangeState = noChangeState;
+		this.developerModeEnabled = false;
+		this.gameSpeedFactor = gameSpeedFactor;
 
+		this.credits = 0;
+		this.arcadeModeEnabled = false;
 		this.nextState = noChangeState;
 		this.currentState = null;
+
+		this.devPacingMode = FlynnDevPacingMode.NORMAL;
+		this.devLowFpsPaceFactor = 0;
+		this.devLowFpsFrameCount = 0;
 
 		this.version = 'v1.0';
 
@@ -29,7 +42,17 @@ var FlynnMcp = Class.extend({
 			["No Name", 100],
 		];
 
+		// Detect developer mode from URL arguments ("?develop=true")
+        if(flynnGetUrlValue("develop")=='true'){
+            this.developerModeEnabled = true;
+        }
+		
 		this.canvas = new FlynnCanvas(this, canvasWidth, canvasHeight);
+
+		// Detect arcade mode from URL arguments ("?arcade=true")
+        if(flynnGetUrlValue("arcade")=='true'){
+            this.arcadeModeEnabled = true;
+        }
 
 		//--------------------------
 		// Browser/platform support
@@ -54,6 +77,25 @@ var FlynnMcp = Class.extend({
 			console.log("DEV: browserSupportsPeformance=", this.browserSupportsPerformance);
 			console.log("DEV: browserIsIos=", this.browserIsIos);
 			console.log("DEV: browserSupportsTouch=", this.browserSupportsTouch);
+		}
+
+		// Set Vector mode
+		this.vectorMode = null;
+		var vectorMode = flynnGetUrlValue("vector");
+		for (var key in FlynnVectorMode){
+			if (vectorMode === key){
+				this.vectorMode = FlynnVectorMode[key];
+			}
+		}
+		if (this.vectorMode === null){
+			// No vector mode specified on command line (or no match)
+			if(this.browserSupportsTouch){
+				// Default to plain lines on phones/pads for visibility and performance
+				this.vectorMode = FlynnVectorMode.V_THICK;
+			}
+			else{
+				this.vectorMode = FlynnVectorMode.V_THIN;
+			}
 		}
 
 		//--------------------------
@@ -98,6 +140,37 @@ var FlynnMcp = Class.extend({
 		this.resizeFunc = resizeFunc;
 	},
 
+	cycleDevPacingMode: function(){
+		switch(this.devPacingMode){
+			case FlynnDevPacingMode.NORMAL:
+				this.devPacingMode = FlynnDevPacingMode.SLOW_MO;
+				break;
+			case FlynnDevPacingMode.SLOW_MO:
+				this.devPacingMode = FlynnDevPacingMode.FPS_20;
+				break;
+			case FlynnDevPacingMode.FPS_20:
+				this.devPacingMode = FlynnDevPacingMode.NORMAL;
+		}
+	},
+
+	toggleDevPacingSlowMo: function(){
+		if(this.devPacingMode === FlynnDevPacingMode.SLOW_MO){
+			this.devPacingMode = FlynnDevPacingMode.NORMAL;
+		}
+		else{
+			this.devPacingMode = FlynnDevPacingMode.SLOW_MO;
+		}
+	},
+
+	toggleDevPacingFps20: function(){
+		if(this.devPacingMode === FlynnDevPacingMode.FPS_20){
+			this.devPacingMode = FlynnDevPacingMode.NORMAL;
+		}
+		else{
+			this.devPacingMode = FlynnDevPacingMode.FPS_20;
+		}
+	},
+
 	updateHighScores: function (nickName, score){
 		"use strict";
 		this.highscores.push([nickName, score]);
@@ -116,27 +189,56 @@ var FlynnMcp = Class.extend({
 		var self = this;
 
 		this.canvas.animate( function(paceFactor) {
-            // Update clock and timers
-            self.clock += paceFactor;
-            self.timers.update(paceFactor);
 
-			// Change state (if pending)
-			if (self.nextState !== self.noChangeState) {
-				self.currentState = self.stateBuilderFunc(self.nextState);
-				self.nextState = self.noChangeState;
+			var skipThisFrame = false;
+			var label = null;
+
+			switch(self.devPacingMode){
+				case FlynnDevPacingMode.NORMAL:
+					paceFactor *= self.gameSpeedFactor;
+					break;
+				case FlynnDevPacingMode.SLOW_MO:
+					paceFactor *= self.gameSpeedFactor * 0.2;
+					label = "SLOW_MO";
+					break;
+				case FlynnDevPacingMode.FPS_20:
+					paceFactor *= self.gameSpeedFactor;
+					++self.devLowFpsFrameCount;
+					self.devLowFpsPaceFactor += paceFactor;
+					if(self.devLowFpsFrameCount === 5){
+						self.devLowFpsFrameCount = 0;
+						paceFactor = self.devLowFpsPaceFactor;
+						self.devLowFpsPaceFactor = 0;
+					}
+					else{
+						// Skip this frame (to simulate low frame rate)
+						skipThisFrame = true;
+					}
+					label = "FPS_20";
+					break;
 			}
 
-			// Process state (if set)
-			if(self.currentState){
-				self.currentState.handleInputs(self.input);
-				if(self.slowMoDebug){
-					self.currentState.update(paceFactor * 0.1); // Slow Mo
-					//self.currentState.update(0); // Freeze Frame
+			if(!skipThisFrame){
+				// Change state (if pending)
+				if (self.nextState !== self.noChangeState) {
+					self.currentState = self.stateBuilderFunc(self.nextState);
+					self.nextState = self.noChangeState;
 				}
-				else{
-					self.currentState.update(paceFactor * 0.7);
+
+				// Update clock and timers
+				self.clock += paceFactor;
+				self.timers.update(paceFactor);
+
+				// Process state (if set)
+				if(self.currentState){
+					self.currentState.handleInputs(self.input, paceFactor);
+					self.currentState.update(paceFactor);
+					self.currentState.render(self.canvas.ctx);
+
+					if(label){
+						self.canvas.ctx.vectorText(label, 1.5, 0, self.canvasHeight-20, null, FlynnColors.GRAY);
+					}
 				}
-				self.currentState.render(self.canvas.ctx);
 			}
 		});
 	},

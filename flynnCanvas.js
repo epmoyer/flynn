@@ -1,16 +1,29 @@
 var FlynnMaxPaceRecoveryTicks = 5; // Max elapsed 60Hz frames to apply pacing (beyond this, just jank)
 
-var FlynnTextWidth = 4;
-var FlynnTextHeight = 6;
-var FlynnTextCenterOffsetX = FlynnTextWidth/2;
-var FlynnTextCenterOffsetY = FlynnTextHeight/2;
-var FlynnTextGap = 2;
-var FlynnTextSpacing = FlynnTextWidth + FlynnTextGap;
+var FlynnTextCenterOffsetX = FlynnCharacterWidth/2;
+var FlynnTextCenterOffsetY = FlynnCharacterHeight/2;
+
+// Vector graphics simulation
+var FlynnVectorDimFactorThick = 0.75; // Brightness dimming for vector lines
+var FlynnVectorDimFactorThin = 0.65;
+var FlynnVectorOverdriveFactor = 0.2; // White overdrive for vertex point artifacts
+
+var FlynnIsCentered = true;
+var FlynnIsNotCentered = false;
+var FlynnIsReversed = true;
+var FlynnIsNotReversed = false;
+
+// Vector rendering emulation modes
+var FlynnVectorMode = {
+	PLAIN:   0,		// No Vector rendering emulation (plain lines)
+	V_THIN:  1,		// Thin Vector rendering 
+	V_THICK: 2,     // Thick Vector rendering
+};
 
 var FlynnCanvas = Class.extend({
 
-	init: function(game, width, height) {
-		this.game = game;
+	init: function(mcp, width, height) {
+		this.mcp = mcp;
 
 		this.showMetrics = false;
 		this.canvas = document.getElementById("gameCanvas");
@@ -27,6 +40,8 @@ var FlynnCanvas = Class.extend({
 			ctx.fpsFrameAverage = 10; // Number of frames to average over
 			ctx.fpsFrameCount = 0;
 			ctx.fpsMsecCount = 0;
+			ctx.vectorVericies = [];
+			ctx.mcp = mcp;
 
 			ctx.ACODE = "A".charCodeAt(0);
 			ctx.ZEROCODE = "0".charCodeAt(0);
@@ -37,15 +52,24 @@ var FlynnCanvas = Class.extend({
 			ctx.drawPolygon = function(p, x, y) {
 				var points = p.points;
 
-				this.strokeStyle = p.color;
-				this.beginPath();
-				//this.lineWidth = "6"; // Fat lines for screenshot thumbnail generation
-				this.moveTo(points[0]+x, points[1]+y);
-				for (var i=2, len=points.length; i<len; i+=2){
-					this.lineTo(points[i]+x, points[i+1] +y);
+				this.vectorStart(p.color);
+				var pen_up = false;
+				for (var i=0, len=points.length; i<len; i+=2){
+					if(points[i] > 900000){
+						// TODO: Bad implementation.  Scale and rotation affect "Pen Up" value.
+						pen_up = true;
+					}
+					else{
+						if(i===0 || pen_up){
+							this.vectorMoveTo(points[i]+x, points[i+1] +y);
+							pen_up = false;
+						}
+						else {
+							this.vectorLineTo(points[i]+x, points[i+1] +y);
+						}
+					}
 				}
-				
-				this.stroke();
+				this.vectorEnd();
 			};
 
 			ctx.drawFpsGague = function(x, y, color, percentage){
@@ -64,13 +88,112 @@ var FlynnCanvas = Class.extend({
 				this.stroke();
 			};
 
+			//-----------------------------
+			// Vector graphic simulation
+			//-----------------------------
+			ctx.vectorStart = function(color){
+
+				// Determine vector line color
+				var dim_color_rgb = flynnHexToRgb(color);
+				var vectorDimFactor = 1;
+				var lineWidth = 1;
+				switch(this.mcp.vectorMode){
+					case FlynnVectorMode.PLAIN:
+						vectorDimFactor = 1;
+						lineWidth = 1;
+						break;
+					case FlynnVectorMode.V_THICK:
+						vectorDimFactor = FlynnVectorDimFactorThick;
+						lineWidth = 3;
+						break;
+					case FlynnVectorMode.V_THIN:
+						vectorDimFactor = FlynnVectorDimFactorThin;
+						lineWidth = 1;
+						break;
+				}
+				dim_color_rgb.r *= vectorDimFactor;
+				dim_color_rgb.g *= vectorDimFactor;
+				dim_color_rgb.b *= vectorDimFactor;
+				var dim_color = flynnRgbToHex(dim_color_rgb.r, dim_color_rgb.g, dim_color_rgb.b);
+
+				// Determine vector vertex color
+				var color_overdrive = flynnRgbOverdirve(flynnHexToRgb(color), FlynnVectorOverdriveFactor);
+				this.vectorVertexColor = flynnRgbToHex(color_overdrive.r, color_overdrive.g, color_overdrive.b);
+
+				this.vectorVericies = [];
+				this.beginPath();
+				this.strokeStyle = dim_color;
+				this.lineJoin = 'round';  // Get rid of long mitres on sharp angles
+				this.lineWidth = lineWidth;
+
+				//this.lineWidth = "6"; // Fat lines for screenshot thumbnail generation
+			};
+
+			ctx.vectorLineTo = function(x, y){
+				x = Math.floor(x);
+				y = Math.floor(y);
+				this.vectorVericies.push(x, y);
+				if(this.mcp.vectorMode === FlynnVectorMode.V_THICK){
+					this.lineTo(x, y);
+				}
+				else{
+					this.lineTo(x+0.5, y+0.5);
+				}
+			};
+
+			ctx.vectorMoveTo = function(x, y){
+				x = Math.floor(x);
+				y = Math.floor(y);
+				this.vectorVericies.push(x, y);
+				if(this.mcp.vectorMode === FlynnVectorMode.V_THICK){
+					this.moveTo(x, y);
+				}
+				else{
+					this.moveTo(x+0.5, y+0.5);
+				}
+			};
+
+			ctx.vectorEnd = function(){
+				// Finish the line drawing 
+				this.stroke();
+
+				if(this.mcp.vectorMode != FlynnVectorMode.PLAIN){
+					// Draw the (bright) vector vertex points
+					var offset, size;
+					if(this.mcp.vectorMode === FlynnVectorMode.V_THICK){
+						offset = 1;
+						size = 2;
+					}
+					else{
+						offset = 0;
+						size = 1;
+					}
+					this.fillStyle = this.vectorVertexColor;
+					for(var i=0, len=this.vectorVericies.length; i<len; i+=2) {
+						ctx.fillRect(this.vectorVericies[i]-offset, this.vectorVericies[i+1]-offset, size, size);
+					}
+				}
+			};
+
+			ctx.vectorRect = function(x, y, width, height, color){
+				// Finish the line drawing 
+				this.vectorStart(color);
+				this.vectorMoveTo(x, y);
+				this.vectorLineTo(x+width, y);
+				this.vectorLineTo(x+width, y+height);
+				this.vectorLineTo(x, y+height);
+				this.vectorLineTo(x, y);
+				this.vectorEnd();
+			};
+
 			ctx.vectorText = function(text, scale, x, y, offset, color){
 				if(typeof(color)==='undefined'){
-					color = FlynnColors.GREEN;
+					console.log("ctx.vectorText(): default color deprecated.  Please pass a color.  Text:" + text );
+					color = FlynnColors.WHITE;
 				}
 
 				text = text.toString().toUpperCase();
-				var step = scale*FlynnTextSpacing;
+				var step = scale*FlynnCharacterSpacing;
 
 				// add offset if specified
 				if (typeof offset === "number") {
@@ -85,10 +208,6 @@ var FlynnCanvas = Class.extend({
 					y = Math.round((this.height - step)/2);
 				}
 
-				x += 0.5;
-				y += 0.5;
-
-				this.strokeStyle = color;
 				for(var i = 0, len = text.length; i<len; i++){
 					var ch = text.charCodeAt(i);
 
@@ -104,23 +223,23 @@ var FlynnCanvas = Class.extend({
 						p = FlynnPoints.UNIMPLEMENTED_CHAR;
 					}
 
-					this.beginPath();
 					var pen_up = false;
+					this.vectorStart(color);
 					for (var j=0, len2=p.length; j<len2; j+=2){
 						if(p[j]==FlynnPoints.PEN_UP){
 							pen_up = true;
 						}
 						else{
 							if(j===0 || pen_up){
-								this.moveTo(p[j]*scale+x, p[j+1]*scale +y);
+								this.vectorMoveTo(p[j]*scale+x, p[j+1]*scale +y);
 								pen_up = false;
 							}
 							else{
-								this.lineTo(p[j]*scale+x, p[j+1]*scale +y);
+								this.vectorLineTo(p[j]*scale+x, p[j+1]*scale +y);
 							}
 						}
 					}
-					this.stroke();
+					this.vectorEnd();
 					x += step;
 				}
 				this.DEBUGLOGGED = true;
@@ -138,13 +257,10 @@ var FlynnCanvas = Class.extend({
 				}
 
 				text = text.toString().toUpperCase();
-				var step = scale*FlynnTextSpacing;
-
-				center_x += 0.5;
-				center_y += 0.5;
+				var step = scale*FlynnCharacterSpacing;
 
 				var render_angle = angle;
-				var render_angle_step = Math.asin(FlynnTextSpacing*scale/radius);
+				var render_angle_step = Math.asin(FlynnCharacterSpacing*scale/radius);
 				var renderAngleOffset = 0;
 				if (isCentered){
 					renderAngleOffset = render_angle_step * (text.length / 2 - 0.5);
@@ -159,8 +275,8 @@ var FlynnCanvas = Class.extend({
 					render_angle_step = - render_angle_step;
 				}
 
-				this.strokeStyle = color;
 				for(var i = 0, len = text.length; i<len; i++){
+					this.vectorStart(color);
 					var ch = text.charCodeAt(i);
 
 					if (ch === this.SPACECODE){
@@ -194,15 +310,15 @@ var FlynnCanvas = Class.extend({
 							var draw_y = (s*x + c*y) * scale + Math.sin(render_angle) * radius + center_y;
 
 							if(j===0 || pen_up){
-								this.moveTo(draw_x, draw_y);
+								this.vectorMoveTo(draw_x, draw_y);
 								pen_up = false;
 							}
 							else{
-								this.lineTo(draw_x, draw_y);
+								this.vectorLineTo(draw_x, draw_y);
 							}
 						}
 					}
-					this.stroke();
+					this.vectorEnd();
 
 					render_angle += render_angle_step;
 					character_angle += render_angle_step;
@@ -243,7 +359,7 @@ var FlynnCanvas = Class.extend({
 			// Calculate FPS and pacing
 			//---------------------------
 			var timeNow;
-			if(self.game.browserSupportsPerformance){
+			if(self.mcp.browserSupportsPerformance){
 				timeNow = performance.now();
 			}
 			else{
@@ -271,19 +387,19 @@ var FlynnCanvas = Class.extend({
 			//---------------------------
 			var start;
 			var end;
-			if(self.game.browserSupportsPerformance){
+			if(self.mcp.browserSupportsPerformance){
 				start = performance.now();
 			}
 			
 			animation_callback_f(paceFactor);
 			
-			if(self.game.browserSupportsPerformance){
+			if(self.mcp.browserSupportsPerformance){
 				end = performance.now();
 			}
 
 			if (self.showMetrics){
 				self.ctx.drawFpsGague(self.canvas.width-65, self.canvas.height-10, FlynnColors.GREEN, self.ctx.fps/120);
-				if(self.game.browserSupportsPerformance){
+				if(self.mcp.browserSupportsPerformance){
 					self.ctx.drawFpsGague(self.canvas.width-65, self.canvas.height-16, FlynnColors.YELLOW, (end-start)/(1000/120));
 				}
 			}
