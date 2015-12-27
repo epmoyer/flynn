@@ -30,7 +30,7 @@ var FlynnMcp = Class.extend({
 		this.devLowFpsPaceFactor = 0;
 		this.devLowFpsFrameCount = 0;
 
-		this.version = 'v1.2';  // Flynn version
+		this.version = 'v1.3';  // Flynn version
 
 		this.stateBuilderFunc = null;
 		this.resizeFunc = null;

@@ -66,10 +66,18 @@ var FlynnInputHandler = Class.extend({
 			//console.log("KeyDown: Code:" + evt.keyCode);
 			if(self.iCadeModeEnabled){
 				var index = self.iCade.keyDownCodes.indexOf(evt.keyCode);
+				var newEvt;
 				if(index > -1){
 					// Re-throw event as an iCade button down event
-					var newEvt = {keyCode: self.iCade.buttonCodes[index]};
+					newEvt = {keyCode: self.iCade.buttonCodes[index]};
 					self.keyDownHandler(newEvt);
+					return;
+				}
+				index = self.iCade.keyUpCodes.indexOf(evt.keyCode);
+				if(index > -1){
+					// Re-throw event as an iCade button up event
+					newEvt = {keyCode: self.iCade.buttonCodes[index]};
+					self.keyUpHandler(newEvt);
 					return;
 				}
 			}
@@ -97,15 +105,6 @@ var FlynnInputHandler = Class.extend({
 		this.keyUpHandler = function(evt){
 			//console.log("KeyUp: Code:" + evt.keyCode);
 			var name;
-			if(self.iCadeModeEnabled){
-				var index = self.iCade.keyUpCodes.indexOf(evt.keyCode);
-				if(index > -1){
-					// Re-throw event as an iCade button up event
-					var newEvt = {keyCode: self.iCade.buttonCodes[index]};
-					self.keyUpHandler(newEvt);
-					return;
-				}
-			}
 
 			if (self.keyCodeToVirtualButtonName[evt.keyCode]){
 				name = self.keyCodeToVirtualButtonName[evt.keyCode];
