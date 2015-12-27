@@ -30,7 +30,7 @@ var FlynnMcp = Class.extend({
 		this.devLowFpsPaceFactor = 0;
 		this.devLowFpsFrameCount = 0;
 
-		this.version = 'v1.1';  // Flynn version
+		this.version = 'v1.2';  // Flynn version
 
 		this.stateBuilderFunc = null;
 		this.resizeFunc = null;
@@ -67,6 +67,7 @@ var FlynnMcp = Class.extend({
             this.input.enableICade();
             this.arcadeModeEnabled = true; // iCade mode forces arcade mode
         }
+        this.input.setupUIButtons();
 
         // Detect back enable from URL arguments ("?back")
         if(flynnGetUrlFlag("back")){

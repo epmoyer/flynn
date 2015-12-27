@@ -40,15 +40,6 @@ var FlynnInputHandler = Class.extend({
 		this.keyCodeCaptureArmed = false;
 		this.capturedKeyCode = null;
 
-		// Add UI Buttons
-		this.addUiButton('UI_enter',  FlynnKeyboardMap['enter']);
-		this.addUiButton('UI_escape', FlynnKeyboardMap['escape']);
-		this.addUiButton('UI_up',     FlynnKeyboardMap['up']);
-		this.addUiButton('UI_down',   FlynnKeyboardMap['down']);
-		this.addUiButton('UI_right',  FlynnKeyboardMap['right']);
-		this.addUiButton('UI_left',   FlynnKeyboardMap['left']);
-		this.addUiButton('UI_exit',	  FlynnKeyboardMap['tab']);
-
 		// iCade button mapping
 		this.iCade = {
 			keyDownCodes: [],
@@ -186,15 +177,44 @@ var FlynnInputHandler = Class.extend({
 		}
 	},
 
+	setupUIButtons: function(){
+		if(!this.iCadeModeEnabled){
+			this.addUiButton('UI_enter',  FlynnKeyboardMap['enter']);
+			this.addUiButton('UI_escape', FlynnKeyboardMap['escape']);
+			this.addUiButton('UI_exit',	  FlynnKeyboardMap['tab']);
+			this.addUiButton('UI_quarter',FlynnKeyboardMap['5']);
+			this.addUiButton('UI_start1', FlynnKeyboardMap['1']);
+			this.addUiButton('UI_start2', FlynnKeyboardMap['2']);
+
+			this.addUiButton('UI_up',     FlynnKeyboardMap['up']);
+			this.addUiButton('UI_down',   FlynnKeyboardMap['down']);
+			this.addUiButton('UI_right',  FlynnKeyboardMap['right']);
+			this.addUiButton('UI_left',   FlynnKeyboardMap['left']);
+		}
+		else{
+			this.addUiButton('UI_enter',  FlynnKeyboardMap['ICADE_T1']);
+			this.addUiButton('UI_escape', FlynnKeyboardMap['ICADE_B1']);
+			this.addUiButton('UI_exit',	  FlynnKeyboardMap['ICADE_B2']);
+			this.addUiButton('UI_quarter',FlynnKeyboardMap['ICADE_T3']);
+			this.addUiButton('UI_start1', FlynnKeyboardMap['ICADE_T4']);
+			this.addUiButton('UI_start2', FlynnKeyboardMap['ICADE_B4']);
+
+			this.addUiButton('UI_up',     FlynnKeyboardMap['ICADE_up']);
+			this.addUiButton('UI_down',   FlynnKeyboardMap['ICADE_down']);
+			this.addUiButton('UI_right',  FlynnKeyboardMap['ICADE_right']);
+			this.addUiButton('UI_left',   FlynnKeyboardMap['ICADE_left']);
+		}
+	},
+
+	enableICade: function(){
+		this.iCadeModeEnabled = true;
+	},
+
 	addiCadeMapping: function(iCadeButtonName, keyDown, keyUp){
 		this.iCade.buttonNames.push(iCadeButtonName);
 		this.iCade.buttonCodes.push(FlynnKeyboardMap[iCadeButtonName]);
 		this.iCade.keyDownCodes.push(FlynnKeyboardMap[keyDown]);
 		this.iCade.keyUpCodes.push(FlynnKeyboardMap[keyUp]);
-	},
-
-	enableICade: function(){
-		this.iCadeModeEnabled = true;
 	},
 
 	addUiButton: function(name, keyCode){
