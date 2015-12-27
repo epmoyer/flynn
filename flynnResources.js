@@ -16,7 +16,11 @@ var FlynnColors = {
 	BROWN:      "#8B4513",
 	YELLOW_DK:  "#808000",
 	GRAY:       "#808080",
-	GRAY_DK:    "#404040"
+	GRAY_DK:    "#404040",
+
+	LIGHTSKYBLUE: "#87CEFA",
+	DODGERBLUE:   "#1E90FF",
+	LIGHTBLUE:    "#ADD8E6",
 };
 
 //------------
@@ -98,6 +102,19 @@ var FlynnKeyboardMap = {
 	'f10':      121,
 	'f11':      122,
 	'f12':      123,
+
+	'ICADE_up':    -1,
+	'ICADE_down':  -2,
+	'ICADE_left':  -3,
+	'ICADE_right': -4,
+	'ICADE_T1':    -5,
+	'ICADE_T2':    -6,
+	'ICADE_T3':    -7,
+	'ICADE_T4':    -8,
+	'ICADE_B1':    -9,
+	'ICADE_B2':    -10,
+	'ICADE_B3':    -11,
+	'ICADE_B4':    -12,
 };
 
 //------------

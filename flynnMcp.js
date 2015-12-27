@@ -15,11 +15,14 @@ var FlynnMcp = Class.extend({
 		this.canvasHeight = canvasHeight;
 		this.input = input;
 		this.noChangeState = noChangeState;
-		this.developerModeEnabled = false;
 		this.gameSpeedFactor = gameSpeedFactor;
 
-		this.credits = 0;
+		this.developerModeEnabled = false;
 		this.arcadeModeEnabled = false;
+		this.iCadeModeEnabled = false;
+		this.backEnabled = false;
+		
+		this.credits = 0;
 		this.nextState = noChangeState;
 		this.currentState = null;
 
@@ -27,13 +30,17 @@ var FlynnMcp = Class.extend({
 		this.devLowFpsPaceFactor = 0;
 		this.devLowFpsFrameCount = 0;
 
-		this.version = 'v1.0';
+		this.version = 'v1.0';  // Flynn version
 
 		this.stateBuilderFunc = null;
 		this.resizeFunc = null;
 		this.slowMoDebug = false;
         this.clock = 0;
         this.timers = new FlynnTimers();
+
+        // Setup options
+        this.options = {};
+        this.optionManager = new FlynnOptionManager(this);
 
 		this.custom={}; // Container for custom game data which needs to be exchanged globally.
 
@@ -42,16 +49,28 @@ var FlynnMcp = Class.extend({
 			["No Name", 100],
 		];
 
-		// Detect developer mode from URL arguments ("?develop=true")
-        if(flynnGetUrlValue("develop")=='true'){
+		// Detect developer mode from URL arguments ("?develop")
+        if(flynnGetUrlFlag("develop")){
             this.developerModeEnabled = true;
         }
 		
 		this.canvas = new FlynnCanvas(this, canvasWidth, canvasHeight);
 
-		// Detect arcade mode from URL arguments ("?arcade=true")
-        if(flynnGetUrlValue("arcade")=='true'){
+		// Detect arcade mode from URL arguments ("?arcade")
+        if(flynnGetUrlFlag("arcade")){
             this.arcadeModeEnabled = true;
+        }
+
+        // Detect iCade mode from URL arguments ("?icade")
+        if(flynnGetUrlFlag("icade")){
+            this.iCadeModeEnabled = true;
+            this.input.enableICade();
+            this.arcadeModeEnabled = true; // iCade mode forces arcade mode
+        }
+
+        // Detect back enable from URL arguments ("?back")
+        if(flynnGetUrlFlag("back")){
+            this.backEnabled = true;
         }
 
 		//--------------------------
@@ -74,29 +93,41 @@ var FlynnMcp = Class.extend({
 		this.browserSupportsTouch = ('ontouchstart' in document.documentElement);
 
 		if (this.developerModeEnabled){
-			console.log("DEV: browserSupportsPeformance=", this.browserSupportsPerformance);
-			console.log("DEV: browserIsIos=", this.browserIsIos);
-			console.log("DEV: browserSupportsTouch=", this.browserSupportsTouch);
+			console.log('DEV: title=' + document.title);
+			console.log('DEV: browserSupportsPeformance=' + this.browserSupportsPerformance);
+			console.log('DEV: browserIsIos=' + this.browserIsIos);
+			console.log('DEV: browserSupportsTouch=' + this.browserSupportsTouch);
+			console.log('DEV: Cookies: enabled=' + Cookies.enabled);
+			console.log('DEV: arcadeModeEnabled=' + this.arcadeModeEnabled);
+			console.log('DEV: iCadeModeEnabled=' + this.iCadeModeEnabled);
+			console.log('DEV: backEnabled=' + this.backEnabled);
 		}
 
 		// Set Vector mode
-		this.vectorMode = null;
-		var vectorMode = flynnGetUrlValue("vector");
+		var vectorMode = null;
+		var vectorModeFromUrl = flynnGetUrlValue("vector");
 		for (var key in FlynnVectorMode){
-			if (vectorMode === key){
-				this.vectorMode = FlynnVectorMode[key];
+			if (vectorModeFromUrl === key){
+				vectorMode = FlynnVectorMode[key];
 			}
 		}
-		if (this.vectorMode === null){
+		if (vectorMode === null){
 			// No vector mode specified on command line (or no match)
 			if(this.browserSupportsTouch){
 				// Default to plain lines on phones/pads for visibility and performance
-				this.vectorMode = FlynnVectorMode.V_THICK;
+				vectorMode = FlynnVectorMode.V_THICK;
 			}
 			else{
-				this.vectorMode = FlynnVectorMode.V_THIN;
+				vectorMode = FlynnVectorMode.V_THIN;
 			}
 		}
+		this.optionManager.addOption('vectorMode', FlynnOptionType.MULTI, vectorMode, vectorMode, 'VECTOR DISPLAY EMULATION',
+			[	['NONE',     FlynnVectorMode.PLAIN],
+				['NORMAL',   FlynnVectorMode.V_THIN],
+				['THICK' ,   FlynnVectorMode.V_THICK],
+				['FLICKER' , FlynnVectorMode.V_FLICKER]
+			],
+			null);
 
 		//--------------------------
 		// Resize handler
@@ -171,14 +202,22 @@ var FlynnMcp = Class.extend({
 		}
 	},
 
-	updateHighScores: function (nickName, score){
+	updateHighScores: function (nickName, score, descending){
 		"use strict";
+		descending = typeof descending !== 'undefined' ? descending : true;
+
 		this.highscores.push([nickName, score]);
 
 		// sort hiscore in ascending order
-		this.highscores.sort(function(a, b) {
-			return b[1] - a[1];
-		});
+		if (descending){
+			this.highscores.sort(function(a, b) {
+				return b[1] - a[1];
+			});
+		} else {
+			this.highscores.sort(function(a, b) {
+				return a[1] - b[1];
+			});
+		}
 
 		// Drop the last
 		this.highscores.splice(this.highscores.length-1, 1);
@@ -221,6 +260,9 @@ var FlynnMcp = Class.extend({
 			if(!skipThisFrame){
 				// Change state (if pending)
 				if (self.nextState !== self.noChangeState) {
+					if(self.currentState && self.currentState.destructor){
+						self.currentState.destructor();
+					}
 					self.currentState = self.stateBuilderFunc(self.nextState);
 					self.nextState = self.noChangeState;
 				}

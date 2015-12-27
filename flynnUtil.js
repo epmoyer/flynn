@@ -9,6 +9,18 @@ function flynnGetUrlValue(VarSearch){
     }
 }
 
+function flynnGetUrlFlag(VarSearch){
+    var SearchString = window.location.search.substring(1);
+    var VariableArray = SearchString.split('&');
+    for(var i = 0; i < VariableArray.length; i++){
+        var KeyValuePair = VariableArray[i].split('=');
+        if(KeyValuePair[0] == VarSearch){
+            return true;
+        }
+    }
+    return false;
+}
+
 function flynnHexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
@@ -107,4 +119,21 @@ function flynnInterceptSolution(B_v, u_v, A_v, gun_velocity){
     solution.velocity_v = vj_v.add(vi_v);
 
     return solution;
+}
+
+function flynnZeroPad(num, places) {
+    var zero = places - num.toString().length + 1;
+    return Array(+(zero > 0 && zero)).join("0") + num;
+}
+
+function flynnTicksToTime(ticks){
+    var time_in_seconds = (ticks / 60);
+    var hundredths = Math.floor((time_in_seconds - Math.floor(time_in_seconds)) * 100);
+    var minutes = Math.floor(time_in_seconds / 60);
+    var seconds = Math.floor((ticks - (minutes * 60 * 60)) / 60);
+    return(
+        flynnZeroPad(minutes,2) + ':' +
+        flynnZeroPad(seconds,2) + '.' +
+        flynnZeroPad(hundredths,2)
+        );
 }

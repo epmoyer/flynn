@@ -15,9 +15,10 @@ var FlynnIsNotReversed = false;
 
 // Vector rendering emulation modes
 var FlynnVectorMode = {
-	PLAIN:   0,		// No Vector rendering emulation (plain lines)
-	V_THIN:  1,		// Thin Vector rendering 
-	V_THICK: 2,     // Thick Vector rendering
+	PLAIN:     0,	// No Vector rendering emulation (plain lines)
+	V_THIN:    1,	// Thin Vector rendering 
+	V_THICK:   2,	// Thick Vector rendering
+	V_FLICKER: 3,	// Flicker rendering    
 };
 
 var FlynnCanvas = Class.extend({
@@ -42,6 +43,7 @@ var FlynnCanvas = Class.extend({
 			ctx.fpsMsecCount = 0;
 			ctx.vectorVericies = [];
 			ctx.mcp = mcp;
+			ctx.ticks = 0;
 
 			ctx.ACODE = "A".charCodeAt(0);
 			ctx.ZEROCODE = "0".charCodeAt(0);
@@ -97,7 +99,7 @@ var FlynnCanvas = Class.extend({
 				var dim_color_rgb = flynnHexToRgb(color);
 				var vectorDimFactor = 1;
 				var lineWidth = 1;
-				switch(this.mcp.vectorMode){
+				switch(this.mcp.options.vectorMode){
 					case FlynnVectorMode.PLAIN:
 						vectorDimFactor = 1;
 						lineWidth = 1;
@@ -109,6 +111,21 @@ var FlynnCanvas = Class.extend({
 					case FlynnVectorMode.V_THIN:
 						vectorDimFactor = FlynnVectorDimFactorThin;
 						lineWidth = 1;
+						break;
+					case FlynnVectorMode.V_FLICKER:
+						var phase = Math.floor(this.ticks) % 3;
+						if (phase === 0){
+							vectorDimFactor = FlynnVectorDimFactorThin;
+							lineWidth = 3;
+						}
+						else if(phase === 1){
+							vectorDimFactor = 1;
+							lineWidth = 1;
+						}
+						else{
+							vectorDimFactor = FlynnVectorDimFactorThin;
+							lineWidth = 1;
+						}
 						break;
 				}
 				dim_color_rgb.r *= vectorDimFactor;
@@ -133,7 +150,7 @@ var FlynnCanvas = Class.extend({
 				x = Math.floor(x);
 				y = Math.floor(y);
 				this.vectorVericies.push(x, y);
-				if(this.mcp.vectorMode === FlynnVectorMode.V_THICK){
+				if(this.mcp.options.vectorMode === FlynnVectorMode.V_THICK){
 					this.lineTo(x, y);
 				}
 				else{
@@ -145,7 +162,7 @@ var FlynnCanvas = Class.extend({
 				x = Math.floor(x);
 				y = Math.floor(y);
 				this.vectorVericies.push(x, y);
-				if(this.mcp.vectorMode === FlynnVectorMode.V_THICK){
+				if(this.mcp.options.vectorMode === FlynnVectorMode.V_THICK){
 					this.moveTo(x, y);
 				}
 				else{
@@ -157,10 +174,10 @@ var FlynnCanvas = Class.extend({
 				// Finish the line drawing 
 				this.stroke();
 
-				if(this.mcp.vectorMode != FlynnVectorMode.PLAIN){
+				if(this.mcp.options.vectorMode != FlynnVectorMode.PLAIN){
 					// Draw the (bright) vector vertex points
 					var offset, size;
-					if(this.mcp.vectorMode === FlynnVectorMode.V_THICK){
+					if(this.mcp.options.vectorMode === FlynnVectorMode.V_THICK){
 						offset = 1;
 						size = 2;
 					}
@@ -202,7 +219,7 @@ var FlynnCanvas = Class.extend({
 
 				// Center x/y if they are not numbers
 				if (typeof x !== "number"){
-					x = Math.round((this.width - text.length*step)/2);
+					x = Math.round((this.width - (text.length*step-(FlynnCharacterGap*scale)))/2);
 				}
 				if (typeof y !== "number"){
 					y = Math.round((this.height - step)/2);
@@ -373,6 +390,8 @@ var FlynnCanvas = Class.extend({
 			if (paceFactor > FlynnMaxPaceRecoveryTicks) {
 				paceFactor = 1;
 			}
+
+			self.ctx.ticks += 1;
 
 			++self.ctx.fpsFrameCount;
 			if (self.ctx.fpsFrameCount >= self.ctx.fpsFrameAverage){
