@@ -1,4 +1,4 @@
-var FlynnProjectile= Class.extend({
+Flynn.Projectile= Class.extend({
 	init: function(world_position_v, velocity_v, lifetime, size, color, min_bounds_v, max_bounds_v){
 
         this.world_position_v = world_position_v.clone();
@@ -49,7 +49,7 @@ var FlynnProjectile= Class.extend({
 
 });
 
-var FlynnProjectiles = Class.extend({
+Flynn.Projectiles = Class.extend({
 
 	init: function(min_bounds_v, max_bounds_v){
 		this.projectiles=[];
@@ -62,7 +62,7 @@ var FlynnProjectiles = Class.extend({
 	},
 
 	add: function(world_position_v, velocity_v, lifetime, size, color) {
-		this.projectiles.push(new FlynnProjectile(
+		this.projectiles.push(new Flynn.Projectile(
 			world_position_v, velocity_v, lifetime, size, color, this.min_bounds_v, this.max_bounds_v));
 	},
 

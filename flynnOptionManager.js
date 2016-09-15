@@ -1,11 +1,11 @@
-var FlynnOptionType = {
+Flynn.OptionType = {
 	BOOLEAN: 0,
 	MULTI: 1,
 	COMMAND: 2,
 	INPUT_KEY: 3,
 };
 
-var FlynnOptionDescriptor = Class.extend({
+Flynn.OptionDescriptor = Class.extend({
 
 	init: function(keyName, type, defaultValue, currentValue, promptText, promptValues, commandHandler){
 		this.keyName = keyName;
@@ -27,10 +27,10 @@ var FlynnOptionDescriptor = Class.extend({
 	}
 });
 
-// These current value for all shadowed options will be maintained in mcp.options.<keyName> for convenience
-var FlynnShadowedOptionTypes = [FlynnOptionType.MULTI, FlynnOptionType.BOOLEAN];
+Flynn.OptionManager = Class.extend({
 
-var FlynnOptionManager = Class.extend({
+	// The current value for all shadowed options will be maintained in mcp.options.<keyName> for convenience
+	SHADOWED_OPTION_TYPES: [Flynn.OptionType.MULTI, Flynn.OptionType.BOOLEAN],
 
 	init: function(mcp){
 		this.mcp = mcp;
@@ -38,7 +38,7 @@ var FlynnOptionManager = Class.extend({
 		this.cookiesFetched = false;
 
 		var self = this;
-		this.addOption('revertDefaults', FlynnOptionType.COMMAND, true, true, 'REVERT TO DEFAULTS', null,
+		this.addOption('revertDefaults', Flynn.OptionType.COMMAND, true, true, 'REVERT TO DEFAULTS', null,
 			function(){
 				self.revertToDefaults();
 				self.saveAllToCookies();
@@ -46,8 +46,8 @@ var FlynnOptionManager = Class.extend({
 	},
 
 	addOption: function(keyName, type, defaultValue, currentValue, promptText, promptValues, commandHandler){
-		var descriptor = new FlynnOptionDescriptor(keyName, type, defaultValue, currentValue, promptText, promptValues, commandHandler);
-		if (type in FlynnShadowedOptionTypes){
+		var descriptor = new Flynn.OptionDescriptor(keyName, type, defaultValue, currentValue, promptText, promptValues, commandHandler);
+		if (type in this.SHADOWED_OPTION_TYPES){
 			this.mcp.options[keyName] = currentValue;
 		}
 		this.optionDescriptors[keyName] = descriptor;
@@ -56,7 +56,7 @@ var FlynnOptionManager = Class.extend({
 	addOptionFromVirtualButton: function(virtualButtonName){
 		var keyCode = this.mcp.input.getVirtualButtonBoundKeyCode(virtualButtonName);
 		var keyName = virtualButtonName;
-		var descriptor = new FlynnOptionDescriptor(keyName, FlynnOptionType.INPUT_KEY, keyCode, keyCode, keyName, null, null);
+		var descriptor = new Flynn.OptionDescriptor(keyName, Flynn.OptionType.INPUT_KEY, keyCode, keyCode, keyName, null, null);
 		this.optionDescriptors[keyName] = descriptor;
 	},
 
@@ -64,10 +64,10 @@ var FlynnOptionManager = Class.extend({
 		if(keyName in this.optionDescriptors){
 			var optionDescriptor = this.optionDescriptors[keyName];
 			optionDescriptor.currentValue = value;
-			if(optionDescriptor.type in FlynnShadowedOptionTypes){
+			if(optionDescriptor.type in this.SHADOWED_OPTION_TYPES){
 				this.mcp.options[keyName] = value;
 			}
-			if(optionDescriptor.type === FlynnOptionType.INPUT_KEY){
+			if(optionDescriptor.type === Flynn.OptionType.INPUT_KEY){
 				this.mcp.input.bindVirtualButtonToKey(keyName, value);
 			}
 		}
@@ -97,7 +97,7 @@ var FlynnOptionManager = Class.extend({
 		for (var keyName in this.optionDescriptors){
 			var descriptor = this.optionDescriptors[keyName];
 			descriptor.currentValue = descriptor.defaultValue;
-			if(descriptor.type in FlynnShadowedOptionTypes){
+			if(descriptor.type in this.SHADOWED_OPTION_TYPES){
 				this.mcp.options[keyName] = descriptor.defaultValue;
 			}
 		}
@@ -147,7 +147,7 @@ var FlynnOptionManager = Class.extend({
 
 	saveOptionToCookies: function(optionKey){
 		// All option types except COMMAND (i.e. INPUT_KEY, MULTI, and BOOLEAN) will be saved to cookies.
-		if(this.optionDescriptors[optionKey].type != FlynnOptionType.COMMAND){
+		if(this.optionDescriptors[optionKey].type != Flynn.OptionType.COMMAND){
 			var cookieKey = document.title + ':OPT_' + optionKey;
 			var optionValue = this.getOption(optionKey);
 			var cookieValue = JSON.stringify(optionValue);
@@ -159,7 +159,7 @@ var FlynnOptionManager = Class.extend({
 	},
 
 	executeCommand: function(keyName){
-		if(keyName in this.optionDescriptors && this.optionDescriptors[keyName].type === FlynnOptionType.COMMAND){
+		if(keyName in this.optionDescriptors && this.optionDescriptors[keyName].type === Flynn.OptionType.COMMAND){
 			this.optionDescriptors[keyName].commandHandler();
 		}
 		else{
@@ -178,16 +178,16 @@ var FlynnOptionManager = Class.extend({
 
 		for (var keyName in this.optionDescriptors){
 			switch(this.optionDescriptors[keyName].type){
-				case FlynnOptionType.INPUT_KEY:
+				case Flynn.OptionType.INPUT_KEY:
 					keyNamesInputKey.push(keyName);
 					break;
-				case FlynnOptionType.COMMAND:
+				case Flynn.OptionType.COMMAND:
 					keyNamesCommand.push(keyName);
 					break;
-				case FlynnOptionType.MULTI:
+				case Flynn.OptionType.MULTI:
 					keyNamesMulti.push(keyName);
 					break;
-				case FlynnOptionType.BOOLEAN:
+				case Flynn.OptionType.BOOLEAN:
 					keyNamesBoolean.push(keyName);
 					break;
 

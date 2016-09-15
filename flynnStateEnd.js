@@ -3,10 +3,9 @@
 //    End of game screens (leaderboard score entry/table)
 //--------------------------------------------
 
-var FlynnCursorBlinkRate = 2;
-var FlynnMaxLeaderboardNameLength = 13;
+Flynn.StateEnd = Flynn.State.extend({
 
-var FlynnStateEnd = FlynnState.extend({
+	CURSOR_BLINK_RATE: 2,
 
 	init: function(mcp, score, leaderboard, color, title, prompt) {
 		this._super(mcp);
@@ -62,7 +61,7 @@ var FlynnStateEnd = FlynnState.extend({
 	},
 
 	update: function(paceFactor) {
-		this.cursorBlinkTimer += ((FlynnCursorBlinkRate*2)/60) * paceFactor;
+		this.cursorBlinkTimer += ((this.CURSOR_BLINK_RATE*2)/60) * paceFactor;
 		if (!this.hasEnteredName) {
 			this.namefield.focus(); // focus so player input is read
 			// exit if same namefield not updated

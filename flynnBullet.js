@@ -1,4 +1,4 @@
-var FlynnBullet = Class.extend({
+Flynn.Bullet = Class.extend({
 	maxX: null,
 	maxY: null,
 

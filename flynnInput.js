@@ -1,7 +1,4 @@
-var FlynnConfigurable = true;
-var FlynnNotConfigurable = false;
-
-var FlynnTouchRegion = Class.extend({
+Flynn.TouchRegion = Class.extend({
 	init: function(name, left, top, right, bottom) {
 		this.name = name;
 		this.left = left;
@@ -13,7 +10,7 @@ var FlynnTouchRegion = Class.extend({
 	}
 });
 
-var FlynnVirtualButton = Class.extend({
+Flynn.VirtualButton = Class.extend({
 	init: function(name, isConfigurable) {
 		this.name = name;
 		this.isConfigurable = isConfigurable;
@@ -24,8 +21,8 @@ var FlynnVirtualButton = Class.extend({
 	}
 });
 
-var FlynnInputHandler = Class.extend({
-	//init: function(keys) {
+Flynn.InputHandler = Class.extend({
+
 	init: function() {
 		this.iCadeModeEnabled = false;
 
@@ -223,7 +220,10 @@ var FlynnInputHandler = Class.extend({
 				'" but that UI button already exists. The old UI button will be removed first.');
 			delete(this.uiButtons[name]);
 		}
-		this.uiButtons[name] = new FlynnVirtualButton(name, FlynnNotConfigurable);
+		this.uiButtons[name] = new FlynnVirtualButton(
+			name,
+			false // Not configurable
+			);
 		this.uiButtons[name].boundKeyCode = keyCode;
 		this.keyCodeToUiButtonName[keyCode] = name;
 	},

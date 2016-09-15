@@ -1,4 +1,4 @@
-var FlynnLeaderboard = Class.extend({
+Flynn.Leaderboard = Class.extend({
 
 	init: function(mcp, attributeList, maxItems, sortDescending){
 		this.mcp = mcp;

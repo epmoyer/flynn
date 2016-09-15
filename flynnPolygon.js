@@ -1,8 +1,8 @@
-var FlynnPolygon = Class.extend({
+Flynn.Polygon = Class.extend({
 
 	init: function(p, color){
 		if(typeof(color)==='undefined'){
-			color = FlynnColors.WHITE;
+			color = Flynn.Colors.WHITE;
 		}
 
 		this.color = color;

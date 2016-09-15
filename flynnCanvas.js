@@ -1,27 +1,23 @@
-var FlynnMaxPaceRecoveryTicks = 5; // Max elapsed 60Hz frames to apply pacing (beyond this, just jank)
-
-var FlynnTextCenterOffsetX = FlynnCharacterWidth/2;
-var FlynnTextCenterOffsetY = FlynnCharacterHeight/2;
-
-// Vector graphics simulation
-var FlynnVectorDimFactorThick = 0.75; // Brightness dimming for vector lines
-var FlynnVectorDimFactorThin = 0.65;
-var FlynnVectorOverdriveFactor = 0.2; // White overdrive for vertex point artifacts
-
-var FlynnIsCentered = true;
-var FlynnIsNotCentered = false;
-var FlynnIsReversed = true;
-var FlynnIsNotReversed = false;
-
 // Vector rendering emulation modes
-var FlynnVectorMode = {
+Flynn.VectorMode = {
 	PLAIN:     0,	// No Vector rendering emulation (plain lines)
 	V_THIN:    1,	// Thin Vector rendering 
 	V_THICK:   2,	// Thick Vector rendering
 	V_FLICKER: 3,	// Flicker rendering    
 };
 
-var FlynnCanvas = Class.extend({
+Flynn.Canvas = Class.extend({
+
+	MAX_PACE_RECOVERY_TICKS: 5, // Max elapsed 60Hz frames to apply pacing (beyond this, just jank)
+
+	// Vector graphics simulation
+	VECTOR_DIM_FACTOR_THICK: 0.75, // Brightness dimming for vector lines
+	VECTOR_DIM_FACTOR_THIN:  0.65,
+	VECTOR_OVERDRIVE_FACTOR: 0.2,  // White overdrive for vertex point artifacts
+
+	TEXT_CENTER_OFFSET_X: Flynn.Font.CharacterWidth/2,
+    TEXT_CENTER_OFFSET_Y: Flynn.Font.CharacterHeight/2,
+
 
 	init: function(mcp, width, height) {
 		this.mcp = mcp;
@@ -96,26 +92,26 @@ var FlynnCanvas = Class.extend({
 			ctx.vectorStart = function(color){
 
 				// Determine vector line color
-				var dim_color_rgb = flynnHexToRgb(color);
+				var dim_color_rgb = Flynn.util.hexToRgb(color);
 				var vectorDimFactor = 1;
 				var lineWidth = 1;
 				switch(this.mcp.options.vectorMode){
-					case FlynnVectorMode.PLAIN:
+					case Flynn.VectorMode.PLAIN:
 						vectorDimFactor = 1;
 						lineWidth = 1;
 						break;
-					case FlynnVectorMode.V_THICK:
-						vectorDimFactor = FlynnVectorDimFactorThick;
+					case Flynn.VectorMode.V_THICK:
+						vectorDimFactor = this.VECTOR_DIM_FACTOR_THICK;
 						lineWidth = 3;
 						break;
-					case FlynnVectorMode.V_THIN:
-						vectorDimFactor = FlynnVectorDimFactorThin;
+					case Flynn.VectorMode.V_THIN:
+						vectorDimFactor = this.VECTOR_DIM_FACTOR_THIN;
 						lineWidth = 1;
 						break;
-					case FlynnVectorMode.V_FLICKER:
+					case Flynn.VectorMode.V_FLICKER:
 						var phase = Math.floor(this.ticks) % 3;
 						if (phase === 0){
-							vectorDimFactor = FlynnVectorDimFactorThin;
+							vectorDimFactor = this.VECTOR_DIM_FACTOR_THIN;
 							lineWidth = 3;
 						}
 						else if(phase === 1){
@@ -123,7 +119,7 @@ var FlynnCanvas = Class.extend({
 							lineWidth = 1;
 						}
 						else{
-							vectorDimFactor = FlynnVectorDimFactorThin;
+							vectorDimFactor = this.VECTOR_DIM_FACTOR_THIN;
 							lineWidth = 1;
 						}
 						break;
@@ -131,11 +127,11 @@ var FlynnCanvas = Class.extend({
 				dim_color_rgb.r *= vectorDimFactor;
 				dim_color_rgb.g *= vectorDimFactor;
 				dim_color_rgb.b *= vectorDimFactor;
-				var dim_color = flynnRgbToHex(dim_color_rgb.r, dim_color_rgb.g, dim_color_rgb.b);
+				var dim_color = Flynn.util.rgbToHex(dim_color_rgb.r, dim_color_rgb.g, dim_color_rgb.b);
 
 				// Determine vector vertex color
-				var color_overdrive = flynnRgbOverdirve(flynnHexToRgb(color), FlynnVectorOverdriveFactor);
-				this.vectorVertexColor = flynnRgbToHex(color_overdrive.r, color_overdrive.g, color_overdrive.b);
+				var color_overdrive = Flynn.util.rgbOverdirve(Flynn.util.hexToRgb(color), this.VECTOR_OVERDRIVE_FACTOR);
+				this.vectorVertexColor = Flynn.util.rgbToHex(color_overdrive.r, color_overdrive.g, color_overdrive.b);
 
 				this.vectorVericies = [];
 				this.beginPath();
@@ -150,7 +146,7 @@ var FlynnCanvas = Class.extend({
 				x = Math.floor(x);
 				y = Math.floor(y);
 				this.vectorVericies.push(x, y);
-				if(this.mcp.options.vectorMode === FlynnVectorMode.V_THICK){
+				if(this.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
 					this.lineTo(x, y);
 				}
 				else{
@@ -162,7 +158,7 @@ var FlynnCanvas = Class.extend({
 				x = Math.floor(x);
 				y = Math.floor(y);
 				this.vectorVericies.push(x, y);
-				if(this.mcp.options.vectorMode === FlynnVectorMode.V_THICK){
+				if(this.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
 					this.moveTo(x, y);
 				}
 				else{
@@ -174,10 +170,10 @@ var FlynnCanvas = Class.extend({
 				// Finish the line drawing 
 				this.stroke();
 
-				if(this.mcp.options.vectorMode != FlynnVectorMode.PLAIN){
+				if(this.mcp.options.vectorMode != Flynn.VectorMode.PLAIN){
 					// Draw the (bright) vector vertex points
 					var offset, size;
-					if(this.mcp.options.vectorMode === FlynnVectorMode.V_THICK){
+					if(this.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
 						offset = 1;
 						size = 2;
 					}
@@ -319,8 +315,8 @@ var FlynnCanvas = Class.extend({
 							pen_up = true;
 						}
 						else{
-							var x = p[j] - FlynnTextCenterOffsetX;
-							var y = p[j+1] - FlynnTextCenterOffsetY;
+							var x = p[j] - this.TEXT_CENTER_OFFSET_X;
+							var y = p[j+1] - this.TEXT_CENTER_OFFSET_Y;
 							var c = Math.cos(character_angle);
 							var s = Math.sin(character_angle);
 							var draw_x = (c*x - s*y) * scale + Math.cos(render_angle) * radius + center_x;
@@ -387,7 +383,7 @@ var FlynnCanvas = Class.extend({
 			// paceFactor represents the % of a 60fps frame that has elapsed.
 			// At 30fps the paceFactor is 2.0,  At 15fps it is 4.0
 			var paceFactor = (60*(timeNow - self.previousTimestamp))/1000;
-			if (paceFactor > FlynnMaxPaceRecoveryTicks) {
+			if (paceFactor > this.MAX_PACE_RECOVERY_TICKS) {
 				paceFactor = 1;
 			}
 

@@ -2,11 +2,12 @@
 //       It is a genericised version of the radial particle library used by Roundabout, rewritten to use cartesian
 //       coordinates only.  What could possibly go wrong? :)
 
-var FlynnParticleLife = 50;
-var FlynnParticleLifeVariation = 20;
-var FlynnParticleFriction = 0.99;
+Flynn.Particle = Class.extend({
 
-var FlynnParticle = Class.extend({
+	PARTICLE_LIFE_VARIATION: 20,
+	PARTICLE_LIFE: 50,
+	PARTICLE_FRICTION: 0.99,
+
 	init: function(particles, x, y, dx, dy, color){
 		this.particles = particles;
         this.x = x;
@@ -15,7 +16,7 @@ var FlynnParticle = Class.extend({
 		this.dy = dy;
 		this.color = color;
 
-		this.life = FlynnParticleLife + (Math.random()-0.5) * FlynnParticleLifeVariation;
+		this.life = this.PARTICLE_LIFE + (Math.random()-0.5) * this.PARTICLE_LIFE_VARIATION;
 	},
 
 	update: function(paceFactor) {
@@ -31,8 +32,8 @@ var FlynnParticle = Class.extend({
 			this.x += this.dx * paceFactor;
 			this.y += this.dy * paceFactor;
 			// Decay impulse
-			this.dx *= FlynnParticleFriction;
-			this.dy *= FlynnParticleFriction;
+			this.dx *= this.PARTICLE_FRICTION;
+			this.dy *= this.PARTICLE_FRICTION;
 		}
 		return isAlive;
 	},
@@ -44,7 +45,7 @@ var FlynnParticle = Class.extend({
 
 });
 
-var FlynnParticles = Class.extend({
+Flynn.Particles = Class.extend({
 
 	init: function(){
 		this.particles=[];
@@ -54,7 +55,7 @@ var FlynnParticles = Class.extend({
 		for(var i=0; i<quantity; i++){
 			theta = Math.random() * Math.PI * 2;
 			velocity = Math.random() * velocity;
-			this.particles.push(new FlynnParticle(
+			this.particles.push(new Flynn.Particle(
 				this,
 				x,
 				y,

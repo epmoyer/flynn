@@ -1,4 +1,4 @@
-var FlynnTimer = Class.extend({
+Flynn.Timer = Class.extend({
 	init: function(timerName, initialTicks, callback){
 		this.name = timerName;
 		this.tickCounter = initialTicks;
@@ -7,7 +7,7 @@ var FlynnTimer = Class.extend({
 	},
 });
 
-var FlynnTimers = Class.extend({
+Flynn.Timers = Class.extend({
 	//-----------------------------------------------------------------------------------------------------
 	// Timers
 	//

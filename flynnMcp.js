@@ -1,12 +1,5 @@
 // Master Control Program 
-
-var FlynnDevPacingMode = {
-	NORMAL:  0,
-	SLOW_MO: 1,
-	FPS_20:  2,
-};
-
-var FlynnMcp = Class.extend({
+Flynn.Mcp = Class.extend({
 
 	init: function(canvasWidth, canvasHeight, input, noChangeState, gameSpeedFactor) {
 		"use strict";
@@ -30,7 +23,7 @@ var FlynnMcp = Class.extend({
 		this.devLowFpsPaceFactor = 0;
 		this.devLowFpsFrameCount = 0;
 
-		this.version = 'v1.3';  // Flynn version
+		this.version = 'v2.0';  // Flynn version
 
 		this.stateBuilderFunc = null;
 		this.resizeFunc = null;
@@ -50,19 +43,19 @@ var FlynnMcp = Class.extend({
 		];
 
 		// Detect developer mode from URL arguments ("?develop")
-        if(flynnGetUrlFlag("develop")){
+        if(Flynn.util.getUrlFlag("develop")){
             this.developerModeEnabled = true;
         }
 		
 		this.canvas = new FlynnCanvas(this, canvasWidth, canvasHeight);
 
 		// Detect arcade mode from URL arguments ("?arcade")
-        if(flynnGetUrlFlag("arcade")){
+        if(Flynn.util.getUrlFlag("arcade")){
             this.arcadeModeEnabled = true;
         }
 
         // Detect iCade mode from URL arguments ("?icade")
-        if(flynnGetUrlFlag("icade")){
+        if(Flynn.util.getUrlFlag("icade")){
             this.iCadeModeEnabled = true;
             this.input.enableICade();
             this.arcadeModeEnabled = true; // iCade mode forces arcade mode
@@ -70,7 +63,7 @@ var FlynnMcp = Class.extend({
         this.input.setupUIButtons();
 
         // Detect back enable from URL arguments ("?back")
-        if(flynnGetUrlFlag("back")){
+        if(Flynn.util.getUrlFlag("back")){
             this.backEnabled = true;
         }
 
@@ -106,27 +99,27 @@ var FlynnMcp = Class.extend({
 
 		// Set Vector mode
 		var vectorMode = null;
-		var vectorModeFromUrl = flynnGetUrlValue("vector");
-		for (var key in FlynnVectorMode){
+		var vectorModeFromUrl = Flynn.util.getUrlValue("vector");
+		for (var key in Flynn.VectorMode){
 			if (vectorModeFromUrl === key){
-				vectorMode = FlynnVectorMode[key];
+				vectorMode = Flynn.VectorMode[key];
 			}
 		}
 		if (vectorMode === null){
 			// No vector mode specified on command line (or no match)
 			if(this.browserSupportsTouch){
 				// Default to plain lines on phones/pads for visibility and performance
-				vectorMode = FlynnVectorMode.V_THICK;
+				vectorMode = Flynn.VectorMode.V_THICK;
 			}
 			else{
-				vectorMode = FlynnVectorMode.V_THIN;
+				vectorMode = Flynn.VectorMode.V_THIN;
 			}
 		}
 		this.optionManager.addOption('vectorMode', FlynnOptionType.MULTI, vectorMode, vectorMode, 'VECTOR DISPLAY EMULATION',
-			[	['NONE',     FlynnVectorMode.PLAIN],
-				['NORMAL',   FlynnVectorMode.V_THIN],
-				['THICK' ,   FlynnVectorMode.V_THICK],
-				['FLICKER' , FlynnVectorMode.V_FLICKER]
+			[	['NONE',     Flynn.VectorMode.PLAIN],
+				['NORMAL',   Flynn.VectorMode.V_THIN],
+				['THICK' ,   Flynn.VectorMode.V_THICK],
+				['FLICKER' , Flynn.VectorMode.V_FLICKER]
 			],
 			null);
 
