@@ -4,6 +4,11 @@ if (typeof Game == "undefined") {
 
 Game.StateHome = Flynn.State.extend({
 
+    TIMER_EXPLODE1_TICKS: 0.3 * Flynn.TICKS_PER_SECOND,
+    TIMER_POLLED_TICKS: 5,
+    TIMER_CALLBACK_TICKS: 5,
+    COUNTER_ROLLOVER: 999,
+
     init: function(mcp) {
         this._super(mcp);
         
@@ -36,18 +41,41 @@ Game.StateHome = Flynn.State.extend({
             this.polygons.push(new Flynn.Polygon(points[i], this.colors[i]));
             this.polygons[i].setScale(3);
         }
-        
-        // this.polygons.push(new Flynn.Polygon(Game.Points.SHIPB, Flynn.Colors.RED));
-        // this.polygons.push(new Flynn.Polygon(Game.Points.POINTY_SHIP, Flynn.Colors.GREEN));
-        // this.polygons.push(new Flynn.Polygon(Game.Points.STAR_WING, Flynn.Colors.ORANGE));
-        // this.polygons.push(new Flynn.Polygon(Game.Points.ABSTRACT, Flynn.Colors.MAGENTA));
-        // this.polygons.push(new Flynn.Polygon(Game.Points.RESPAWN, Flynn.Colors.CYAN));
-        // var i;
-        // for (i=0; i<this.polygons.length; i++){
-        //     this.polygons[i].setScale(3);
-        // }
-    
+
+        this.particles = new Flynn.Particles();
+        this.timers = new Flynn.Timers();
+        this.timers.add("Explode1", this.TIMER_EXPLODE1_TICKS, null);
+        this.timers.add("Polled", this.TIMER_POLLED_TICKS, null);
+        var self = this;
+        this.timers.add("Callback", this.TIMER_CALLBACK_TICKS, function(){
+                self.counter_callback += 1;
+                self.timers.set("Callback", self.TIMER_CALLBACK_TICKS);
+                if(self.counter_callback > self.COUNTER_ROLLOVER){
+                    self.counter_callback = 0;
+                }
+            });
+
+        this.counter_polled = 0;
+        this.counter_callback = 0;
+
+        this.partice_gun = {
+            angle: 0,
+            x: this.canvasWidth * 0.7 ,
+            y: this.canvasHeight/2,
+            length: 100,
+            angular_velocity: Math.PI/600,
+            muzzle_velocity: 3
+        };
+
     },
+
+    // timerCallback: function() {
+    //     this.counter_callback += 1;
+    //     this.timers.set("Callback", this.TIMER_CALLBACK_TICKS);
+    //     if(this.counter_callback > this.COUNTER_ROLLOVER){
+    //         this.counter_callback = 0;
+    //     }
+    // },
 
     handleInputs: function(input, paceFactor) {
 
@@ -71,14 +99,52 @@ Game.StateHome = Flynn.State.extend({
 
     update: function(paceFactor) {
         this.gameClock += paceFactor;
+        
+        this.timers.update(paceFactor);
+        this.particles.update(paceFactor);
+
+        if(this.timers.hasExpired("Explode1")){
+            this.timers.set("Explode1", this.TIMER_EXPLODE1_TICKS);
+            this.particles.explosion(
+                Flynn.Util.randomIntFromInterval(
+                    this.canvasWidth-130, this.canvasWidth-80), // x
+                Flynn.Util.randomIntFromInterval(120, 220),     // y
+                Flynn.Util.randomIntFromInterval(10,200),       // quantity
+                2,                                              // max_velocity
+                Flynn.Util.randomChoice(this.colors)            // color
+                );
+
+            this.particles.explosion(
+                this.partice_gun.x + Math.cos(this.partice_gun.angle) * this.partice_gun.length, // x
+                this.partice_gun.y + Math.sin(this.partice_gun.angle) * this.partice_gun.length, // y
+                Flynn.Util.randomIntFromInterval(10, 40),    // quantity
+                1,                                           // max_velocity
+                Flynn.Colors.RED,                            // color
+                Math.cos(this.partice_gun.angle) * this.partice_gun.muzzle_velocity,  // dx
+                Math.sin(this.partice_gun.angle) * this.partice_gun.muzzle_velocity   // dy
+                );
+        }
+
+        if(this.timers.hasExpired("Polled")){
+            this.counter_polled += 1;
+            this.timers.set("Polled", this.TIMER_POLLED_TICKS);
+            if(this.counter_polled > this.COUNTER_ROLLOVER){
+                this.counter_polled = 0;
+            }
+        }
+
         var i;
         for (i=0; i<this.polygons.length; i++){
             this.polygons[i].setAngle(this.polygons[i].angle + Math.PI/60.0 * paceFactor * (1 + 0.2*i));
         }
+
+        this.partice_gun.angle += this.partice_gun.angular_velocity;
     },
 
     render: function(ctx){
         ctx.clearAll();
+
+        this.particles.draw(ctx);
 
         var left_x = 10;
         var margin = 3;
@@ -96,6 +162,7 @@ Game.StateHome = Flynn.State.extend({
 
         var curret_y = 42;
         ctx.vectorText("LINES", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("PARTICLES", 1.5, this.canvasWidth-90, curret_y, null, heading_color);
 
         curret_y += 20;
         for (i=0; i<this.colors.length; i++){
@@ -143,7 +210,31 @@ Game.StateHome = Flynn.State.extend({
             left_x + indent, 
             curret_y + y_step * 17, 
             null, text_color);
+
+        curret_y += y_step * 18 + 10;
+        ctx.vectorText("TIMERS", 1.5, left_x, curret_y, null, heading_color);
+        curret_y += 20;
+        ctx.vectorText("TIMER, POLLED: " + this.counter_polled, 1.5, left_x + indent, curret_y, null, Flynn.Colors.GREEN);
+        curret_y += 20;
+        ctx.vectorText("TIMER, CALLBACK: " + this.counter_callback, 1.5, left_x + indent, curret_y, null, Flynn.Colors.GREEN);
         
+        //-----------------
+        // Particle gun
+        //-----------------
+        var size = 10;
+        ctx.vectorRect(
+            this.partice_gun.x - size/2, 
+            this.partice_gun.y - size/2,
+            size,
+            size,
+            Flynn.Colors.GRAY); 
+
+        ctx.vectorLine(
+            this.partice_gun.x, 
+            this.partice_gun.y, 
+            this.partice_gun.x + Math.cos(this.partice_gun.angle) * this.partice_gun.length, 
+            this.partice_gun.y + Math.sin(this.partice_gun.angle) * this.partice_gun.length, 
+            Flynn.Colors.GRAY);
 
     }
 });

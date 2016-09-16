@@ -6,6 +6,8 @@ if (typeof Flynn == "undefined") {
   var Flynn = {};  // Create namespace
 }
 
+Flynn.TICKS_PER_SECOND = 60;
+
 Flynn.DevPacingMode = {
     NORMAL:  0,
     SLOW_MO: 1,

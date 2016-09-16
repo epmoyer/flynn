@@ -138,4 +138,14 @@ Flynn.Util = {
             Flynn.Util.zeroPad(hundredths,2)
             );
     },
+
+    randomIntFromInterval: function(min,max)
+    {
+        return Math.floor(Math.random()*(max-min+1)+min);
+    },
+
+    randomChoice: function(array)
+    {
+        return array[this.randomIntFromInterval(0, array.length-1)];
+    }
 };

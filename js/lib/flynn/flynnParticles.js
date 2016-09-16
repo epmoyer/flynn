@@ -1,7 +1,3 @@
-// Note: This particle library is completely untested.
-//       It is a genericised version of the radial particle library used by Roundabout, rewritten to use cartesian
-//       coordinates only.  What could possibly go wrong? :)
-
 Flynn.Particle = Class.extend({
 
     PARTICLE_LIFE_VARIATION: 20,
@@ -47,20 +43,30 @@ Flynn.Particle = Class.extend({
 
 Flynn.Particles = Class.extend({
 
+    VELOCITY_VARIATION: 1.0,
+
     init: function(){
         this.particles=[];
     },
 
-    explosion: function(x, y, quantity, velocity, color) {
+    explosion: function(x, y, quantity, max_velocity, color, dx, dy) {
+
+        if(typeof(dx)==='undefined'){
+            dx = 0;
+        }
+        if(typeof(dy)==='undefined'){
+            dy = 0;
+        }
+
         for(var i=0; i<quantity; i++){
             theta = Math.random() * Math.PI * 2;
-            velocity = Math.random() * velocity;
+            particle_velocity = max_velocity * (1.0 - this.VELOCITY_VARIATION + Math.random() * this.VELOCITY_VARIATION);
             this.particles.push(new Flynn.Particle(
                 this,
                 x,
                 y,
-                Math.cos(theta) * velocity,
-                Math.sin(theta) * velocity,
+                Math.cos(theta) * particle_velocity + dx,
+                Math.sin(theta) * particle_velocity + dy,
                 color
             ));
         }
