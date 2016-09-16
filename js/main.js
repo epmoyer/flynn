@@ -76,6 +76,8 @@ Game.Main = Class.extend({
         if(!this.mcp.iCadeModeEnabled){
             this.input.addVirtualButton('fire', Flynn.KeyboardMap['z'], Flynn.BUTTON_CONFIGURABLE);
             this.input.addVirtualButton('thrust', Flynn.KeyboardMap['spacebar'], Flynn.BUTTON_CONFIGURABLE);
+            this.input.addVirtualButton('right', Flynn.KeyboardMap['right'], Flynn.BUTTON_CONFIGURABLE);
+            this.input.addVirtualButton('left', Flynn.KeyboardMap['left'], Flynn.BUTTON_CONFIGURABLE);
         }
         else{
             this.input.addVirtualButton('fire', Flynn.KeyboardMap['ICADE_T2'], Flynn.BUTTON_NOT_CONFIGURABLE);

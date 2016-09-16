@@ -69,15 +69,11 @@ Game.StateHome = Flynn.State.extend({
 
     },
 
-    // timerCallback: function() {
-    //     this.counter_callback += 1;
-    //     this.timers.set("Callback", this.TIMER_CALLBACK_TICKS);
-    //     if(this.counter_callback > this.COUNTER_ROLLOVER){
-    //         this.counter_callback = 0;
-    //     }
-    // },
-
     handleInputs: function(input, paceFactor) {
+
+        if (input.virtualButtonIsPressed("right")){
+            this.mcp.nextState = Game.States.DEMO1;
+        }
 
         if(this.mcp.developerModeEnabled){
             // Metrics toggle

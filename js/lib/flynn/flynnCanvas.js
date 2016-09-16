@@ -220,7 +220,7 @@ Flynn.Canvas = Class.extend({
 
                 // add offset if specified
                 if (typeof offset === "number") {
-                    x += step*(offset - text.length);
+                    x += step*(offset - text.length) + scale * Flynn.Font.CharacterGap;
                 }
 
                 // Center x/y if they are not numbers
