@@ -75,6 +75,10 @@ Game.StateHome = Flynn.State.extend({
             this.mcp.nextState = Game.States.DEMO1;
         }
 
+        if (input.virtualButtonIsPressed("UI_escape")) {
+            this.mcp.nextState = Game.States.CONFIG;
+        }
+
         if(this.mcp.developerModeEnabled){
             // Metrics toggle
             if (input.virtualButtonIsPressed("dev_metrics")){
@@ -116,8 +120,8 @@ Game.StateHome = Flynn.State.extend({
                 Flynn.Util.randomIntFromInterval(10, 40),    // quantity
                 1,                                           // max_velocity
                 Flynn.Colors.RED,                            // color
-                Math.cos(this.partice_gun.angle) * this.partice_gun.muzzle_velocity,  // dx
-                Math.sin(this.partice_gun.angle) * this.partice_gun.muzzle_velocity   // dy
+                Math.cos(this.partice_gun.angle) * this.partice_gun.muzzle_velocity, // dx
+                Math.sin(this.partice_gun.angle) * this.partice_gun.muzzle_velocity  // dy
                 );
         }
 
@@ -134,7 +138,7 @@ Game.StateHome = Flynn.State.extend({
             this.polygons[i].setAngle(this.polygons[i].angle + Math.PI/60.0 * paceFactor * (1 + 0.2*i));
         }
 
-        this.partice_gun.angle += this.partice_gun.angular_velocity;
+        this.partice_gun.angle += this.partice_gun.angular_velocity * paceFactor;
     },
 
     render: function(ctx){

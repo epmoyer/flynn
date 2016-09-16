@@ -28,8 +28,9 @@ Flynn.Particle = Class.extend({
             this.x += this.dx * paceFactor;
             this.y += this.dy * paceFactor;
             // Decay impulse
-            this.dx *= this.PARTICLE_FRICTION;
-            this.dy *= this.PARTICLE_FRICTION;
+            var pacedFriction = Math.pow(this.PARTICLE_FRICTION, paceFactor);
+            this.dx *= pacedFriction;
+            this.dy *= pacedFriction;
         }
         return isAlive;
     },

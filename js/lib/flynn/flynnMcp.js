@@ -272,7 +272,7 @@ Flynn.Mcp = Class.extend({
                     self.currentState.render(self.canvas.ctx);
 
                     if(label){
-                        self.canvas.ctx.vectorText(label, 1.5, 0, self.canvasHeight-20, null, Flynn.Colors.GRAY);
+                        self.canvas.ctx.vectorText(label, 1.5, 10, self.canvasHeight-20, null, Flynn.Colors.GRAY);
                     }
                 }
             }

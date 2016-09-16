@@ -423,9 +423,9 @@ Flynn.Canvas = Class.extend({
             }
 
             if (self.showMetrics){
-                self.ctx.drawFpsGague(self.canvas.width-65, self.canvas.height-10, Flynn.Colors.GREEN, self.ctx.fps/120);
+                self.ctx.drawFpsGague(self.canvas.width-70, self.canvas.height-15, Flynn.Colors.GREEN, self.ctx.fps/120);
                 if(self.mcp.browserSupportsPerformance){
-                    self.ctx.drawFpsGague(self.canvas.width-65, self.canvas.height-16, Flynn.Colors.YELLOW, (end-start)/(1000/120));
+                    self.ctx.drawFpsGague(self.canvas.width-70, self.canvas.height-21, Flynn.Colors.YELLOW, (end-start)/(1000/120));
                 }
             }
             

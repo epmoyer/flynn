@@ -48,7 +48,9 @@ Game.Main = Class.extend({
                             Flynn.Colors.CYAN, 
                             Flynn.Colors.YELLOW, 
                             Flynn.Colors.GREEN,
-                            Flynn.Colors.MAGENTA);
+                            Flynn.Colors.MAGENTA,
+                            Game.States.HOME // Parent state
+                            );
                 }
             }
         );
