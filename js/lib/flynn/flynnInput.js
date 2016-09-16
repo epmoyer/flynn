@@ -1,3 +1,6 @@
+Flynn.BUTTON_CONFIGURABLE = true;
+Flynn.BUTTON_NOT_CONFIGURABLE = false;
+
 Flynn.TouchRegion = Class.extend({
 	init: function(name, left, top, right, bottom) {
 		this.name = name;
@@ -80,7 +83,7 @@ Flynn.InputHandler = Class.extend({
 			}
 
 			// Capture key codes (for user configuration of virualButtons).  Ignore <escape>.
-			if(self.keyCodeCaptureArmed && evt.keyCode != FlynnKeyboardMap['escape']){
+			if(self.keyCodeCaptureArmed && evt.keyCode != Flynn.KeyboardMap['escape']){
 				self.capturedKeyCode = evt.keyCode;
 				self.keyCodeCaptureArmed = false;
 				// Exit without recording any .isDown events
@@ -175,30 +178,30 @@ Flynn.InputHandler = Class.extend({
 
 	setupUIButtons: function(){
 		if(!this.iCadeModeEnabled){
-			this.addUiButton('UI_enter',  FlynnKeyboardMap['enter']);
-			this.addUiButton('UI_escape', FlynnKeyboardMap['escape']);
-			this.addUiButton('UI_exit',	  FlynnKeyboardMap['tab']);
-			this.addUiButton('UI_quarter',FlynnKeyboardMap['5']);
-			this.addUiButton('UI_start1', FlynnKeyboardMap['1']);
-			this.addUiButton('UI_start2', FlynnKeyboardMap['2']);
+			this.addUiButton('UI_enter',  Flynn.KeyboardMap['enter']);
+			this.addUiButton('UI_escape', Flynn.KeyboardMap['escape']);
+			this.addUiButton('UI_exit',	  Flynn.KeyboardMap['tab']);
+			this.addUiButton('UI_quarter',Flynn.KeyboardMap['5']);
+			this.addUiButton('UI_start1', Flynn.KeyboardMap['1']);
+			this.addUiButton('UI_start2', Flynn.KeyboardMap['2']);
 
-			this.addUiButton('UI_up',     FlynnKeyboardMap['up']);
-			this.addUiButton('UI_down',   FlynnKeyboardMap['down']);
-			this.addUiButton('UI_right',  FlynnKeyboardMap['right']);
-			this.addUiButton('UI_left',   FlynnKeyboardMap['left']);
+			this.addUiButton('UI_up',     Flynn.KeyboardMap['up']);
+			this.addUiButton('UI_down',   Flynn.KeyboardMap['down']);
+			this.addUiButton('UI_right',  Flynn.KeyboardMap['right']);
+			this.addUiButton('UI_left',   Flynn.KeyboardMap['left']);
 		}
 		else{
-			this.addUiButton('UI_enter',  FlynnKeyboardMap['ICADE_T1']);
-			this.addUiButton('UI_escape', FlynnKeyboardMap['ICADE_B1']);
-			this.addUiButton('UI_exit',	  FlynnKeyboardMap['ICADE_B2']);
-			this.addUiButton('UI_quarter',FlynnKeyboardMap['ICADE_T3']);
-			this.addUiButton('UI_start1', FlynnKeyboardMap['ICADE_T4']);
-			this.addUiButton('UI_start2', FlynnKeyboardMap['ICADE_B4']);
+			this.addUiButton('UI_enter',  Flynn.KeyboardMap['ICADE_T1']);
+			this.addUiButton('UI_escape', Flynn.KeyboardMap['ICADE_B1']);
+			this.addUiButton('UI_exit',	  Flynn.KeyboardMap['ICADE_B2']);
+			this.addUiButton('UI_quarter',Flynn.KeyboardMap['ICADE_T3']);
+			this.addUiButton('UI_start1', Flynn.KeyboardMap['ICADE_T4']);
+			this.addUiButton('UI_start2', Flynn.KeyboardMap['ICADE_B4']);
 
-			this.addUiButton('UI_up',     FlynnKeyboardMap['ICADE_up']);
-			this.addUiButton('UI_down',   FlynnKeyboardMap['ICADE_down']);
-			this.addUiButton('UI_right',  FlynnKeyboardMap['ICADE_right']);
-			this.addUiButton('UI_left',   FlynnKeyboardMap['ICADE_left']);
+			this.addUiButton('UI_up',     Flynn.KeyboardMap['ICADE_up']);
+			this.addUiButton('UI_down',   Flynn.KeyboardMap['ICADE_down']);
+			this.addUiButton('UI_right',  Flynn.KeyboardMap['ICADE_right']);
+			this.addUiButton('UI_left',   Flynn.KeyboardMap['ICADE_left']);
 		}
 	},
 
@@ -208,9 +211,9 @@ Flynn.InputHandler = Class.extend({
 
 	addiCadeMapping: function(iCadeButtonName, keyDown, keyUp){
 		this.iCade.buttonNames.push(iCadeButtonName);
-		this.iCade.buttonCodes.push(FlynnKeyboardMap[iCadeButtonName]);
-		this.iCade.keyDownCodes.push(FlynnKeyboardMap[keyDown]);
-		this.iCade.keyUpCodes.push(FlynnKeyboardMap[keyUp]);
+		this.iCade.buttonCodes.push(Flynn.KeyboardMap[iCadeButtonName]);
+		this.iCade.keyDownCodes.push(Flynn.KeyboardMap[keyDown]);
+		this.iCade.keyUpCodes.push(Flynn.KeyboardMap[keyUp]);
 	},
 
 	addUiButton: function(name, keyCode){
@@ -220,9 +223,9 @@ Flynn.InputHandler = Class.extend({
 				'" but that UI button already exists. The old UI button will be removed first.');
 			delete(this.uiButtons[name]);
 		}
-		this.uiButtons[name] = new FlynnVirtualButton(
+		this.uiButtons[name] = new Flynn.VirtualButton(
 			name,
-			false // Not configurable
+			Flynn.BUTTON_NOT_CONFIGURABLE
 			);
 		this.uiButtons[name].boundKeyCode = keyCode;
 		this.keyCodeToUiButtonName[keyCode] = name;
@@ -235,7 +238,7 @@ Flynn.InputHandler = Class.extend({
 				'" but that virtual button already exists. The old virtual button will be removed first.');
 			delete(this.virtualButtons[name]);
 		}
-		this.virtualButtons[name] = new FlynnVirtualButton(name, isConfigurable);
+		this.virtualButtons[name] = new Flynn.VirtualButton(name, isConfigurable);
 		this.bindVirtualButtonToKey(name, keyCode);
 	},
 
@@ -302,8 +305,8 @@ Flynn.InputHandler = Class.extend({
 	},
 
 	keyCodeToKeyName: function(keyCode){
-		for(var keyName in FlynnKeyboardMap){
-			if(FlynnKeyboardMap[keyName]===keyCode){
+		for(var keyName in Flynn.KeyboardMap){
+			if(Flynn.KeyboardMap[keyName]===keyCode){
 				return keyName;
 			}
 		}
@@ -338,7 +341,7 @@ Flynn.InputHandler = Class.extend({
 			// same name
 			delete this.touchRegions[name];
 		}
-		touchRegion = new FlynnTouchRegion(name, left, top, right, bottom);
+		touchRegion = new Flynn.TouchRegion(name, left, top, right, bottom);
 		this.touchRegions[name] = touchRegion;
 		if (!(name in this.virtualButtons) && !(name in this.uiButtons)){
 			console.log('Flynn: Warning: touch region name "' + name +

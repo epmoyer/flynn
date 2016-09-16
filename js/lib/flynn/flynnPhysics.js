@@ -164,7 +164,7 @@ FlynnBody.prototype.defaults = {
     width: 0.4,
     height: 0.4,
     radius: 0.4,
-    //color: FlynnColors.WHITE,
+    //color: Flynn.Colors.WHITE,
 };
  
 FlynnBody.prototype.fixtureDefaults = {

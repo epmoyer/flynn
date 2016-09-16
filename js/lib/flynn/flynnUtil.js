@@ -1,4 +1,4 @@
-Flynn.util = {
+Flynn.Util = {
     getUrlValue: function(VarSearch){
         var SearchString = window.location.search.substring(1);
         var VariableArray = SearchString.split('&');
@@ -37,7 +37,7 @@ Flynn.util = {
     },
 
     rgbToHex: function(r, g, b) {
-        return "#" + Flynn.util.componentToHex(r) + Flynn.util.componentToHex(g) + Flynn.util.componentToHex(b);
+        return "#" + Flynn.Util.componentToHex(r) + Flynn.Util.componentToHex(g) + Flynn.Util.componentToHex(b);
     },
 
     rgbOverdirve: function(rgb, overdrive) {
@@ -110,7 +110,7 @@ Flynn.util = {
             vj_magnitude = Math.sqrt(vj_magnitude_squared);
         }
         else{
-            // console.log("Flynn.util.interceptSolution: No solution.");
+            // console.log("Flynn.Util.interceptSolution: No solution.");
         }
 
         // Get vj by multiplying it's magnitude with the unit vector AB
@@ -133,9 +133,9 @@ Flynn.util = {
         var minutes = Math.floor(time_in_seconds / 60);
         var seconds = Math.floor((ticks - (minutes * 60 * 60)) / 60);
         return(
-            Flynn.util.zeroPad(minutes,2) + ':' +
-            Flynn.util.zeroPad(seconds,2) + '.' +
-            Flynn.util.zeroPad(hundredths,2)
+            Flynn.Util.zeroPad(minutes,2) + ':' +
+            Flynn.Util.zeroPad(seconds,2) + '.' +
+            Flynn.Util.zeroPad(hundredths,2)
             );
     },
 };

@@ -6,18 +6,19 @@ Flynn.VectorMode = {
 	V_FLICKER: 3,	// Flicker rendering    
 };
 
+if (typeof Flynn.Config == "undefined") {
+   Flynn.Config = {};  // Create Configuration object
+}
+
+Flynn.Config.MAX_PACE_RECOVERY_TICKS = 5; // Max elapsed 60Hz frames to apply pacing (beyond this, just jank)
+
+// Vector graphics simulation
+Flynn.Config.VECTOR_DIM_FACTOR_THICK = 0.75; // Brightness dimming for vector lines
+Flynn.Config.VECTOR_DIM_FACTOR_THIN  = 0.65;
+Flynn.Config.VECTOR_OVERDRIVE_FACTOR = 0.2;  // White overdrive for vertex point artifacts
+
+
 Flynn.Canvas = Class.extend({
-
-	MAX_PACE_RECOVERY_TICKS: 5, // Max elapsed 60Hz frames to apply pacing (beyond this, just jank)
-
-	// Vector graphics simulation
-	VECTOR_DIM_FACTOR_THICK: 0.75, // Brightness dimming for vector lines
-	VECTOR_DIM_FACTOR_THIN:  0.65,
-	VECTOR_OVERDRIVE_FACTOR: 0.2,  // White overdrive for vertex point artifacts
-
-	TEXT_CENTER_OFFSET_X: Flynn.Font.CharacterWidth/2,
-    TEXT_CENTER_OFFSET_Y: Flynn.Font.CharacterHeight/2,
-
 
 	init: function(mcp, width, height) {
 		this.mcp = mcp;
@@ -30,6 +31,7 @@ Flynn.Canvas = Class.extend({
 
 		this.DEBUGLOGGED = false;
 
+		self = this;
 		this.ctx = (function(ctx) {
 			ctx.width = ctx.canvas.width;
 			ctx.height = ctx.canvas.height;
@@ -92,7 +94,7 @@ Flynn.Canvas = Class.extend({
 			ctx.vectorStart = function(color){
 
 				// Determine vector line color
-				var dim_color_rgb = Flynn.util.hexToRgb(color);
+				var dim_color_rgb = Flynn.Util.hexToRgb(color);
 				var vectorDimFactor = 1;
 				var lineWidth = 1;
 				switch(this.mcp.options.vectorMode){
@@ -101,17 +103,17 @@ Flynn.Canvas = Class.extend({
 						lineWidth = 1;
 						break;
 					case Flynn.VectorMode.V_THICK:
-						vectorDimFactor = this.VECTOR_DIM_FACTOR_THICK;
+						vectorDimFactor = Flynn.Config.VECTOR_DIM_FACTOR_THICK;
 						lineWidth = 3;
 						break;
 					case Flynn.VectorMode.V_THIN:
-						vectorDimFactor = this.VECTOR_DIM_FACTOR_THIN;
+						vectorDimFactor = Flynn.Config.VECTOR_DIM_FACTOR_THIN;
 						lineWidth = 1;
 						break;
 					case Flynn.VectorMode.V_FLICKER:
 						var phase = Math.floor(this.ticks) % 3;
 						if (phase === 0){
-							vectorDimFactor = this.VECTOR_DIM_FACTOR_THIN;
+							vectorDimFactor = Flynn.Config.VECTOR_DIM_FACTOR_THIN;
 							lineWidth = 3;
 						}
 						else if(phase === 1){
@@ -119,7 +121,7 @@ Flynn.Canvas = Class.extend({
 							lineWidth = 1;
 						}
 						else{
-							vectorDimFactor = this.VECTOR_DIM_FACTOR_THIN;
+							vectorDimFactor = Flynn.Config.VECTOR_DIM_FACTOR_THIN;
 							lineWidth = 1;
 						}
 						break;
@@ -127,11 +129,11 @@ Flynn.Canvas = Class.extend({
 				dim_color_rgb.r *= vectorDimFactor;
 				dim_color_rgb.g *= vectorDimFactor;
 				dim_color_rgb.b *= vectorDimFactor;
-				var dim_color = Flynn.util.rgbToHex(dim_color_rgb.r, dim_color_rgb.g, dim_color_rgb.b);
+				var dim_color = Flynn.Util.rgbToHex(dim_color_rgb.r, dim_color_rgb.g, dim_color_rgb.b);
 
 				// Determine vector vertex color
-				var color_overdrive = Flynn.util.rgbOverdirve(Flynn.util.hexToRgb(color), this.VECTOR_OVERDRIVE_FACTOR);
-				this.vectorVertexColor = Flynn.util.rgbToHex(color_overdrive.r, color_overdrive.g, color_overdrive.b);
+				var color_overdrive = Flynn.Util.rgbOverdirve(Flynn.Util.hexToRgb(color), Flynn.Config.VECTOR_OVERDRIVE_FACTOR);
+				this.vectorVertexColor = Flynn.Util.rgbToHex(color_overdrive.r, color_overdrive.g, color_overdrive.b);
 
 				this.vectorVericies = [];
 				this.beginPath();
@@ -192,21 +194,29 @@ Flynn.Canvas = Class.extend({
 				// Finish the line drawing 
 				this.vectorStart(color);
 				this.vectorMoveTo(x, y);
-				this.vectorLineTo(x+width, y);
-				this.vectorLineTo(x+width, y+height);
-				this.vectorLineTo(x, y+height);
+				this.vectorLineTo(x+width-1, y);
+				this.vectorLineTo(x+width-1, y+height-1);
+				this.vectorLineTo(x, y+height-1);
 				this.vectorLineTo(x, y);
+				this.vectorEnd();
+			};
+
+			ctx.vectorLine = function(x1, y1, x2, y2, color){
+				// Finish the line drawing 
+				this.vectorStart(color);
+				this.vectorMoveTo(x1, y1);
+				this.vectorLineTo(x2, y2);
 				this.vectorEnd();
 			};
 
 			ctx.vectorText = function(text, scale, x, y, offset, color){
 				if(typeof(color)==='undefined'){
 					console.log("ctx.vectorText(): default color deprecated.  Please pass a color.  Text:" + text );
-					color = FlynnColors.WHITE;
+					color = Flynn.Colors.WHITE;
 				}
 
 				text = text.toString().toUpperCase();
-				var step = scale*FlynnCharacterSpacing;
+				var step = scale*Flynn.Font.CharacterSpacing;
 
 				// add offset if specified
 				if (typeof offset === "number") {
@@ -215,7 +225,7 @@ Flynn.Canvas = Class.extend({
 
 				// Center x/y if they are not numbers
 				if (typeof x !== "number"){
-					x = Math.round((this.width - (text.length*step-(FlynnCharacterGap*scale)))/2);
+					x = Math.round((this.width - (text.length*step-(Flynn.Font.CharacterGap*scale)))/2);
 				}
 				if (typeof y !== "number"){
 					y = Math.round((this.height - step)/2);
@@ -230,16 +240,16 @@ Flynn.Canvas = Class.extend({
 					}
 					var p;
 					if ((ch >= this.EXCLAMATIONCODE) && (ch <= this.ACCENTCODE)){
-						p = FlynnPoints.ASCII[ch - this.EXCLAMATIONCODE];
+						p = Flynn.Font.Points.ASCII[ch - this.EXCLAMATIONCODE];
 					}
 					else{
-						p = FlynnPoints.UNIMPLEMENTED_CHAR;
+						p = Flynn.Font.Points.UNIMPLEMENTED_CHAR;
 					}
 
 					var pen_up = false;
 					this.vectorStart(color);
 					for (var j=0, len2=p.length; j<len2; j+=2){
-						if(p[j]==FlynnPoints.PEN_UP){
+						if(p[j]==Flynn.Font.Points.PEN_UP){
 							pen_up = true;
 						}
 						else{
@@ -260,7 +270,7 @@ Flynn.Canvas = Class.extend({
 
 			ctx.vectorTextArc = function(text, scale, center_x, center_y, angle, radius, color, isCentered, isReversed){
 				if(typeof(color)==='undefined'){
-					color = FlynnColors.GREEN;
+					color = Flynn.Colors.GREEN;
 				}
 				if(typeof(isCentered)==='undefined'){
 					isCentered = false;
@@ -270,10 +280,10 @@ Flynn.Canvas = Class.extend({
 				}
 
 				text = text.toString().toUpperCase();
-				var step = scale*FlynnCharacterSpacing;
+				var step = scale*Flynn.Font.CharacterSpacing;
 
 				var render_angle = angle;
-				var render_angle_step = Math.asin(FlynnCharacterSpacing*scale/radius);
+				var render_angle_step = Math.asin(Flynn.Font.CharacterSpacing*scale/radius);
 				var renderAngleOffset = 0;
 				if (isCentered){
 					renderAngleOffset = render_angle_step * (text.length / 2 - 0.5);
@@ -301,22 +311,22 @@ Flynn.Canvas = Class.extend({
 					// Get the character vector points
 					var p;
 					if ((ch >= this.EXCLAMATIONCODE) && (ch <= this.ACCENTCODE)){
-						p = FlynnPoints.ASCII[ch - this.EXCLAMATIONCODE];
+						p = Flynn.Font.Points.ASCII[ch - this.EXCLAMATIONCODE];
 					}
 					else{
-						p = FlynnPoints.UNIMPLEMENTED_CHAR;
+						p = Flynn.Font.Points.UNIMPLEMENTED_CHAR;
 					}
 
 					// Render character
 					var pen_up = false;
 					this.beginPath();
 					for (var j=0, len2=p.length; j<len2; j+=2){
-						if(p[j]==FlynnPoints.PEN_UP){
+						if(p[j]==Flynn.Font.Points.PEN_UP){
 							pen_up = true;
 						}
 						else{
-							var x = p[j] - this.TEXT_CENTER_OFFSET_X;
-							var y = p[j+1] - this.TEXT_CENTER_OFFSET_Y;
+							var x = p[j] - Flynn.Font.CharacterWidth/2;
+							var y = p[j+1] - Flynn.Font.CharacterHeight/2;
 							var c = Math.cos(character_angle);
 							var s = Math.sin(character_angle);
 							var draw_x = (c*x - s*y) * scale + Math.cos(render_angle) * radius + center_x;
@@ -345,7 +355,7 @@ Flynn.Canvas = Class.extend({
 			return ctx;
 		})(this.canvas.getContext("2d"));
 
-		this.ctx.strokeStyle = FlynnColors.WHITE;
+		this.ctx.strokeStyle = Flynn.Colors.WHITE;
 
 		document.body.appendChild(this.canvas);
 	},
@@ -383,7 +393,7 @@ Flynn.Canvas = Class.extend({
 			// paceFactor represents the % of a 60fps frame that has elapsed.
 			// At 30fps the paceFactor is 2.0,  At 15fps it is 4.0
 			var paceFactor = (60*(timeNow - self.previousTimestamp))/1000;
-			if (paceFactor > this.MAX_PACE_RECOVERY_TICKS) {
+			if (paceFactor > Flynn.Config.MAX_PACE_RECOVERY_TICKS) {
 				paceFactor = 1;
 			}
 
@@ -413,9 +423,9 @@ Flynn.Canvas = Class.extend({
 			}
 
 			if (self.showMetrics){
-				self.ctx.drawFpsGague(self.canvas.width-65, self.canvas.height-10, FlynnColors.GREEN, self.ctx.fps/120);
+				self.ctx.drawFpsGague(self.canvas.width-65, self.canvas.height-10, Flynn.Colors.GREEN, self.ctx.fps/120);
 				if(self.mcp.browserSupportsPerformance){
-					self.ctx.drawFpsGague(self.canvas.width-65, self.canvas.height-16, FlynnColors.YELLOW, (end-start)/(1000/120));
+					self.ctx.drawFpsGague(self.canvas.width-65, self.canvas.height-16, Flynn.Colors.YELLOW, (end-start)/(1000/120));
 				}
 			}
 			

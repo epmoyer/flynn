@@ -19,7 +19,7 @@ Flynn.Mcp = Class.extend({
 		this.nextState = noChangeState;
 		this.currentState = null;
 
-		this.devPacingMode = FlynnDevPacingMode.NORMAL;
+		this.devPacingMode = Flynn.DevPacingMode.NORMAL;
 		this.devLowFpsPaceFactor = 0;
 		this.devLowFpsFrameCount = 0;
 
@@ -29,11 +29,11 @@ Flynn.Mcp = Class.extend({
 		this.resizeFunc = null;
 		this.slowMoDebug = false;
         this.clock = 0;
-        this.timers = new FlynnTimers();
+        this.timers = new Flynn.Timers();
 
         // Setup options
         this.options = {};
-        this.optionManager = new FlynnOptionManager(this);
+        this.optionManager = new Flynn.OptionManager(this);
 
 		this.custom={}; // Container for custom game data which needs to be exchanged globally.
 
@@ -43,19 +43,19 @@ Flynn.Mcp = Class.extend({
 		];
 
 		// Detect developer mode from URL arguments ("?develop")
-        if(Flynn.util.getUrlFlag("develop")){
+        if(Flynn.Util.getUrlFlag("develop")){
             this.developerModeEnabled = true;
         }
 		
-		this.canvas = new FlynnCanvas(this, canvasWidth, canvasHeight);
+		this.canvas = new Flynn.Canvas(this, canvasWidth, canvasHeight);
 
 		// Detect arcade mode from URL arguments ("?arcade")
-        if(Flynn.util.getUrlFlag("arcade")){
+        if(Flynn.Util.getUrlFlag("arcade")){
             this.arcadeModeEnabled = true;
         }
 
         // Detect iCade mode from URL arguments ("?icade")
-        if(Flynn.util.getUrlFlag("icade")){
+        if(Flynn.Util.getUrlFlag("icade")){
             this.iCadeModeEnabled = true;
             this.input.enableICade();
             this.arcadeModeEnabled = true; // iCade mode forces arcade mode
@@ -63,7 +63,7 @@ Flynn.Mcp = Class.extend({
         this.input.setupUIButtons();
 
         // Detect back enable from URL arguments ("?back")
-        if(Flynn.util.getUrlFlag("back")){
+        if(Flynn.Util.getUrlFlag("back")){
             this.backEnabled = true;
         }
 
@@ -99,7 +99,7 @@ Flynn.Mcp = Class.extend({
 
 		// Set Vector mode
 		var vectorMode = null;
-		var vectorModeFromUrl = Flynn.util.getUrlValue("vector");
+		var vectorModeFromUrl = Flynn.Util.getUrlValue("vector");
 		for (var key in Flynn.VectorMode){
 			if (vectorModeFromUrl === key){
 				vectorMode = Flynn.VectorMode[key];
@@ -115,7 +115,7 @@ Flynn.Mcp = Class.extend({
 				vectorMode = Flynn.VectorMode.V_THIN;
 			}
 		}
-		this.optionManager.addOption('vectorMode', FlynnOptionType.MULTI, vectorMode, vectorMode, 'VECTOR DISPLAY EMULATION',
+		this.optionManager.addOption('vectorMode', Flynn.OptionType.MULTI, vectorMode, vectorMode, 'VECTOR DISPLAY EMULATION',
 			[	['NONE',     Flynn.VectorMode.PLAIN],
 				['NORMAL',   Flynn.VectorMode.V_THIN],
 				['THICK' ,   Flynn.VectorMode.V_THICK],
@@ -167,32 +167,32 @@ Flynn.Mcp = Class.extend({
 
 	cycleDevPacingMode: function(){
 		switch(this.devPacingMode){
-			case FlynnDevPacingMode.NORMAL:
-				this.devPacingMode = FlynnDevPacingMode.SLOW_MO;
+			case Flynn.DevPacingMode.NORMAL:
+				this.devPacingMode = Flynn.DevPacingMode.SLOW_MO;
 				break;
-			case FlynnDevPacingMode.SLOW_MO:
-				this.devPacingMode = FlynnDevPacingMode.FPS_20;
+			case Flynn.DevPacingMode.SLOW_MO:
+				this.devPacingMode = Flynn.DevPacingMode.FPS_20;
 				break;
-			case FlynnDevPacingMode.FPS_20:
-				this.devPacingMode = FlynnDevPacingMode.NORMAL;
+			case Flynn.DevPacingMode.FPS_20:
+				this.devPacingMode = Flynn.DevPacingMode.NORMAL;
 		}
 	},
 
 	toggleDevPacingSlowMo: function(){
-		if(this.devPacingMode === FlynnDevPacingMode.SLOW_MO){
-			this.devPacingMode = FlynnDevPacingMode.NORMAL;
+		if(this.devPacingMode === Flynn.DevPacingMode.SLOW_MO){
+			this.devPacingMode = Flynn.DevPacingMode.NORMAL;
 		}
 		else{
-			this.devPacingMode = FlynnDevPacingMode.SLOW_MO;
+			this.devPacingMode = Flynn.DevPacingMode.SLOW_MO;
 		}
 	},
 
 	toggleDevPacingFps20: function(){
-		if(this.devPacingMode === FlynnDevPacingMode.FPS_20){
-			this.devPacingMode = FlynnDevPacingMode.NORMAL;
+		if(this.devPacingMode === Flynn.DevPacingMode.FPS_20){
+			this.devPacingMode = Flynn.DevPacingMode.NORMAL;
 		}
 		else{
-			this.devPacingMode = FlynnDevPacingMode.FPS_20;
+			this.devPacingMode = Flynn.DevPacingMode.FPS_20;
 		}
 	},
 
@@ -227,14 +227,14 @@ Flynn.Mcp = Class.extend({
 			var label = null;
 
 			switch(self.devPacingMode){
-				case FlynnDevPacingMode.NORMAL:
+				case Flynn.DevPacingMode.NORMAL:
 					paceFactor *= self.gameSpeedFactor;
 					break;
-				case FlynnDevPacingMode.SLOW_MO:
+				case Flynn.DevPacingMode.SLOW_MO:
 					paceFactor *= self.gameSpeedFactor * 0.2;
 					label = "SLOW_MO";
 					break;
-				case FlynnDevPacingMode.FPS_20:
+				case Flynn.DevPacingMode.FPS_20:
 					paceFactor *= self.gameSpeedFactor;
 					++self.devLowFpsFrameCount;
 					self.devLowFpsPaceFactor += paceFactor;
@@ -272,7 +272,7 @@ Flynn.Mcp = Class.extend({
 					self.currentState.render(self.canvas.ctx);
 
 					if(label){
-						self.canvas.ctx.vectorText(label, 1.5, 0, self.canvasHeight-20, null, FlynnColors.GRAY);
+						self.canvas.ctx.vectorText(label, 1.5, 0, self.canvasHeight-20, null, Flynn.Colors.GRAY);
 					}
 				}
 			}
