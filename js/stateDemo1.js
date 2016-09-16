@@ -124,14 +124,6 @@ Game.StateDemo1 = Flynn.State.extend({
             ctx.vectorText("VERTICAL CENTERING", 1.5, this.canvasWidth-200, null, null, Flynn.Colors.WHITE);
             ctx.vectorText("HORIZONTAL & VERTICAL CENTERING", 1.5, null, null, null, Flynn.Colors.WHITE);
 
-            //ctx.vectorTextArc(text, scale, center_x, center_y, angle, radius, color, isCentered, isReversed)
-
-            // ctx.vectorTextArc(
-            //     "THIS IS CURVED TEXT", 3.0, 
-            //     this.canvasWidth/2, this.canvasHeight/2, 
-            //     -Math.PI/2, 
-            //     170, Flynn.Colors.MAGENTA, true, false);
-
             ctx.vectorTextArc(
                 "ARC TEXT WITH REVERSE ENABLED", 3.0, 
                 this.canvasWidth/2, this.canvasHeight/2, 
@@ -142,7 +134,7 @@ Game.StateDemo1 = Flynn.State.extend({
                 "ARC TEXT AT -90 DEGREES WITHOUT CENTERING", 3.0, 
                 this.canvasWidth/2, this.canvasHeight/2, 
                 -Math.PI/2, 
-                200, Flynn.Colors.CYAN, false, false);
+                200, Flynn.Colors.DODGERBLUE, false, false);
 
             ctx.vectorTextArc(
                 "ARC TEXT AT -90 DEGREES WITH CENTERING", 3.0, 
