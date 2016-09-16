@@ -34,42 +34,42 @@ b2Body.prototype.resetToHome = function () {
 };
 
 var FlynnPhysics= Class.extend({
-	init: function(ctx, gravity_x, gravity_y, render_scale){
+    init: function(ctx, gravity_x, gravity_y, render_scale){
 
-		var gravity = new b2Vec2(gravity_x, gravity_y);
-		this.world = new b2World(gravity, true);
-		this.context = ctx;
-		this.scale = render_scale;
-		this.dtRemaining = 0;
-		this.stepAmount = 1/60;
+        var gravity = new b2Vec2(gravity_x, gravity_y);
+        this.world = new b2World(gravity, true);
+        this.context = ctx;
+        this.scale = render_scale;
+        this.dtRemaining = 0;
+        this.stepAmount = 1/60;
 
-		//this.enableDebugDraw();
-	},
+        //this.enableDebugDraw();
+    },
 
-	enableDebugDraw: function() {
-		this.debugDraw = new b2DebugDraw();
-		this.debugDraw.SetSprite(this.context);
-		this.debugDraw.SetDrawScale(this.scale);
-		this.debugDraw.SetFillAlpha(0.3);
-		this.debugDraw.SetLineThickness(1.0);
-		this.debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
-		this.world.SetDebugDraw(this.debugDraw);
-	},
+    enableDebugDraw: function() {
+        this.debugDraw = new b2DebugDraw();
+        this.debugDraw.SetSprite(this.context);
+        this.debugDraw.SetDrawScale(this.scale);
+        this.debugDraw.SetFillAlpha(0.3);
+        this.debugDraw.SetLineThickness(1.0);
+        this.debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+        this.world.SetDebugDraw(this.debugDraw);
+    },
 
-	update: function(paceFactor){
-		this.dtRemaining += paceFactor * 1/60;
-		while (this.dtRemaining > this.stepAmount) {
-			this.dtRemaining -= this.stepAmount;
-			this.world.Step(this.stepAmount,
-				8, // velocity iterations
-				3); // position iterations
-		}
-	},
+    update: function(paceFactor){
+        this.dtRemaining += paceFactor * 1/60;
+        while (this.dtRemaining > this.stepAmount) {
+            this.dtRemaining -= this.stepAmount;
+            this.world.Step(this.stepAmount,
+                8, // velocity iterations
+                3); // position iterations
+        }
+    },
 
-	render: function(ctx){
-		if (this.debugDraw) {
-			this.world.DrawDebugData();
-		} else{
+    render: function(ctx){
+        if (this.debugDraw) {
+            this.world.DrawDebugData();
+        } else{
             //ctx.clearAll();
         }
 
@@ -86,7 +86,7 @@ var FlynnPhysics= Class.extend({
             obj = obj.GetNext();
         }
         this.context.restore();
-	}
+    }
 });
 
 

@@ -54,11 +54,11 @@ Flynn.Util = {
     },
 
     angleBound2Pi: function(angle){
-    	var boundAngle = angle % (Math.PI * 2);
-    	if(boundAngle<0){
-    		boundAngle += (Math.PI * 2);
-    	}
-    	return (boundAngle);
+        var boundAngle = angle % (Math.PI * 2);
+        if(boundAngle<0){
+            boundAngle += (Math.PI * 2);
+        }
+        return (boundAngle);
     },
 
     minMaxBound: function(value, min, max){
