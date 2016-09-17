@@ -23,11 +23,14 @@ Flynn.Polygon = Class.extend({
             var x = this.pointsMaster[i];
             var y = this.pointsMaster[i+1];
 
-            //console.log(">>");
-            //console.log(c, s, x, y, (c*x - s*y), (s*x + c*y));
-
-            this.points[i] = (c*x - s*y) * this.scale;
-            this.points[i+1] = (s*x + c*y) * this.scale;
+            if(x==Flynn.Font.PenUp || y==Flynn.Font.PenUp){
+                this.points[i] = Flynn.Font.PenUp;
+                this.points[i+1] = Flynn.Font.PenUp;
+            }
+            else{
+                this.points[i] = (c*x - s*y) * this.scale;
+                this.points[i+1] = (s*x + c*y) * this.scale;
+            }
         }
     },
 

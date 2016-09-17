@@ -138,7 +138,7 @@ Flynn.KeyboardMap = {
 //------------
 Flynn.Font = {
     UnimplementedChar: [0,6,0,0,4,0,4,6,0,6,4,0,4,6,0,0,0,6],
-    PenUp: 9999,
+    PenUp: 9000, 
     CharacterHeight: 6,
     CharacterWidth: 4,
     CharacterGap: 2

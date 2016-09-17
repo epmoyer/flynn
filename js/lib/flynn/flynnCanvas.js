@@ -55,8 +55,7 @@ Flynn.Canvas = Class.extend({
                 this.vectorStart(p.color);
                 var pen_up = false;
                 for (var i=0, len=points.length; i<len; i+=2){
-                    if(points[i] > 900000){
-                        // TODO: Bad implementation.  Scale and rotation affect "Pen Up" value.
+                    if(points[i] == Flynn.Font.PenUp){
                         pen_up = true;
                     }
                     else{
