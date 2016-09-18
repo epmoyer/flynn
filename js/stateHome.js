@@ -240,14 +240,14 @@ Game.StateHome = Flynn.State.extend({
         curret_y += 30;
         var text_color = Flynn.Colors.WHITE;
         ctx.vectorText("TEXT", 1.5, left_x, curret_y, null, heading_color);
-        curret_y += 25;
+        curret_y += 15;
         var low, high;
         var x_step = 20;
         var y_step = 20;
         var indent = 20;
-        for (high=0; high<15; ++high){
+        for (high=0; high<=15; ++high){
             ctx.vectorText(high.toString(16), 2, left_x + indent + x_step * (high+1), curret_y, null, Flynn.Colors.CYAN);
-            for (low=0; low<15; ++low){
+            for (low=0; low<=15; ++low){
                 if(high === 0){
                     ctx.vectorText(low.toString(16), 2, left_x + indent, curret_y + y_step * (low + 1), null, Flynn.Colors.CYAN);
                 }
@@ -259,7 +259,7 @@ Game.StateHome = Flynn.State.extend({
         }
         ctx.vectorText("JACKDAWS LOVE MY BIG SPHINX OF QUARTZ", 2, 
             left_x + indent, 
-            curret_y + y_step * 17, 
+            curret_y + y_step * 18,
             null, text_color);
 
         //curret_y += y_step * 18 + 10;

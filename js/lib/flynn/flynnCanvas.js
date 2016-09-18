@@ -48,6 +48,9 @@ Flynn.Canvas = Class.extend({
             ctx.SPACECODE = " ".charCodeAt(0);
             ctx.EXCLAMATIONCODE = "!".charCodeAt(0);
             ctx.ACCENTCODE = '`'.charCodeAt(0);
+            ctx.LOWERCASE_A = 'a'.charCodeAt(0);
+            ctx.LOWERCASE_Z = 'z'.charCodeAt(0);
+            ctx.UPPER_TO_LOWER = 0x20;
             
             ctx.drawPolygon = function(p, x, y) {
                 var points = p.points;
@@ -229,13 +232,26 @@ Flynn.Canvas = Class.extend({
                 this.vectorEnd();
             };
 
+            ctx.charToPolygon = function(ch){
+                var p;
+                if ((ch >= this.EXCLAMATIONCODE) && (ch <= this.LOWERCASE_Z)){
+                    if(ch >= this.LOWERCASE_A){
+                        ch -= this.UPPER_TO_LOWER;
+                    }
+                    p = Flynn.Font.Points.ASCII[ch - this.EXCLAMATIONCODE];
+                }
+                else{
+                    p = Flynn.Font.Points.UNIMPLEMENTED_CHAR;
+                }
+                return p;
+            };
+
             ctx.vectorText = function(text, scale, x, y, offset, color){
                 if(typeof(color)==='undefined'){
                     console.log("ctx.vectorText(): default color deprecated.  Please pass a color.  Text:" + text );
                     color = Flynn.Colors.WHITE;
                 }
 
-                text = text.toString().toUpperCase();
                 var step = scale*Flynn.Font.CharacterSpacing;
 
                 // add offset if specified
@@ -258,13 +274,7 @@ Flynn.Canvas = Class.extend({
                         x += step;
                         continue;
                     }
-                    var p;
-                    if ((ch >= this.EXCLAMATIONCODE) && (ch <= this.ACCENTCODE)){
-                        p = Flynn.Font.Points.ASCII[ch - this.EXCLAMATIONCODE];
-                    }
-                    else{
-                        p = Flynn.Font.Points.UNIMPLEMENTED_CHAR;
-                    }
+                    var p = this.charToPolygon(ch);
 
                     var pen_up = false;
                     this.vectorStart(color);
@@ -299,7 +309,6 @@ Flynn.Canvas = Class.extend({
                     isReversed = false;
                 }
 
-                text = text.toString().toUpperCase();
                 var step = scale*Flynn.Font.CharacterSpacing;
 
                 var render_angle = angle;
@@ -329,13 +338,7 @@ Flynn.Canvas = Class.extend({
                     }
 
                     // Get the character vector points
-                    var p;
-                    if ((ch >= this.EXCLAMATIONCODE) && (ch <= this.ACCENTCODE)){
-                        p = Flynn.Font.Points.ASCII[ch - this.EXCLAMATIONCODE];
-                    }
-                    else{
-                        p = Flynn.Font.Points.UNIMPLEMENTED_CHAR;
-                    }
+                    var p = this.charToPolygon(ch);
 
                     // Render character
                     var pen_up = false;
