@@ -23,9 +23,10 @@ Flynn.Polygon = Class.extend({
             var x = this.pointsMaster[i];
             var y = this.pointsMaster[i+1];
 
-            if(x==Flynn.Font.PenUp || y==Flynn.Font.PenUp){
-                this.points[i] = Flynn.Font.PenUp;
-                this.points[i+1] = Flynn.Font.PenUp;
+            if(x==Flynn.PEN_COMMAND){
+                // Preserve pen commands
+                this.points[i] = x;
+                this.points[i+1] = y;
             }
             else{
                 this.points[i] = (c*x - s*y) * this.scale;

@@ -51,20 +51,36 @@ Flynn.Canvas = Class.extend({
             
             ctx.drawPolygon = function(p, x, y) {
                 var points = p.points;
+                var vector_color = p.color;
+                var current_polygon_x, current_polygon_y;
 
-                this.vectorStart(p.color);
+                this.vectorStart(vector_color);
                 var pen_up = false;
                 for (var i=0, len=points.length; i<len; i+=2){
-                    if(points[i] == Flynn.Font.PenUp){
-                        pen_up = true;
+                    if(points[i] == Flynn.PEN_COMMAND){
+                        if(points[i+1] == Flynn.PEN_UP){
+                            pen_up = true;
+                        }
+                        else{
+                            vector_color = Flynn.ColorsOrdered[points[i+1] - Flynn.PEN_COLOR1 +1];
+                            this.vectorEnd();
+                            this.vectorStart(vector_color);
+                            if(i>0){
+                                this.vectorMoveTo(current_polygon_x+x, current_polygon_y+y);
+                            }
+                            //pen_up = true;
+                            //this.vectorMoveTo(current_polygon_x+x, current_polygon_y+y);
+                        }
                     }
                     else{
+                        current_polygon_x = points[i];
+                        current_polygon_y = points[i+1];
                         if(i===0 || pen_up){
-                            this.vectorMoveTo(points[i]+x, points[i+1] +y);
+                            this.vectorMoveTo(current_polygon_x+x, current_polygon_y+y);
                             pen_up = false;
                         }
                         else {
-                            this.vectorLineTo(points[i]+x, points[i+1] +y);
+                            this.vectorLineTo(current_polygon_x+x, current_polygon_y+y);
                         }
                     }
                 }
@@ -144,8 +160,14 @@ Flynn.Canvas = Class.extend({
             };
 
             ctx.vectorLineTo = function(x, y){
-                x = Math.floor(x);
-                y = Math.floor(y);
+                this.vectorLineToUnconstrained(Math.floor(x), Math.floor(y));
+            };
+
+            ctx.vectorMoveTo = function(x, y){
+                this.vectorMoveToUnconstrained(Math.floor(x), Math.floor(y));
+            };
+
+            ctx.vectorLineToUnconstrained = function(x, y){
                 this.vectorVericies.push(x, y);
                 if(this.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
                     this.lineTo(x, y);
@@ -155,9 +177,7 @@ Flynn.Canvas = Class.extend({
                 }
             };
 
-            ctx.vectorMoveTo = function(x, y){
-                x = Math.floor(x);
-                y = Math.floor(y);
+            ctx.vectorMoveToUnconstrained = function(x, y){
                 this.vectorVericies.push(x, y);
                 if(this.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
                     this.moveTo(x, y);
@@ -166,6 +186,7 @@ Flynn.Canvas = Class.extend({
                     this.moveTo(x+0.5, y+0.5);
                 }
             };
+
 
             ctx.vectorEnd = function(){
                 // Finish the line drawing 
@@ -248,7 +269,7 @@ Flynn.Canvas = Class.extend({
                     var pen_up = false;
                     this.vectorStart(color);
                     for (var j=0, len2=p.length; j<len2; j+=2){
-                        if(p[j]==Flynn.Font.Points.PEN_UP){
+                        if(p[j]==Flynn.PEN_COMMAND){
                             pen_up = true;
                         }
                         else{
@@ -320,7 +341,7 @@ Flynn.Canvas = Class.extend({
                     var pen_up = false;
                     this.beginPath();
                     for (var j=0, len2=p.length; j<len2; j+=2){
-                        if(p[j]==Flynn.Font.Points.PEN_UP){
+                        if(p[j]==Flynn.PEN_COMMAND){
                             pen_up = true;
                         }
                         else{
@@ -332,11 +353,11 @@ Flynn.Canvas = Class.extend({
                             var draw_y = (s*x + c*y) * scale + Math.sin(render_angle) * radius + center_y;
 
                             if(j===0 || pen_up){
-                                this.vectorMoveTo(draw_x, draw_y);
+                                this.vectorMoveToUnconstrained(draw_x, draw_y);
                                 pen_up = false;
                             }
                             else{
-                                this.vectorLineTo(draw_x, draw_y);
+                                this.vectorLineToUnconstrained(draw_x, draw_y);
                             }
                         }
                     }
