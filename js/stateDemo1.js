@@ -45,7 +45,8 @@ Game.StateDemo1 = Flynn.State.extend({
     },
 
     render: function(ctx){
-        if (this.render_dirty){
+        // if (this.render_dirty){
+        if (true){
             this.render_dirty = false;
 
             ctx.clearAll();

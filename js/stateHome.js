@@ -105,6 +105,9 @@ Game.StateHome = Flynn.State.extend({
         if (input.virtualButtonIsPressed("right")){
             this.mcp.nextState = Game.States.DEMO1;
         }
+        else{
+            //console.log("StateHome: not down");
+        }
 
         if (input.virtualButtonIsPressed("UI_escape")) {
             this.mcp.nextState = Game.States.CONFIG;

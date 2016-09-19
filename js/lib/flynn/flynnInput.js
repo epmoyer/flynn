@@ -94,6 +94,7 @@ Flynn.InputHandler = Class.extend({
             if (self.keyCodeToVirtualButtonName[evt.keyCode]){
                 name = self.keyCodeToVirtualButtonName[evt.keyCode];
                 self.virtualButtons[name].isDown = true;
+                //console.log("Set .isDown for: " + name);
             }
             if (self.keyCodeToUiButtonName[evt.keyCode]){
                 name = self.keyCodeToUiButtonName[evt.keyCode];
@@ -110,6 +111,7 @@ Flynn.InputHandler = Class.extend({
                 name = self.keyCodeToVirtualButtonName[evt.keyCode];
                 self.virtualButtons[name].isDown = false;
                 self.virtualButtons[name].pressWasReported = false;
+                //console.log("Clear .isDown for: " + name);
             }
             if (self.keyCodeToUiButtonName[evt.keyCode]){
                 name = self.keyCodeToUiButtonName[evt.keyCode];
@@ -371,6 +373,7 @@ Flynn.InputHandler = Class.extend({
             } else if (this.virtualButtons[name].isDown){
                 // The button is down and no press has (yet) been reported, so report this one.
                 this.virtualButtons[name].pressWasReported = true;
+                //console.log("Set .pressWasReported for: " + name);
                 return true;
             }
             // Button is not down

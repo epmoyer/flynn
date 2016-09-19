@@ -65,7 +65,7 @@ Flynn.Canvas = Class.extend({
                             pen_up = true;
                         }
                         else{
-                            vector_color = Flynn.ColorsOrdered[points[i+1] - Flynn.PEN_COLOR1 +1];
+                            vector_color = Flynn.ColorsOrdered[points[i+1] - Flynn.PEN_COLOR0];
                             this.vectorEnd();
                             this.vectorStart(vector_color);
                             if(i>0){
@@ -98,6 +98,7 @@ Flynn.Canvas = Class.extend({
                 var height = 6;
                 var x_needle = percentage * length;
 
+                this.strokeStyle = Flynn.Colors.GRAY;
                 ctx.fillStyle="#FFFFFF";
                 ctx.rect(x,y,length,height);
                 ctx.fillStyle=color;
