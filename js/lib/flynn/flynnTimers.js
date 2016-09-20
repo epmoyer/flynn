@@ -30,8 +30,7 @@ Flynn.Timers = Class.extend({
         }
         else{
             // Create new timer
-            newTimer = new Flynn.Timer(timerName, initialTicks, callback);
-            this.timers[timerName]=newTimer;
+            this.timers[timerName]=new Flynn.Timer(timerName, initialTicks, callback);
         }
     },
 

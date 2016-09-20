@@ -248,6 +248,7 @@ Flynn.Canvas = Class.extend({
             };
 
             ctx.vectorText = function(text, scale, x, y, offset, color){
+                text = String(text);
                 if(typeof(color)==='undefined'){
                     console.log("ctx.vectorText(): default color deprecated.  Please pass a color.  Text:" + text );
                     color = Flynn.Colors.WHITE;
@@ -300,6 +301,8 @@ Flynn.Canvas = Class.extend({
             };
 
             ctx.vectorTextArc = function(text, scale, center_x, center_y, angle, radius, color, isCentered, isReversed){
+                text = String(text);
+
                 if(typeof(color)==='undefined'){
                     color = Flynn.Colors.GREEN;
                 }

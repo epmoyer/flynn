@@ -7,7 +7,7 @@ Flynn.StateEnd = Flynn.State.extend({
 
     CURSOR_BLINK_RATE: 2,
 
-    init: function(mcp, score, leaderboard, color, title, prompt) {
+    init: function(mcp, score, leaderboard, color, title, prompt, parentState) {
         this._super(mcp);
 
         this.score = score;
@@ -16,6 +16,11 @@ Flynn.StateEnd = Flynn.State.extend({
         this.title = title;
         this.prompt = prompt;
 
+        if(typeof(parentState)==='undefined'){
+            throw("API has changed. parentState is now a required parameter.");
+        }
+
+        this.parentState = parentState;
         this.nick = "";
         var worstEntry = this.leaderboard.getWorstEntry();
         if (    (!this.leaderboard.sortDescending && this.score < worstEntry['score']) ||
@@ -41,8 +46,8 @@ Flynn.StateEnd = Flynn.State.extend({
     handleInputs: function(input, paceFactor) {
         if (this.hasEnteredName) {
             if (input.virtualButtonIsPressed("UI_enter")) {
-                // change the game state
-                this.mcp.nextState = States.MENU;
+                // Exit back to the parent state
+                this.mcp.nextState = this.parentState;
             }
         } else {
             if (input.virtualButtonIsPressed("UI_enter")) {

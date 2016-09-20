@@ -48,18 +48,18 @@ Flynn.InputHandler = Class.extend({
             buttonCodes:  [],
         };
         //                    Name          Down Up
-        this.addiCadeMapping('ICADE_up',    'w', 'e'); // Joytick
-        this.addiCadeMapping('ICADE_down',  'x', 'z');
-        this.addiCadeMapping('ICADE_left',  'a', 'q');
-        this.addiCadeMapping('ICADE_right', 'd', 'c');
-        this.addiCadeMapping('ICADE_T1',    'y', 't'); // Top row buttons
-        this.addiCadeMapping('ICADE_T2',    'u', 'f');
-        this.addiCadeMapping('ICADE_T3',    'i', 'm');
-        this.addiCadeMapping('ICADE_T4',    'o', 'g');
-        this.addiCadeMapping('ICADE_B1',    'h', 'r'); // Bottom row buttons
-        this.addiCadeMapping('ICADE_B2',    'j', 'n');
-        this.addiCadeMapping('ICADE_B3',    'k', 'p');
-        this.addiCadeMapping('ICADE_B4',    'l', 'v');
+        this.addiCadeMapping('icade_up',    'w', 'e'); // Joytick
+        this.addiCadeMapping('icade_down',  'x', 'z');
+        this.addiCadeMapping('icade_left',  'a', 'q');
+        this.addiCadeMapping('icade_right', 'd', 'c');
+        this.addiCadeMapping('icade_t1',    'y', 't'); // Top row buttons
+        this.addiCadeMapping('icade_t2',    'u', 'f');
+        this.addiCadeMapping('icade_t3',    'i', 'm');
+        this.addiCadeMapping('icade_t4',    'o', 'g');
+        this.addiCadeMapping('icade_b1',    'h', 'r'); // Bottom row buttons
+        this.addiCadeMapping('icade_b2',    'j', 'n');
+        this.addiCadeMapping('icade_b3',    'k', 'p');
+        this.addiCadeMapping('icade_b4',    'l', 'v');
 
         var self = this;
         this.keyDownHandler = function(evt){
@@ -193,17 +193,17 @@ Flynn.InputHandler = Class.extend({
             this.addUiButton('UI_left',   Flynn.KeyboardMap['left']);
         }
         else{
-            this.addUiButton('UI_enter',  Flynn.KeyboardMap['ICADE_T1']);
-            this.addUiButton('UI_escape', Flynn.KeyboardMap['ICADE_B1']);
-            this.addUiButton('UI_exit',   Flynn.KeyboardMap['ICADE_B2']);
-            this.addUiButton('UI_quarter',Flynn.KeyboardMap['ICADE_T3']);
-            this.addUiButton('UI_start1', Flynn.KeyboardMap['ICADE_T4']);
-            this.addUiButton('UI_start2', Flynn.KeyboardMap['ICADE_B4']);
+            this.addUiButton('UI_enter',  Flynn.KeyboardMap['icade_t1']);
+            this.addUiButton('UI_escape', Flynn.KeyboardMap['icade_b1']);
+            this.addUiButton('UI_exit',   Flynn.KeyboardMap['icade_b2']);
+            this.addUiButton('UI_quarter',Flynn.KeyboardMap['icade_t3']);
+            this.addUiButton('UI_start1', Flynn.KeyboardMap['icade_t4']);
+            this.addUiButton('UI_start2', Flynn.KeyboardMap['icade_b4']);
 
-            this.addUiButton('UI_up',     Flynn.KeyboardMap['ICADE_up']);
-            this.addUiButton('UI_down',   Flynn.KeyboardMap['ICADE_down']);
-            this.addUiButton('UI_right',  Flynn.KeyboardMap['ICADE_right']);
-            this.addUiButton('UI_left',   Flynn.KeyboardMap['ICADE_left']);
+            this.addUiButton('UI_up',     Flynn.KeyboardMap['icade_up']);
+            this.addUiButton('UI_down',   Flynn.KeyboardMap['icade_down']);
+            this.addUiButton('UI_right',  Flynn.KeyboardMap['icade_right']);
+            this.addUiButton('UI_left',   Flynn.KeyboardMap['icade_left']);
         }
     },
 
@@ -269,7 +269,7 @@ Flynn.InputHandler = Class.extend({
     },
 
     getConfigurableVirtualButtonNames: function(){
-        names = [];
+        var names = [];
         for (var name in this.virtualButtons){
             if(this.virtualButtons[name].isConfigurable){
                 names.push(name);

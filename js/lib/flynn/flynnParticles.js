@@ -60,8 +60,8 @@ Flynn.Particles = Class.extend({
         }
 
         for(var i=0; i<quantity; i++){
-            theta = Math.random() * Math.PI * 2;
-            particle_velocity = max_velocity * (1.0 - this.VELOCITY_VARIATION + Math.random() * this.VELOCITY_VARIATION);
+            var theta = Math.random() * Math.PI * 2;
+            var particle_velocity = max_velocity * (1.0 - this.VELOCITY_VARIATION + Math.random() * this.VELOCITY_VARIATION);
             this.particles.push(new Flynn.Particle(
                 this,
                 x,

@@ -76,21 +76,21 @@ Game.Main = Class.extend({
 
         // Setup inputs
         if(!this.mcp.iCadeModeEnabled){
-            this.input.addVirtualButton('fire', Flynn.KeyboardMap['z'], Flynn.BUTTON_CONFIGURABLE);
-            this.input.addVirtualButton('thrust', Flynn.KeyboardMap['spacebar'], Flynn.BUTTON_CONFIGURABLE);
-            this.input.addVirtualButton('right', Flynn.KeyboardMap['right'], Flynn.BUTTON_CONFIGURABLE);
-            this.input.addVirtualButton('left', Flynn.KeyboardMap['left'], Flynn.BUTTON_CONFIGURABLE);
+            this.input.addVirtualButton('fire', Flynn.KeyboardMap.z, Flynn.BUTTON_CONFIGURABLE);
+            this.input.addVirtualButton('thrust', Flynn.KeyboardMap.spacebar, Flynn.BUTTON_CONFIGURABLE);
+            this.input.addVirtualButton('right', Flynn.KeyboardMap.right, Flynn.BUTTON_CONFIGURABLE);
+            this.input.addVirtualButton('left', Flynn.KeyboardMap.left, Flynn.BUTTON_CONFIGURABLE);
         }
         else{
-            this.input.addVirtualButton('fire', Flynn.KeyboardMap['ICADE_T2'], Flynn.BUTTON_NOT_CONFIGURABLE);
-            this.input.addVirtualButton('thrust', Flynn.KeyboardMap['ICADE_T1'], Flynn.BUTTON_NOT_CONFIGURABLE);
+            this.input.addVirtualButton('fire', Flynn.KeyboardMap.icade_t2, Flynn.BUTTON_NOT_CONFIGURABLE);
+            this.input.addVirtualButton('thrust', Flynn.KeyboardMap.icade_t1, Flynn.BUTTON_NOT_CONFIGURABLE);
         }
         
 
         if(this.mcp.developerModeEnabled){
-            this.input.addVirtualButton('dev_metrics', Flynn.KeyboardMap['6'], Flynn.BUTTON_NOT_CONFIGURABLE);
-            this.input.addVirtualButton('dev_slow_mo', Flynn.KeyboardMap['7'], Flynn.BUTTON_NOT_CONFIGURABLE);
-            this.input.addVirtualButton('dev_fps_20', Flynn.KeyboardMap['\\'], Flynn.BUTTON_NOT_CONFIGURABLE);
+            this.input.addVirtualButton('dev_metrics', Flynn.KeyboardMap.num_6, Flynn.BUTTON_NOT_CONFIGURABLE);
+            this.input.addVirtualButton('dev_slow_mo', Flynn.KeyboardMap.num_7, Flynn.BUTTON_NOT_CONFIGURABLE);
+            this.input.addVirtualButton('dev_fps_20', Flynn.KeyboardMap.backslash, Flynn.BUTTON_NOT_CONFIGURABLE);
         }
 
         // Options

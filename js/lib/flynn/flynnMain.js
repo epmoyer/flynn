@@ -61,16 +61,16 @@ Flynn.ColorsOrdered=[
 // Keyboard input 
 //------------
 Flynn.KeyboardMap = {
-    '0':        48,
-    '1':        49,
-    '2':        50,
-    '3':        51,
-    '4':        52,
-    '5':        53,
-    '6':        54,
-    '7':        55,
-    '8':        56,
-    '9':        57,
+    'num_0':        48,
+    'num_1':        49,
+    'num_2':        50,
+    'num_3':        51,
+    'num_4':        52,
+    'num_5':        53,
+    'num_6':        54,
+    'num_7':        55,
+    'num_8':        56,
+    'num_9':        57,
 
     'a':        65,
     'b':        66,
@@ -99,17 +99,17 @@ Flynn.KeyboardMap = {
     'y':        89,
     'z':        90,
 
-    "'":        222,
-    ',':        188,
-    '-':        189,
-    '.':        190,
-    '/':        191,
-    ';':        186,
-    '=':        187,
-    '[':        219,
-    '\\':       220,
-    ']':        221,
-    '`':        192,
+    'single_quote':  222, // '
+    'comma':         188, // ,
+    'dash':          189, // -
+    'period':        190, // .
+    'forward_slash': 191, // /
+    'semicolon':     186, // ;
+    'equals':        187, // =
+    'left_bracket':  219, // [
+    'backslash':     220, // \
+    'right_bracket': 221, // /
+    'grave_accent':  192, // `
 
     'tab':      9,
     'enter':    13,
@@ -137,18 +137,18 @@ Flynn.KeyboardMap = {
     'f11':      122,
     'f12':      123,
 
-    'ICADE_up':    -1,
-    'ICADE_down':  -2,
-    'ICADE_left':  -3,
-    'ICADE_right': -4,
-    'ICADE_T1':    -5,
-    'ICADE_T2':    -6,
-    'ICADE_T3':    -7,
-    'ICADE_T4':    -8,
-    'ICADE_B1':    -9,
-    'ICADE_B2':    -10,
-    'ICADE_B3':    -11,
-    'ICADE_B4':    -12,
+    'icade_up':    -1,
+    'icade_down':  -2,
+    'icade_left':  -3,
+    'icade_right': -4,
+    'icade_t1':    -5,
+    'icade_t2':    -6,
+    'icade_t3':    -7,
+    'icade_t4':    -8,
+    'icade_b1':    -9,
+    'icade_b2':    -10,
+    'icade_b3':    -11,
+    'icade_b4':    -12,
 };
 
 //------------
