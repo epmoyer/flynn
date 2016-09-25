@@ -8,10 +8,13 @@ Game.SPEED_FACTOR = 0.7;
 
 Game.States = {
     NO_CHANGE: 0,
+    
     HOME:      1,
     DEMO1:     2,
-    END:       3,
-    CONFIG:    4,
+    DEMO2:     3,
+
+    END:       90,
+    CONFIG:    91,
 };
 
 Game.Main = Class.extend({
@@ -34,6 +37,8 @@ Game.Main = Class.extend({
                         return new Game.StateHome(self.mcp);
                     case Game.States.DEMO1:
                         return new Game.StateDemo1(self.mcp);
+                    case Game.States.DEMO2:
+                        return new Game.StateDemo2(self.mcp);
                     case Game.States.END:
                         return new Flynn.StateEnd(
                             self.mcp,

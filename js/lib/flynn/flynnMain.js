@@ -108,7 +108,7 @@ Flynn.KeyboardMap = {
     'equals':        187, // =
     'left_bracket':  219, // [
     'backslash':     220, // \
-    'right_bracket': 221, // /
+    'right_bracket': 221, // ]
     'grave_accent':  192, // `
 
     'tab':      9,
