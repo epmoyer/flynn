@@ -21,6 +21,9 @@ Game.StateDemo1 = Flynn.State.extend({
         if (input.virtualButtonIsPressed("right")){
             this.mcp.nextState = Game.States.DEMO2;
         }
+        if (input.virtualButtonIsPressed("left")){
+            this.mcp.nextState = Game.States.HOME;
+        }
 
         if(this.mcp.developerModeEnabled){
             // Metrics toggle
@@ -56,7 +59,7 @@ Game.StateDemo1 = Flynn.State.extend({
             var i, j, x;
             var heading_color = Flynn.Colors.YELLOW;
             
-            ctx.vectorText("DEMO1", 3, left_x, 11, null, heading_color);
+            Game.render_page_name (ctx, Game.States.DEMO1);
             ctx.vectorLine(margin, 37, this.canvasWidth-margin-1, 37, Flynn.Colors.GREEN);
             ctx.vectorRect(
                 margin, 

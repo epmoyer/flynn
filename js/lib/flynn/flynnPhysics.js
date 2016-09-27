@@ -171,8 +171,9 @@ Flynn.Body= Class.extend({
                 details.height = details.height || this.defaults.height;
      
                 this.fixtureDef.shape = new Box2D.Collision.Shapes.b2PolygonShape();
-                this.fixtureDef.shape.SetAsBox(details.width / 2,
-                details.height / 2);
+                this.fixtureDef.shape.SetAsBox(
+                    details.width  / 2,
+                    details.height / 2);
                 break;
         }
     
@@ -197,9 +198,13 @@ Flynn.Body= Class.extend({
      
             switch (this.details.shape) {
                 case "circle":
+                    var num_sides = 6;
+                    if (typeof this.details.render_sides != "undefined") {
+                       num_sides = this.details.render_sides;
+                    }
                     context.vectorStart(this.details.color);
                     var first = true;
-                    for(var a=0, stop=Math.PI*2, step = Math.PI*2/6; a<=stop; a += step ){
+                    for(var a=0, stop=Math.PI*2.01, step = Math.PI*2/num_sides; a<=stop; a += step ){
                         if(first){
                             context.vectorMoveTo(Math.cos(a)*this.details.radius*scale, Math.sin(a)*this.details.radius*scale);
                             first = false;
@@ -211,12 +216,17 @@ Flynn.Body= Class.extend({
                     break;
                 case "polygon":
                     var points = this.details.points;
-                    context.beginPath();
-                    context.moveTo(points[0].x, points[0].y);
+                    //context.beginPath();
+                    context.vectorStart(this.details.color);
+                    //context.moveTo(points[0].x, points[0].y);
+                    context.vectorMoveTo(points[0].x*scale, points[0].y*scale);
                     for (var i = 1; i < points.length; i++) {
-                        context.lineTo(points[i].x, points[i].y);
+                        //context.lineTo(points[i].x, points[i].y);
+                        context.vectorLineTo(points[i].x*scale, points[i].y*scale);
                     }
-                    context.fill();
+                    context.vectorLineTo(points[0].x*scale, points[0].y*scale);
+                    //context.fill();
+                    context.vectorEnd();
                     break;
                 case "block":
                     context.vectorRect(-this.details.width / 2 * scale, -this.details.height / 2 * scale,

@@ -2,6 +2,26 @@ if (typeof Game == "undefined") {
    var Game = {};  // Create namespace
 }
 
+Game.render_page_name = function(ctx, page_id){
+    // Render the name of the current page
+
+    var i, text, color;
+    var x=10;
+    var scale=3;
+    var page_names = ["HOME", "TEXT", "BOX2D"];
+    for(i=0; i<page_names.length; ++i){
+        text = page_names[i];
+        if(i==page_id-1){
+            color = Flynn.Colors.YELLOW;   
+        }
+        else{
+            color = Flynn.Colors.GRAY_DK;
+        }
+        ctx.vectorText(text, scale, x, 11, null, color);
+        x += Flynn.Font.CharacterSpacing * scale * (text.length + 2);
+    }
+};
+
 Game.StateHome = Flynn.State.extend({
 
     TIMER_EXPLODE1_TICKS: 0.3 * Flynn.TICKS_PER_SECOND,
@@ -108,8 +128,11 @@ Game.StateHome = Flynn.State.extend({
         if (input.virtualButtonIsPressed("right")){
             this.mcp.nextState = Game.States.DEMO1;
         }
-        else{
-            //console.log("StateHome: not down");
+        if (input.virtualButtonIsPressed("left")){
+            this.mcp.nextState = Game.States.DEMO2;
+        }
+        if (input.virtualButtonIsPressed("UI_enter")){
+            this.mcp.nextState = Game.States.END;
         }
 
         if (input.virtualButtonIsPressed("UI_escape")) {
@@ -187,14 +210,12 @@ Game.StateHome = Flynn.State.extend({
     render: function(ctx){
         ctx.clearAll();
 
-        this.particles.draw(ctx);
-
         var left_x = 10;
         var margin = 3;
         var i, x;
         var heading_color = Flynn.Colors.YELLOW;
 
-        ctx.vectorText("HOME", 3, left_x, 11, null, heading_color);
+        Game.render_page_name (ctx, Game.States.HOME);
         ctx.vectorLine(margin, 37, this.canvasWidth-margin-1, 37, Flynn.Colors.GREEN);
         ctx.vectorRect(
             margin, 
@@ -273,9 +294,32 @@ Game.StateHome = Flynn.State.extend({
         left_x = 400;
         ctx.vectorText("TIMERS", 1.5, left_x, curret_y, null, heading_color);
         curret_y += 20;
-        ctx.vectorText("TIMER, POLLED: " + this.counter_polled, 1.5, left_x + indent, curret_y, null, Flynn.Colors.GREEN);
+        ctx.vectorText("TIMER, POLLED: " + this.counter_polled, 1.5, left_x + indent, curret_y, null, Flynn.Colors.WHITE);
         curret_y += 20;
-        ctx.vectorText("TIMER, CALLBACK: " + this.counter_callback, 1.5, left_x + indent, curret_y, null, Flynn.Colors.GREEN);
+        ctx.vectorText("TIMER, CALLBACK: " + this.counter_callback, 1.5, left_x + indent, curret_y, null, Flynn.Colors.WHITE);
+
+        curret_y += 40;
+        // ctx.vectorText("PRESS <ESCAPE> TO ACCESS CONFIGURATION MENU", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("KEYBOARD CONTROLS:", 1.5, left_x, curret_y, null, heading_color);
+        // ctx.vectorText("PRESS <ENTER> TO TEST HIGH SCORE SCREEN", 1.5, left_x, curret_y, null, heading_color);
+        var indent_chars = 9;
+        var scale = 1.5;
+        options=[
+            ['ESCAPE', 'CONFIGURATION MENU'],
+            ['ENTER', 'HIGH SCORE SCREEN'],
+            ['6', '(DEVELOPER MODE) TOGGLE METRICS'],
+            ['7', '(DEVELOPER MODE) TOGGLE SLOW MO'],
+            ['\\', '(DEVELOPER MODE) TOGGLE 20 FPS'],
+        ];
+        for(i=0; i<options.length; i++){
+            curret_y += 20;
+            ctx.vectorText(options[i][0], scale, left_x + indent_chars * Flynn.Font.CharacterSpacing * scale,
+                curret_y, 0, Flynn.Colors.ORANGE);
+            ctx.vectorText(options[i][1], scale, left_x + (indent_chars+2) * Flynn.Font.CharacterSpacing * scale,
+                curret_y, null, Flynn.Colors.WHITE);            
+        }
+
+
         
         //-----------------
         // Particle gun
@@ -296,6 +340,8 @@ Game.StateHome = Flynn.State.extend({
             Flynn.Colors.GRAY);
 
         ctx.drawPolygon(this.logo, this.canvasWidth-80, this.canvasHeight-30);
+
+        this.particles.draw(ctx);
 
     }
 });

@@ -46,7 +46,9 @@ Game.Main = Class.extend({
                             self.mcp.custom.leaderboard,
                             Flynn.Colors.GREEN,
                             'HIGH SCORES',
-                            "WELL AREN'T YOU SOMETHING?!");
+                            "YOU'VE MADE IT TO THE HIGH SCORE LIST!",
+                            Game.States.HOME // Parent state
+                            );
                     case Game.States.CONFIG:
                         return new Flynn.StateConfig(
                             self.mcp, 
@@ -60,7 +62,7 @@ Game.Main = Class.extend({
             }
         );
         this.mcp.nextState = Game.States.HOME;
-        this.mcp.custom.score = 0;
+        this.mcp.custom.score = 500001;
         this.mcp.custom.leaderboard = new Flynn.Leaderboard(
             this.mcp,
             ['name', 'score'],  // attributeList
@@ -69,12 +71,12 @@ Game.Main = Class.extend({
             );
         this.mcp.custom.leaderboard.setDefaultList(
             [
-                {'name': 'FLOATINHEAD', 'score': 2200},
-                {'name': 'FIENDFODDER', 'score': 2100},
-                {'name': 'DIO',         'score': 2000},
-                {'name': 'JOTARO',      'score': 1300},
-                {'name': 'JOSEPH',      'score': 1200},
-                {'name': 'JONATHAN',    'score': 1100},
+                {'name': 'FLOATINHEAD', 'score': 6000000},
+                {'name': 'FIENDFODDER', 'score':  500000},
+                {'name': 'DIO',         'score':   40000},
+                {'name': 'JOTARO',      'score':    3000},
+                {'name': 'JOSEPH',      'score':     200},
+                {'name': 'JONATHAN',    'score':      10},
             ]);
         this.mcp.custom.leaderboard.loadFromCookies();
         this.mcp.custom.leaderboard.saveToCookies();

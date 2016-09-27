@@ -180,30 +180,30 @@ Flynn.InputHandler = Class.extend({
 
     setupUIButtons: function(){
         if(!this.iCadeModeEnabled){
-            this.addUiButton('UI_enter',  Flynn.KeyboardMap['enter']);
-            this.addUiButton('UI_escape', Flynn.KeyboardMap['escape']);
-            this.addUiButton('UI_exit',   Flynn.KeyboardMap['tab']);
-            this.addUiButton('UI_quarter',Flynn.KeyboardMap['5']);
-            this.addUiButton('UI_start1', Flynn.KeyboardMap['1']);
-            this.addUiButton('UI_start2', Flynn.KeyboardMap['2']);
+            this.addUiButton('UI_enter',  Flynn.KeyboardMap.enter);
+            this.addUiButton('UI_escape', Flynn.KeyboardMap.escape);
+            this.addUiButton('UI_exit',   Flynn.KeyboardMap.tab);
+            this.addUiButton('UI_quarter',Flynn.KeyboardMap.num_5);
+            this.addUiButton('UI_start1', Flynn.KeyboardMap.num_1);
+            this.addUiButton('UI_start2', Flynn.KeyboardMap.num_2);
 
-            this.addUiButton('UI_up',     Flynn.KeyboardMap['up']);
-            this.addUiButton('UI_down',   Flynn.KeyboardMap['down']);
-            this.addUiButton('UI_right',  Flynn.KeyboardMap['right']);
-            this.addUiButton('UI_left',   Flynn.KeyboardMap['left']);
+            this.addUiButton('UI_up',     Flynn.KeyboardMap.up);
+            this.addUiButton('UI_down',   Flynn.KeyboardMap.down);
+            this.addUiButton('UI_right',  Flynn.KeyboardMap.right);
+            this.addUiButton('UI_left',   Flynn.KeyboardMap.left);
         }
         else{
-            this.addUiButton('UI_enter',  Flynn.KeyboardMap['icade_t1']);
-            this.addUiButton('UI_escape', Flynn.KeyboardMap['icade_b1']);
-            this.addUiButton('UI_exit',   Flynn.KeyboardMap['icade_b2']);
-            this.addUiButton('UI_quarter',Flynn.KeyboardMap['icade_t3']);
-            this.addUiButton('UI_start1', Flynn.KeyboardMap['icade_t4']);
-            this.addUiButton('UI_start2', Flynn.KeyboardMap['icade_b4']);
+            this.addUiButton('UI_enter',  Flynn.KeyboardMap.icade_t1);
+            this.addUiButton('UI_escape', Flynn.KeyboardMap.icade_b1);
+            this.addUiButton('UI_exit',   Flynn.KeyboardMap.icade_b2);
+            this.addUiButton('UI_quarter',Flynn.KeyboardMap.icade_t3);
+            this.addUiButton('UI_start1', Flynn.KeyboardMap.icade_t4);
+            this.addUiButton('UI_start2', Flynn.KeyboardMap.icade_b4);
 
-            this.addUiButton('UI_up',     Flynn.KeyboardMap['icade_up']);
-            this.addUiButton('UI_down',   Flynn.KeyboardMap['icade_down']);
-            this.addUiButton('UI_right',  Flynn.KeyboardMap['icade_right']);
-            this.addUiButton('UI_left',   Flynn.KeyboardMap['icade_left']);
+            this.addUiButton('UI_up',     Flynn.KeyboardMap.icade_up);
+            this.addUiButton('UI_down',   Flynn.KeyboardMap.icade_down);
+            this.addUiButton('UI_right',  Flynn.KeyboardMap.icade_right);
+            this.addUiButton('UI_left',   Flynn.KeyboardMap.icade_left);
         }
     },
 
