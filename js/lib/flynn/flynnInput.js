@@ -2,13 +2,15 @@ Flynn.BUTTON_CONFIGURABLE = true;
 Flynn.BUTTON_NOT_CONFIGURABLE = false;
 
 Flynn.TouchRegion = Class.extend({
-    init: function(name, left, top, right, bottom) {
+    init: function(name, left, top, right, bottom, shape) {
         this.name = name;
         this.left = left;
         this.top = top;
         this.right = right;
         this.bottom = bottom;
+        this.shape = shape;
 
+        this.show = false;
         this.touchStartIdentifier = 0; // Unique identifier of most recent touchstart event
     }
 });
@@ -332,23 +334,77 @@ Flynn.InputHandler = Class.extend({
         }
     },
 
-    addTouchRegion: function(name, left, top, right, bottom){
+    addTouchRegion: function(name, left, top, right, bottom, shape){
         // The 'name' must match a virtual button for touches to be reported.
         // All touches are reported as virtual buttons.
         // Touch regions can be bound to virtual buttons which are also bound to keys.
+        
         //console.log("DEV: Added touch region ", name);
+
+        if (typeof shape == 'undefined') {
+           shape = 'rect';  
+        }
+
         if (name in this.touchRegions){
             // Remove old region if it exists.  Regions can thus be 
             // redefined by calling addTouchRegion again with the 
             // same name
             delete this.touchRegions[name];
         }
-        touchRegion = new Flynn.TouchRegion(name, left, top, right, bottom);
+        touchRegion = new Flynn.TouchRegion(name, left, top, right, bottom, shape);
         this.touchRegions[name] = touchRegion;
         if (!(name in this.virtualButtons) && !(name in this.uiButtons)){
             console.log('Flynn: Warning: touch region name "' + name +
                         '" does not match an existing virtual button name.  Touches to this region will be unreported' +
                         ' unless (until) a virtual button with the same name is created.');
+        }
+    },
+
+    showTouchRegion: function(name){
+        if(name in this.touchRegions){
+            this.touchRegions[name].show = true;
+        }
+    },
+
+    hideTouchRegion: function(name){
+         if(name in this.touchRegions){
+            this.touchRegions[name].show = false;
+        }
+    },
+
+    hideTouchRegionAll: function(){
+        var name;
+        for(name in this.touchRegions){
+            this.touchRegions[name].show = false;
+        }
+    },
+
+    renderTouchRegions: function(ctx){
+        var name, region;
+        for(name in this.touchRegions){
+            region = this.touchRegions[name];
+            if(region.show){
+                if(region.shape == 'round'){
+                    ctx.beginPath();
+                    ctx.arc(
+                        (region.left + region.right) / 2,
+                        (region.top + region.bottom) / 2,
+                        (region.right - region.left) / 2,
+                        0, 2*Math.PI,
+                        false
+                        );
+                    if(this.virtualButtonIsDown(name)){
+                        ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+                    }
+                    else{
+                        ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+                    }
+                    ctx.fill();
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+                    ctx.stroke();
+                }
+            }
         }
     },
 

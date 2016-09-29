@@ -2,13 +2,14 @@ if (typeof Game == "undefined") {
    var Game = {};  // Create namespace
 }
 
-Game.render_page_name = function(ctx, page_id){
+Game.render_page_frame = function(ctx, page_id){
     // Render the name of the current page
 
     var i, text, color;
+    var margin=3;
     var x=10;
     var scale=3;
-    var page_names = ["HOME", "TEXT", "BOX2D"];
+    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION"];
     for(i=0; i<page_names.length; ++i){
         text = page_names[i];
         if(i==page_id-1){
@@ -20,6 +21,14 @@ Game.render_page_name = function(ctx, page_id){
         ctx.vectorText(text, scale, x, 11, null, color);
         x += Flynn.Font.CharacterSpacing * scale * (text.length + 2);
     }
+
+    ctx.vectorLine(margin, 37, ctx.width-margin-1, 37, Flynn.Colors.GREEN);
+    ctx.vectorRect(
+        margin, 
+        margin, 
+        ctx.width-2*margin,
+        ctx.height-2*margin,
+        Flynn.Colors.GREEN);
 };
 
 Game.StateHome = Flynn.State.extend({
@@ -129,7 +138,7 @@ Game.StateHome = Flynn.State.extend({
             this.mcp.nextState = Game.States.DEMO1;
         }
         if (input.virtualButtonIsPressed("left")){
-            this.mcp.nextState = Game.States.DEMO2;
+            this.mcp.nextState = Game.States.DEMO3;
         }
         if (input.virtualButtonIsPressed("UI_enter")){
             this.mcp.nextState = Game.States.END;
@@ -215,14 +224,7 @@ Game.StateHome = Flynn.State.extend({
         var i, x;
         var heading_color = Flynn.Colors.YELLOW;
 
-        Game.render_page_name (ctx, Game.States.HOME);
-        ctx.vectorLine(margin, 37, this.canvasWidth-margin-1, 37, Flynn.Colors.GREEN);
-        ctx.vectorRect(
-            margin, 
-            margin, 
-            this.canvasWidth-2*margin,
-            this.canvasHeight-2*margin,
-            Flynn.Colors.GREEN);
+        Game.render_page_frame (ctx, Game.States.HOME);
 
         var curret_y = 42;
         ctx.vectorText("LINES", 1.5, left_x, curret_y, null, heading_color);
@@ -319,8 +321,6 @@ Game.StateHome = Flynn.State.extend({
                 curret_y, null, Flynn.Colors.WHITE);            
         }
 
-
-        
         //-----------------
         // Particle gun
         //-----------------
@@ -339,7 +339,7 @@ Game.StateHome = Flynn.State.extend({
             this.partice_gun.y + Math.sin(this.partice_gun.angle) * this.partice_gun.length, 
             Flynn.Colors.GRAY);
 
-        ctx.drawPolygon(this.logo, this.canvasWidth-80, this.canvasHeight-30);
+        ctx.drawPolygon(this.logo, this.canvasWidth-76, this.canvasHeight-40);
 
         this.particles.draw(ctx);
 

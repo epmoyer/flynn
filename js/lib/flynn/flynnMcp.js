@@ -84,7 +84,9 @@ Flynn.Mcp = Class.extend({
         this.browserIsIos = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
 
         // SUPPORT: Touch
-        this.browserSupportsTouch = ('ontouchstart' in document.documentElement);
+        this.browserSupportsTouch = (
+                ('ontouchstart' in document.documentElement) ||
+                (Flynn.Util.getUrlFlag('mousetouch')));
 
         if (this.developerModeEnabled){
             console.log('DEV: title=' + document.title);
@@ -274,6 +276,9 @@ Flynn.Mcp = Class.extend({
                     if(label){
                         self.canvas.ctx.vectorText(label, 1.5, 10, self.canvasHeight-20, null, Flynn.Colors.GRAY);
                     }
+
+                    // Render any visible virtual button touch regions
+                    self.input.renderTouchRegions(self.canvas.ctx);
                 }
             }
         });

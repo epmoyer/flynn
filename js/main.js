@@ -4,7 +4,7 @@ if (typeof Game == "undefined") {
 
 Game.CANVAS_HEIGHT = 768;
 Game.CANVAS_WIDTH = 1024;
-Game.SPEED_FACTOR = 0.7;
+Game.SPEED_FACTOR = 1.0;
 
 Game.States = {
     NO_CHANGE: 0,
@@ -12,6 +12,7 @@ Game.States = {
     HOME:      1,
     DEMO1:     2,
     DEMO2:     3,
+    DEMO3:     4,
 
     END:       90,
     CONFIG:    91,
@@ -39,6 +40,8 @@ Game.Main = Class.extend({
                         return new Game.StateDemo1(self.mcp);
                     case Game.States.DEMO2:
                         return new Game.StateDemo2(self.mcp);
+                    case Game.States.DEMO3:
+                        return new Game.StateDemo3(self.mcp);
                     case Game.States.END:
                         return new Flynn.StateEnd(
                             self.mcp,
@@ -110,11 +113,26 @@ Game.Main = Class.extend({
         this.mcp.optionManager.loadFromCookies();
         
         // Set resize handler and force a resize
+        var button_size = 80;
+        var x, y;
         this.mcp.setResizeFunc( function(width, height){
             if(self.mcp.browserSupportsTouch){
-                self.input.addTouchRegion("thrust",0,0,width/2,height); // Left side of screen
-                self.input.addTouchRegion("fire",width/2+1,0,width,height); // Right side of screen
+                x = Game.CANVAS_WIDTH - 1.5*button_size;
+                y = Game.CANVAS_HEIGHT - 2.2*button_size;
+                self.input.addTouchRegion("thrust",
+                    x, y, x+button_size, y+button_size,
+                    'round'
+                    );
+                x -= 1.5 * button_size; 
+                self.input.addTouchRegion("fire",
+                    x, y, x+button_size, y+button_size,
+                    'round'
+                    ); 
                 self.input.addTouchRegion("enter",0,0,width,height); // Whole screen
+
+                // Temp show for debugging
+                self.input.showTouchRegion("thrust");
+                self.input.showTouchRegion("fire");
             }
         });
         this.mcp.resize();

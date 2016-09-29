@@ -105,7 +105,7 @@ Game.StateDemo2 = Flynn.State.extend({
     handleInputs: function(input, paceFactor) {
         
         if (input.virtualButtonIsPressed("right")){
-            this.mcp.nextState = Game.States.HOME;
+            this.mcp.nextState = Game.States.DEMO3;
         }
         if (input.virtualButtonIsPressed("left")){
             this.mcp.nextState = Game.States.DEMO1;
@@ -143,14 +143,7 @@ Game.StateDemo2 = Flynn.State.extend({
         var i, j, x;
         var heading_color = Flynn.Colors.YELLOW;
         
-        Game.render_page_name (ctx, Game.States.DEMO2);
-        ctx.vectorLine(margin, 37, this.canvasWidth-margin-1, 37, Flynn.Colors.GREEN);
-        ctx.vectorRect(
-            margin, 
-            margin, 
-            this.canvasWidth-2*margin,
-            this.canvasHeight-2*margin,
-            Flynn.Colors.GREEN);
+        Game.render_page_frame (ctx, Game.States.DEMO2);
 
         this.physics.render(ctx);
     },
