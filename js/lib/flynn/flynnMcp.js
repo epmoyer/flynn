@@ -4,6 +4,10 @@ Flynn.Mcp = Class.extend({
     init: function(canvasWidth, canvasHeight, input, noChangeState, gameSpeedFactor) {
         "use strict";
 
+        // TODO: This is a temporary step towart the new initialization paradigm.  
+        //       Will go away when Flynn.init() exists.
+        Flynn.mcp = this;
+
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.input = input;
@@ -14,6 +18,7 @@ Flynn.Mcp = Class.extend({
         this.arcadeModeEnabled = false;
         this.iCadeModeEnabled = false;
         this.backEnabled = false;
+        this.mousetouchEnabled = false;
         
         this.credits = 0;
         this.nextState = noChangeState;
@@ -67,6 +72,11 @@ Flynn.Mcp = Class.extend({
             this.backEnabled = true;
         }
 
+        // Detect mousetouch from URL arguments ("?mousetouch")
+        if(Flynn.Util.getUrlFlag("mousetouch")){
+            this.mousetouchEnabled = true;
+        }
+
         //--------------------------
         // Browser/platform support
         //--------------------------
@@ -85,8 +95,8 @@ Flynn.Mcp = Class.extend({
 
         // SUPPORT: Touch
         this.browserSupportsTouch = (
-                ('ontouchstart' in document.documentElement) ||
-                (Flynn.Util.getUrlFlag('mousetouch')));
+            ('ontouchstart' in document.documentElement) ||
+            this.mousetouchEnabled );
 
         if (this.developerModeEnabled){
             console.log('DEV: title=' + document.title);
@@ -256,11 +266,13 @@ Flynn.Mcp = Class.extend({
             if(!skipThisFrame){
                 // Change state (if pending)
                 if (self.nextState !== self.noChangeState) {
+                    self.input.hideTouchRegionAll();
                     if(self.currentState && self.currentState.destructor){
                         self.currentState.destructor();
                     }
                     self.currentState = self.stateBuilderFunc(self.nextState);
                     self.nextState = self.noChangeState;
+
                 }
 
                 // Update clock and timers

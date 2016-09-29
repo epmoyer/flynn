@@ -117,8 +117,8 @@ Game.Main = Class.extend({
         var x, y;
         this.mcp.setResizeFunc( function(width, height){
             if(self.mcp.browserSupportsTouch){
-                x = Game.CANVAS_WIDTH - 1.5*button_size;
-                y = Game.CANVAS_HEIGHT - 2.2*button_size;
+                x = Game.CANVAS_WIDTH - 1.4*button_size;
+                y = Game.CANVAS_HEIGHT - 1.4*button_size;
                 self.input.addTouchRegion("thrust",
                     x, y, x+button_size, y+button_size,
                     'round'
@@ -128,11 +128,7 @@ Game.Main = Class.extend({
                     x, y, x+button_size, y+button_size,
                     'round'
                     ); 
-                self.input.addTouchRegion("enter",0,0,width,height); // Whole screen
-
-                // Temp show for debugging
-                self.input.showTouchRegion("thrust");
-                self.input.showTouchRegion("fire");
+                //self.input.addTouchRegion("enter",0,0,width,height); // Whole screen
             }
         });
         this.mcp.resize();

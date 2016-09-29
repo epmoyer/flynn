@@ -50,6 +50,8 @@ Game.StateDemo3 = Flynn.State.extend({
             {poly_index:2, x:this.box.center_x+110, y:300}
         ];
 
+        mcp.input.showTouchRegion('thrust');
+        mcp.input.showTouchRegion('fire');
     },
 
     handleInputs: function(input, paceFactor) {

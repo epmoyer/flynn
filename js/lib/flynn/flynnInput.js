@@ -85,7 +85,7 @@ Flynn.InputHandler = Class.extend({
             }
 
             // Capture key codes (for user configuration of virualButtons).  Ignore <escape>.
-            if(self.keyCodeCaptureArmed && evt.keyCode != Flynn.KeyboardMap['escape']){
+            if(self.keyCodeCaptureArmed && evt.keyCode != Flynn.KeyboardMap.escape){
                 self.capturedKeyCode = evt.keyCode;
                 self.keyCodeCaptureArmed = false;
                 // Exit without recording any .isDown events
@@ -123,32 +123,52 @@ Flynn.InputHandler = Class.extend({
         };
         document.addEventListener("keyup", this.keyUpHandler);
 
+        //TODO: Temp until Flynn.init() implemented
+        //if(Flynn.mcp.mousetouchEnabled){
+        if(true){
+            document.addEventListener(
+                'mousedown',
+                function(event){
+                    //TODO: Temp until Flynn.init() implemented
+                    var canvas = document.getElementById("gameCanvas");
+                    var rect = canvas.getBoundingClientRect();
+                    //var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / (rect.right - rect.left);
+                    //var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / (rect.bottom - rect.top);
+                    var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                    var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                    console.log("DEV: mousedown ",x,y);
+                    self.handleTouchStart(x, y, 99999990);
+                },
+                false
+            );
+
+            document.addEventListener(
+                'mouseup',
+                function(event){
+                    //TODO: Temp until Flynn.init() implemented
+                    var canvas = document.getElementById("gameCanvas");
+                    var rect = canvas.getBoundingClientRect();
+                    //var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / (rect.right - rect.left);
+                    //var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / (rect.bottom - rect.top);
+                    var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                    var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                    console.log("DEV: mouseup ",x,y);
+                    self.handleTouchEnd(x, y, 99999990);
+                },
+                false
+            );
+        }
+
         try{
             document.addEventListener(
                 'touchstart',
                 function(event){
                     event.preventDefault();
                     var touch=event.changedTouches[0];
-                    var x = touch.pageX;
-                    var y = touch.pageY;
-                    //console.log("DEV: Touch ",x,y);
-                    for(var name in self.touchRegions){
-                        var region = self.touchRegions[name];
-                        if ((x>region.left) && (x<region.right) && (y>region.top) && (y<region.bottom)){
-                            // A touch event was detected in the region 'name'
-                            //console.log("DEV: Touch in region:", name);
-                            if(self.virtualButtons[name]){
-                                self.virtualButtons[name].isDown = true;
-                            } else if (self.uiButtons[name]){
-                                self.uiButtons[name].isDown = true;
-                            }
-                            else {
-                                console.log('Flynn: Warning: touch detected in touch region "' + name +
-                                    '" but no virtual button exists with that name.  The touch will go unreported.');
-                            }
-                            region.touchStartIdentifier = touch.identifier;
-                        }
-                    }
+                    var x = touch.pageX * Flynn.mcp.canvasWidth / window.innerWidth;
+                    var y = touch.pageY * Flynn.mcp.canvasHeight / window.innerHeight;
+                    //console.log("DEV: touchstart ",x,y);
+                    self.handleTouchStart(x, y, touch.identifier);
                 },
                 false
             );
@@ -159,24 +179,51 @@ Flynn.InputHandler = Class.extend({
                     var touch=event.changedTouches[0];
                     var x = touch.pageX;
                     var y = touch.pageY;
-                    for(var name in self.touchRegions){
-                        var region = self.touchRegions[name];
-                        // If the unique identifier associated with this touchend event matches
-                        // the identifier associated with the most recent touchstart event
-                        // for this touchRegion.
-                        if (region.touchStartIdentifier == touch.identifier){
-                            if(self.virtualButtons[name]){
-                                // Mark the associated virtual button as not down and clear its press reporting.
-                                self.virtualButtons[name].isDown = false;
-                                self.virtualButtons[name].pressWasReported = false;
-                            }
-                        }
-                    }
+                    //console.log("DEV: touchend ",x,y);
+                    self.handleTouchEnd(x, y, touch.identifier);
                 },
                 false
             );
         }
         catch(err){
+        }
+    },
+
+    handleTouchStart: function(x,y,touch_identifier){
+        console.log("DEV: handleTouchStart() ",x,y);
+        for(var name in this.touchRegions){
+            var region = this.touchRegions[name];
+            if ((x>region.left) && (x<region.right) && (y>region.top) && (y<region.bottom)){
+                // A touch event was detected in the region 'name'
+                //console.log("DEV: Touch in region:", name);
+                if(this.virtualButtons[name]){
+                    this.virtualButtons[name].isDown = true;
+                } else if (this.uiButtons[name]){
+                    this.uiButtons[name].isDown = true;
+                }
+                else {
+                    console.log('Flynn: Warning: touch detected in touch region "' + name +
+                        '" but no virtual button exists with that name.  The touch will go unreported.');
+                }
+                region.touchStartIdentifier = touch_identifier;
+            }
+        }
+    },
+
+    handleTouchEnd: function(x,y,touch_identifier){
+        console.log("DEV: handleTouchEnd() ",x,y);
+        for(var name in this.touchRegions){
+            var region = this.touchRegions[name];
+            // If the unique identifier associated with this touchend event matches
+            // the identifier associated with the most recent touchstart event
+            // for this touchRegion.
+            if (region.touchStartIdentifier == touch_identifier){
+                if(this.virtualButtons[name]){
+                    // Mark the associated virtual button as not down and clear its press reporting.
+                    this.virtualButtons[name].isDown = false;
+                    this.virtualButtons[name].pressWasReported = false;
+                }
+            }
         }
     },
 
@@ -394,14 +441,14 @@ Flynn.InputHandler = Class.extend({
                         false
                         );
                     if(this.virtualButtonIsDown(name)){
-                        ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+                        ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
                     }
                     else{
-                        ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+                        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
                     }
                     ctx.fill();
                     ctx.lineWidth = 2;
-                    ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
                     ctx.stroke();
                 }
             }
