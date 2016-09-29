@@ -14,11 +14,11 @@ Flynn.Mcp = Class.extend({
         this.noChangeState = noChangeState;
         this.gameSpeedFactor = gameSpeedFactor;
 
-        this.developerModeEnabled = false;
-        this.arcadeModeEnabled = false;
-        this.iCadeModeEnabled = false;
-        this.backEnabled = false;
-        this.mousetouchEnabled = false;
+        this.developerModeEnabled = Flynn.Util.getUrlFlag("develop");
+        this.arcadeModeEnabled = Flynn.Util.getUrlFlag("arcade");
+        this.iCadeModeEnabled = Flynn.Util.getUrlFlag("icade");
+        this.backEnabled = Flynn.Util.getUrlFlag("back");
+        this.mousetouchEnabled = Flynn.Util.getUrlFlag("mousetouch");
         
         this.credits = 0;
         this.nextState = noChangeState;
@@ -47,35 +47,13 @@ Flynn.Mcp = Class.extend({
             ["No Name", 100],
         ];
 
-        // Detect developer mode from URL arguments ("?develop")
-        if(Flynn.Util.getUrlFlag("develop")){
-            this.developerModeEnabled = true;
-        }
-        
         this.canvas = new Flynn.Canvas(this, canvasWidth, canvasHeight);
 
-        // Detect arcade mode from URL arguments ("?arcade")
-        if(Flynn.Util.getUrlFlag("arcade")){
-            this.arcadeModeEnabled = true;
-        }
-
-        // Detect iCade mode from URL arguments ("?icade")
-        if(Flynn.Util.getUrlFlag("icade")){
-            this.iCadeModeEnabled = true;
+        if(this.iCadeModeEnabled){
             this.input.enableICade();
             this.arcadeModeEnabled = true; // iCade mode forces arcade mode
         }
         this.input.setupUIButtons();
-
-        // Detect back enable from URL arguments ("?back")
-        if(Flynn.Util.getUrlFlag("back")){
-            this.backEnabled = true;
-        }
-
-        // Detect mousetouch from URL arguments ("?mousetouch")
-        if(Flynn.Util.getUrlFlag("mousetouch")){
-            this.mousetouchEnabled = true;
-        }
 
         //--------------------------
         // Browser/platform support
@@ -266,7 +244,11 @@ Flynn.Mcp = Class.extend({
             if(!skipThisFrame){
                 // Change state (if pending)
                 if (self.nextState !== self.noChangeState) {
+
+                    // Hide all touch controls on a state change
                     self.input.hideTouchRegionAll();
+                    self.input.hideVirtualJoystickAll();
+
                     if(self.currentState && self.currentState.destructor){
                         self.currentState.destructor();
                     }
@@ -289,8 +271,9 @@ Flynn.Mcp = Class.extend({
                         self.canvas.ctx.vectorText(label, 1.5, 10, self.canvasHeight-20, null, Flynn.Colors.GRAY);
                     }
 
-                    // Render any visible virtual button touch regions
+                    // Render any visible virtual controls
                     self.input.renderTouchRegions(self.canvas.ctx);
+                    self.input.renderVirtualJoysticks(self.canvas.ctx);
                 }
             }
         });

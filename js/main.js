@@ -133,6 +133,11 @@ Game.Main = Class.extend({
         });
         this.mcp.resize();
 
+        this.mcp.input.addVirtualJoystick({
+            pos: {x: 80, y: Game.CANVAS_HEIGHT-80},
+            name: 'stick',
+        });
+
         // Audio
         // var soundMusic = new Howl({
         //  //src: ['sounds/song_roundabout.ogg', 'sounds/song_roundabout.mp3'],

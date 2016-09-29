@@ -52,6 +52,7 @@ Game.StateDemo3 = Flynn.State.extend({
 
         mcp.input.showTouchRegion('thrust');
         mcp.input.showTouchRegion('fire');
+        mcp.input.showVirtualJoystick('stick');
     },
 
     handleInputs: function(input, paceFactor) {

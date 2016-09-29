@@ -28,7 +28,10 @@ Flynn.VirtualButton = Class.extend({
 
 Flynn.InputHandler = Class.extend({
 
+    MOUSE_IDENTIFIER: 99999991,
+
     init: function() {
+
         this.iCadeModeEnabled = false;
 
         this.virtualButtons = {};
@@ -37,6 +40,8 @@ Flynn.InputHandler = Class.extend({
 
         this.uiButtons = {};
         this.keyCodeToUiButtonName = {};
+
+        this.virtualJoysticks = {};
 
         // Key Code capture support for user configuration of key assignments
         this.keyCodeCaptureArmed = false;
@@ -132,12 +137,10 @@ Flynn.InputHandler = Class.extend({
                     //TODO: Temp until Flynn.init() implemented
                     var canvas = document.getElementById("gameCanvas");
                     var rect = canvas.getBoundingClientRect();
-                    //var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / (rect.right - rect.left);
-                    //var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / (rect.bottom - rect.top);
                     var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                     var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
                     console.log("DEV: mousedown ",x,y);
-                    self.handleTouchStart(x, y, 99999990);
+                    self.handleTouchStart(x, y, self.MOUSE_IDENTIFIER);
                 },
                 false
             );
@@ -148,12 +151,27 @@ Flynn.InputHandler = Class.extend({
                     //TODO: Temp until Flynn.init() implemented
                     var canvas = document.getElementById("gameCanvas");
                     var rect = canvas.getBoundingClientRect();
-                    //var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / (rect.right - rect.left);
-                    //var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / (rect.bottom - rect.top);
                     var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                     var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
                     console.log("DEV: mouseup ",x,y);
-                    self.handleTouchEnd(x, y, 99999990);
+                    self.handleTouchEnd(x, y, self.MOUSE_IDENTIFIER);
+                },
+                false
+            );
+
+            document.addEventListener(
+                'mousemove',
+                function(event){
+                    // If a button is pressed
+                    if(event.which){
+                        //TODO: Temp until Flynn.init() implemented
+                        var canvas = document.getElementById("gameCanvas");
+                        var rect = canvas.getBoundingClientRect();
+                        var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                        var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                        console.log("DEV: mousemove ",x,y);
+                        self.handleTouchMove(x, y, self.MOUSE_IDENTIFIER);
+                    }
                 },
                 false
             );
@@ -225,6 +243,10 @@ Flynn.InputHandler = Class.extend({
                 }
             }
         }
+    },
+
+    handleTouchMove: function(x,y,touch_identifier){
+        console.log("DEV: handleTouchMove() ",x,y);
     },
 
     setupUIButtons: function(){
@@ -519,16 +541,34 @@ Flynn.InputHandler = Class.extend({
         return false;
     },
 
-    // isKeyCodeUnavailable: function(keyCode){
-    //  // Returns true if the keyCode is assigned to any virtual button NOT INCLUDING
-    //  // a small number of UI keys which are avaialble to be bound user buttons simultaneously with 
-    //  // being bound to UI buttons.
-    //  for(var name in this.virtualButtons){
-    //      if(this.virtualButtons[name].boundKeyCode == keyCode){
-    //          return true;
-    //      }
-    //  }
-    //  return false;
-    // },
+    addVirtualJoystick: function(opts){
+        opts = opts || {};
+        var joystick = new Flynn.VirtualJoystick(opts);
+        this.virtualJoysticks[joystick.name] = joystick;
+    },
+
+    showVirtualJoystick: function(name) {
+        if(this.virtualJoysticks[name]){
+            this.virtualJoysticks[name].show();
+        }
+        else{
+            console.log('Flynn: Warning: showVirtualJoystick() was called for "' + name +
+                '" but no virtual joystick with that name exists.');
+        }
+    },
+
+    hideVirtualJoystickAll: function() {
+        var name;
+        for(name in this.virtualJoysticks){
+            this.virtualJoysticks[name].hide();
+        }
+    },
+
+    renderVirtualJoysticks: function(ctx) {
+        var name;
+        for(name in this.virtualJoysticks){
+            this.virtualJoysticks[name].render(ctx);
+        }
+    },
 
 });

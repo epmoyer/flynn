@@ -74,6 +74,10 @@ Flynn.Util = {
         return Math.abs(a-b) <= distance;
     },
 
+    distance: function(x1, y1, x2, y2){
+        return Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+    },
+
     interceptSolution: function(B_v, u_v, A_v, gun_velocity){
         // Returns a targeting solution object
         //    Input:
