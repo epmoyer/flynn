@@ -211,8 +211,14 @@ Flynn.Canvas = Class.extend({
                 }
             };
 
-            ctx.vectorRect = function(x, y, width, height, color){
-                // Finish the line drawing 
+            ctx.vectorRect = function(x, y, width, height, color, fill_color){
+                
+                if(typeof(fill_color)!=='undefined'){
+                    this.fillStyle = fill_color;
+                    this.fillRect(x, y, width, height);
+                }
+
+                // Draw a rect using vectors
                 this.vectorStart(color);
                 this.vectorMoveTo(x, y);
                 this.vectorLineTo(x+width-1, y);
@@ -223,7 +229,7 @@ Flynn.Canvas = Class.extend({
             };
 
             ctx.vectorLine = function(x1, y1, x2, y2, color){
-                // Finish the line drawing 
+                // Draw a vector line
                 this.vectorStart(color);
                 this.vectorMoveTo(x1, y1);
                 this.vectorLineTo(x2, y2);
@@ -454,7 +460,9 @@ Flynn.Canvas = Class.extend({
             }
             
             // Update screen and request callback
-            refresh_f(callback_f, self.canvas);
+            if(!Flynn.mcp.halted){
+                refresh_f(callback_f, self.canvas);
+            }
 
         };
         refresh_f(callback_f, this.canvas );

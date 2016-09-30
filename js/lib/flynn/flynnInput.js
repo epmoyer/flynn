@@ -128,18 +128,18 @@ Flynn.InputHandler = Class.extend({
         };
         document.addEventListener("keyup", this.keyUpHandler);
 
-        //TODO: Temp until Flynn.init() implemented
-        //if(Flynn.mcp.mousetouchEnabled){
-        if(true){
+        if(Flynn.mcp.mousetouchEnabled){
             document.addEventListener(
                 'mousedown',
                 function(event){
-                    //TODO: Temp until Flynn.init() implemented
-                    var canvas = document.getElementById("gameCanvas");
+                    if(Flynn.mcp.halted){
+                        Flynn.mcp.devResume();
+                    }
+                    var canvas = Flynn.mcp.canvas.canvas;
                     var rect = canvas.getBoundingClientRect();
                     var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                     var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
-                    console.log("DEV: mousedown ",x,y);
+                    //console.log("DEV: mousedown ",x,y);
                     self.handleTouchStart(x, y, self.MOUSE_IDENTIFIER);
                 },
                 false
@@ -148,12 +148,11 @@ Flynn.InputHandler = Class.extend({
             document.addEventListener(
                 'mouseup',
                 function(event){
-                    //TODO: Temp until Flynn.init() implemented
-                    var canvas = document.getElementById("gameCanvas");
+                    var canvas = Flynn.mcp.canvas.canvas;
                     var rect = canvas.getBoundingClientRect();
                     var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                     var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
-                    console.log("DEV: mouseup ",x,y);
+                    //console.log("DEV: mouseup ",x,y);
                     self.handleTouchEnd(x, y, self.MOUSE_IDENTIFIER);
                 },
                 false
@@ -164,12 +163,11 @@ Flynn.InputHandler = Class.extend({
                 function(event){
                     // If a button is pressed
                     if(event.which){
-                        //TODO: Temp until Flynn.init() implemented
-                        var canvas = document.getElementById("gameCanvas");
+                        var canvas = Flynn.mcp.canvas.canvas;
                         var rect = canvas.getBoundingClientRect();
                         var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                         var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
-                        console.log("DEV: mousemove ",x,y);
+                        //console.log("DEV: mousemove ",x,y);
                         self.handleTouchMove(x, y, self.MOUSE_IDENTIFIER);
                     }
                 },
@@ -208,7 +206,7 @@ Flynn.InputHandler = Class.extend({
     },
 
     handleTouchStart: function(x,y,touch_identifier){
-        console.log("DEV: handleTouchStart() ",x,y);
+        //console.log("DEV: handleTouchStart() ",x,y);
         var name, region;
         for(name in this.touchRegions){
             region = this.touchRegions[name];
@@ -233,7 +231,7 @@ Flynn.InputHandler = Class.extend({
     },
 
     handleTouchEnd: function(x,y,touch_identifier){
-        console.log("DEV: handleTouchEnd() ",x,y);
+        //console.log("DEV: handleTouchEnd() ",x,y);
         var name, region, joystick;
         for(name in this.touchRegions){
             region = this.touchRegions[name];
@@ -269,7 +267,7 @@ Flynn.InputHandler = Class.extend({
     },
 
     handleTouchMove: function(x,y,touch_identifier){
-        console.log("DEV: handleTouchMove() ",x,y);
+        //console.log("DEV: handleTouchMove() ",x,y);
         var name, direction, joystick, i;
         var directions=['up','down','left','right'];
         for(name in this.virtualJoysticks){
@@ -305,6 +303,9 @@ Flynn.InputHandler = Class.extend({
             this.addUiButton('UI_down',   Flynn.KeyboardMap.down);
             this.addUiButton('UI_right',  Flynn.KeyboardMap.right);
             this.addUiButton('UI_left',   Flynn.KeyboardMap.left);
+            if(Flynn.mcp.developerModeEnabled){
+                this.addUiButton('UI_halt',   Flynn.KeyboardMap.grave_accent);
+            }
         }
         else{
             this.addUiButton('UI_enter',  Flynn.KeyboardMap.icade_t1);
@@ -318,6 +319,7 @@ Flynn.InputHandler = Class.extend({
             this.addUiButton('UI_down',   Flynn.KeyboardMap.icade_down);
             this.addUiButton('UI_right',  Flynn.KeyboardMap.icade_right);
             this.addUiButton('UI_left',   Flynn.KeyboardMap.icade_left);
+
         }
     },
 

@@ -12,7 +12,6 @@ Flynn.Mcp = Class.extend({
         this.gameSpeedFactor = gameSpeedFactor;
         this.stateBuilderFunc = stateBuilderFunc;
 
-        this.input = new Flynn.InputHandler();
 
         this.developerModeEnabled = Flynn.Util.getUrlFlag("develop");
         this.arcadeModeEnabled = Flynn.Util.getUrlFlag("arcade");
@@ -20,6 +19,7 @@ Flynn.Mcp = Class.extend({
         this.backEnabled = Flynn.Util.getUrlFlag("back");
         this.mousetouchEnabled = Flynn.Util.getUrlFlag("mousetouch");
         
+        this.halted = false;
         this.credits = 0;
         this.nextState = noChangeState;
         this.currentState = null;
@@ -47,6 +47,7 @@ Flynn.Mcp = Class.extend({
         ];
 
         this.canvas = new Flynn.Canvas(canvasWidth, canvasHeight);
+        this.input = new Flynn.InputHandler();
 
         if(this.iCadeModeEnabled){
             this.input.enableICade();
@@ -148,6 +149,28 @@ Flynn.Mcp = Class.extend({
 
     setResizeFunc: function(resizeFunc){
         this.resizeFunc = resizeFunc;
+    },
+
+    devHalt: function(){
+        var ctx = this.canvas.ctx;
+        var box_height = 60;
+        var box_margin = 20;
+        var box_width = this.canvasWidth - box_margin*2;
+        var box_x = box_margin;
+        var box_y = this.canvasHeight/2 - box_height/2;
+
+        this.halted = true;
+        console.log('DEV: Execution halted');
+        ctx.vectorRect(box_x, box_y, box_width, box_height, 
+            Flynn.Colors.CYAN,
+            Flynn.Colors.BLACK);
+        ctx.vectorText("MCP HALTED.  CLICK TO RESUME.", 4.0, null, null, null, Flynn.Colors.WHITE);
+    },
+
+    devResume: function(){
+        this.halted = false;
+        console.log('DEV: Execution resumed');
+        this.run();
     },
 
     cycleDevPacingMode: function(){
@@ -269,6 +292,12 @@ Flynn.Mcp = Class.extend({
                     // Render any visible virtual controls
                     self.input.renderTouchRegions(self.canvas.ctx);
                     self.input.renderVirtualJoysticks(self.canvas.ctx);
+
+                    // Process halt
+                    if(   self.developerModeEnabled 
+                       && self.input.virtualButtonIsPressed("UI_halt")){
+                        self.devHalt();
+                    }
                 }
             }
         });
