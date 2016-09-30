@@ -592,6 +592,9 @@ Flynn.InputHandler = Class.extend({
     },
 
     virtualButtonIsDown: function(name) {
+        // Reports the current "physical" state of the button.
+        // Returns "true" if down, and will continue to return true if 
+        // called in the future if the button is held down.
         if(this.virtualButtons[name]){
             return this.virtualButtons[name].isDown;
         }
@@ -604,7 +607,12 @@ Flynn.InputHandler = Class.extend({
         }
     },
 
-    virtualButtonIsPressed: function(name) {
+    virtualButtonWasPressed: function(name) {
+        // Reports whether a "button down" event has occurred. 
+        // Returns "true" if a button down event occurred since the last time
+        // this function was called.
+        // Returns "false" on subsequent calls until the button is released and 
+        // pressed again.
         if(this.virtualButtons[name]){
             if (this.virtualButtons[name].pressWasReported){
                 // The current press was already reported, so don't report it again.

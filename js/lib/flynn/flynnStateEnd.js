@@ -45,12 +45,12 @@ Flynn.StateEnd = Flynn.State.extend({
 
     handleInputs: function(input, paceFactor) {
         if (this.hasEnteredName) {
-            if (input.virtualButtonIsPressed("UI_enter")) {
+            if (input.virtualButtonWasPressed("UI_enter")) {
                 // Exit back to the parent state
                 Flynn.mcp.nextState = this.parentState;
             }
         } else {
-            if (input.virtualButtonIsPressed("UI_enter")) {
+            if (input.virtualButtonWasPressed("UI_enter")) {
                 // take sate to next stage
                 this.hasEnteredName = true;
                 this.namefield.blur();

@@ -295,7 +295,7 @@ Flynn.Mcp = Class.extend({
 
                     // Process halt
                     if(   self.developerModeEnabled 
-                       && self.input.virtualButtonIsPressed("UI_halt")){
+                       && self.input.virtualButtonWasPressed("UI_halt")){
                         self.devHalt();
                     }
                 }

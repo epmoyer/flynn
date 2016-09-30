@@ -62,7 +62,7 @@ Flynn.StateConfig = Flynn.State.extend({
                 }
             }
 
-            if (input.virtualButtonIsPressed("UI_escape")) {
+            if (input.virtualButtonWasPressed("UI_escape")) {
                 this.keyAssignmentInProgress = false;
             }
             return;
@@ -71,28 +71,28 @@ Flynn.StateConfig = Flynn.State.extend({
         var optionDescriptor = Flynn.mcp.optionManager.optionDescriptors[this.optionKeyNames[this.selectedLineIndex]];
 
         if(Flynn.mcp.arcadeModeEnabled) {
-            if (input.virtualButtonIsPressed("quarter")) {
+            if (input.virtualButtonWasPressed("quarter")) {
                 Flynn.mcp.credits += 1;
                 this.insert_coin_sound.play();
             }
         }
-        if (input.virtualButtonIsPressed("UI_escape")) {
+        if (input.virtualButtonWasPressed("UI_escape")) {
             // Exit back to the parent state
             Flynn.mcp.nextState = this.parentState;
         }
-        if (input.virtualButtonIsPressed("UI_down")) {
+        if (input.virtualButtonWasPressed("UI_down")) {
             ++this.selectedLineIndex;
             if(this.selectedLineIndex >= this.numOptions){
                 this.selectedLineIndex = 0;
             }
         }
-        if (input.virtualButtonIsPressed("UI_up")) {
+        if (input.virtualButtonWasPressed("UI_up")) {
             --this.selectedLineIndex;
             if(this.selectedLineIndex < 0){
                 this.selectedLineIndex = this.numOptions-1;
             }
         }
-        if (input.virtualButtonIsPressed("UI_enter")) {
+        if (input.virtualButtonWasPressed("UI_enter")) {
             switch(optionDescriptor.type){
                 case Flynn.OptionType.BOOLEAN:
                     // Toggle boolean
@@ -113,10 +113,10 @@ Flynn.StateConfig = Flynn.State.extend({
             }
         }
         var optionIndexDelta = 0;
-        if (input.virtualButtonIsPressed("UI_left")) {
+        if (input.virtualButtonWasPressed("UI_left")) {
             optionIndexDelta = -1;
         }
-        if (input.virtualButtonIsPressed("UI_right")) {
+        if (input.virtualButtonWasPressed("UI_right")) {
             optionIndexDelta = 1;
         }
         if(optionIndexDelta !== 0){

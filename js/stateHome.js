@@ -135,33 +135,33 @@ Game.StateHome = Flynn.State.extend({
 
     handleInputs: function(input, paceFactor) {
 
-        if (input.virtualButtonIsPressed("UI_right")){
+        if (input.virtualButtonWasPressed("UI_right")){
             Flynn.mcp.nextState = Game.States.DEMO1;
         }
-        if (input.virtualButtonIsPressed("UI_left")){
+        if (input.virtualButtonWasPressed("UI_left")){
             Flynn.mcp.nextState = Game.States.DEMO3;
         }
-        if (input.virtualButtonIsPressed("UI_enter")){
+        if (input.virtualButtonWasPressed("UI_enter")){
             Flynn.mcp.nextState = Game.States.END;
         }
 
-        if (input.virtualButtonIsPressed("UI_escape")) {
+        if (input.virtualButtonWasPressed("UI_escape")) {
             Flynn.mcp.nextState = Game.States.CONFIG;
         }
 
         if(Flynn.mcp.developerModeEnabled){
             // Metrics toggle
-            if (input.virtualButtonIsPressed("dev_metrics")){
+            if (input.virtualButtonWasPressed("dev_metrics")){
                 Flynn.mcp.canvas.showMetrics = !Flynn.mcp.canvas.showMetrics;
             }
 
             // Toggle DEV pacing mode slow mo
-            if (input.virtualButtonIsPressed("dev_slow_mo")){
+            if (input.virtualButtonWasPressed("dev_slow_mo")){
                 Flynn.mcp.toggleDevPacingSlowMo();
             }
 
             // Toggle DEV pacing mode fps 20
-            if (input.virtualButtonIsPressed("dev_fps_20")){
+            if (input.virtualButtonWasPressed("dev_fps_20")){
                 Flynn.mcp.toggleDevPacingFps20();
             }
         }

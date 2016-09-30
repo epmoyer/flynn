@@ -251,3 +251,16 @@ Flynn.Font.Points = {
         [1.5,0,2.5,1],                                                       // `
     ],
 };
+
+Flynn.Rect= Class.extend({
+    init: function(left, top, width, height){
+        this.left = left;
+        this.top = top;
+        this.width = width;
+        this.height = height;
+        this.center_x = this.left + this.width/2;
+        this.center_y = this.top + this.height/2;
+        this.right = this.left + this.width;
+        this.bottom = this.top + this.height;
+    },
+});
