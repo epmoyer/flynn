@@ -20,9 +20,7 @@ Flynn.Config.VECTOR_OVERDRIVE_FACTOR = 0.2;  // White overdrive for vertex point
 
 Flynn.Canvas = Class.extend({
 
-    init: function(mcp, width, height) {
-        this.mcp = mcp;
-
+    init: function(width, height) {
         this.showMetrics = false;
         this.canvas = document.getElementById("gameCanvas");
         this.canvas.width = width;
@@ -40,7 +38,6 @@ Flynn.Canvas = Class.extend({
             ctx.fpsFrameCount = 0;
             ctx.fpsMsecCount = 0;
             ctx.vectorVericies = [];
-            ctx.mcp = mcp;
             ctx.ticks = 0;
 
             ctx.ACODE = "A".charCodeAt(0);
@@ -116,7 +113,7 @@ Flynn.Canvas = Class.extend({
                 var dim_color_rgb = Flynn.Util.hexToRgb(color);
                 var vectorDimFactor = 1;
                 var lineWidth = 1;
-                switch(this.mcp.options.vectorMode){
+                switch(Flynn.mcp.options.vectorMode){
                     case Flynn.VectorMode.PLAIN:
                         vectorDimFactor = 1;
                         lineWidth = 1;
@@ -173,7 +170,7 @@ Flynn.Canvas = Class.extend({
 
             ctx.vectorLineToUnconstrained = function(x, y){
                 this.vectorVericies.push(x, y);
-                if(this.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
+                if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
                     this.lineTo(x, y);
                 }
                 else{
@@ -183,7 +180,7 @@ Flynn.Canvas = Class.extend({
 
             ctx.vectorMoveToUnconstrained = function(x, y){
                 this.vectorVericies.push(x, y);
-                if(this.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
+                if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
                     this.moveTo(x, y);
                 }
                 else{
@@ -196,10 +193,10 @@ Flynn.Canvas = Class.extend({
                 // Finish the line drawing 
                 this.stroke();
 
-                if(this.mcp.options.vectorMode != Flynn.VectorMode.PLAIN){
+                if(Flynn.mcp.options.vectorMode != Flynn.VectorMode.PLAIN){
                     // Draw the (bright) vector vertex points
                     var offset, size;
-                    if(this.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
+                    if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
                         offset = 1;
                         size = 2;
                     }
@@ -409,7 +406,7 @@ Flynn.Canvas = Class.extend({
             // Calculate FPS and pacing
             //---------------------------
             var timeNow;
-            if(self.mcp.browserSupportsPerformance){
+            if(Flynn.mcp.browserSupportsPerformance){
                 timeNow = performance.now();
             }
             else{
@@ -439,19 +436,19 @@ Flynn.Canvas = Class.extend({
             //---------------------------
             var start;
             var end;
-            if(self.mcp.browserSupportsPerformance){
+            if(Flynn.mcp.browserSupportsPerformance){
                 start = performance.now();
             }
             
             animation_callback_f(paceFactor);
             
-            if(self.mcp.browserSupportsPerformance){
+            if(Flynn.mcp.browserSupportsPerformance){
                 end = performance.now();
             }
 
             if (self.showMetrics){
                 self.ctx.drawFpsGague(self.canvas.width-70, self.canvas.height-15, Flynn.Colors.GREEN, self.ctx.fps/120);
-                if(self.mcp.browserSupportsPerformance){
+                if(Flynn.mcp.browserSupportsPerformance){
                     self.ctx.drawFpsGague(self.canvas.width-70, self.canvas.height-21, Flynn.Colors.YELLOW, (end-start)/(1000/120));
                 }
             }

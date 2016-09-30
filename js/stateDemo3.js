@@ -4,14 +4,12 @@ if (typeof Game == "undefined") {
 
 Game.StateDemo3 = Flynn.State.extend({
 
-    init: function(mcp) {
+    init: function() {
         var i, x;
-        this._super(mcp);
+        this._super();
         
-        this.canvasWidth = mcp.canvas.ctx.width;
-        this.canvasHeight = mcp.canvas.ctx.height;
-        this.center_x = this.canvasWidth/2;
-        this.center_y = this.canvasHeight/2;
+        this.center_x = Flynn.mcp.canvasWidth/2;
+        this.center_y = Flynn.mcp.canvasHeight/2;
         this.viewport_v = new Victor(0,0);
         this.gameClock = 0;
 
@@ -50,34 +48,34 @@ Game.StateDemo3 = Flynn.State.extend({
             {poly_index:2, x:this.box.center_x+110, y:310}
         ];
 
-        mcp.input.showTouchRegion('thrust');
-        mcp.input.showTouchRegion('fire');
-        mcp.input.showVirtualJoystick('stick');
+        Flynn.mcp.input.showTouchRegion('thrust');
+        Flynn.mcp.input.showTouchRegion('fire');
+        Flynn.mcp.input.showVirtualJoystick('stick');
     },
 
     handleInputs: function(input, paceFactor) {
         
         if (input.virtualButtonIsPressed("UI_right")){
-            this.mcp.nextState = Game.States.HOME;
+            Flynn.mcp.nextState = Game.States.HOME;
         }
         if (input.virtualButtonIsPressed("UI_left")){
-            this.mcp.nextState = Game.States.DEMO2;
+            Flynn.mcp.nextState = Game.States.DEMO2;
         }
 
-        if(this.mcp.developerModeEnabled){
+        if(Flynn.mcp.developerModeEnabled){
             // Metrics toggle
             if (input.virtualButtonIsPressed("dev_metrics")){
-                this.mcp.canvas.showMetrics = !this.mcp.canvas.showMetrics;
+                Flynn.mcp.canvas.showMetrics = !Flynn.mcp.canvas.showMetrics;
             }
 
             // Toggle DEV pacing mode slow mo
             if (input.virtualButtonIsPressed("dev_slow_mo")){
-                this.mcp.toggleDevPacingSlowMo();
+                Flynn.mcp.toggleDevPacingSlowMo();
             }
 
             // Toggle DEV pacing mode fps 20
             if (input.virtualButtonIsPressed("dev_fps_20")){
-                this.mcp.toggleDevPacingFps20();
+                Flynn.mcp.toggleDevPacingFps20();
             }
         }
     },

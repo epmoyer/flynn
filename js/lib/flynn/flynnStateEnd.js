@@ -7,8 +7,8 @@ Flynn.StateEnd = Flynn.State.extend({
 
     CURSOR_BLINK_RATE: 2,
 
-    init: function(mcp, score, leaderboard, color, title, prompt, parentState) {
-        this._super(mcp);
+    init: function(score, leaderboard, color, title, prompt, parentState) {
+        this._super();
 
         this.score = score;
         this.leaderboard = leaderboard;
@@ -47,7 +47,7 @@ Flynn.StateEnd = Flynn.State.extend({
         if (this.hasEnteredName) {
             if (input.virtualButtonIsPressed("UI_enter")) {
                 // Exit back to the parent state
-                this.mcp.nextState = this.parentState;
+                Flynn.mcp.nextState = this.parentState;
             }
         } else {
             if (input.virtualButtonIsPressed("UI_enter")) {

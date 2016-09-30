@@ -32,8 +32,7 @@ Flynn.OptionManager = Class.extend({
     // The current value for all shadowed options will be maintained in mcp.options.<keyName> for convenience
     SHADOWED_OPTION_TYPES: [Flynn.OptionType.MULTI, Flynn.OptionType.BOOLEAN],
 
-    init: function(mcp){
-        this.mcp = mcp;
+    init: function(){
         this.optionDescriptors = {};
         this.cookiesFetched = false;
 
@@ -48,13 +47,13 @@ Flynn.OptionManager = Class.extend({
     addOption: function(keyName, type, defaultValue, currentValue, promptText, promptValues, commandHandler){
         var descriptor = new Flynn.OptionDescriptor(keyName, type, defaultValue, currentValue, promptText, promptValues, commandHandler);
         if (type in this.SHADOWED_OPTION_TYPES){
-            this.mcp.options[keyName] = currentValue;
+            Flynn.mcp.options[keyName] = currentValue;
         }
         this.optionDescriptors[keyName] = descriptor;
     },
 
     addOptionFromVirtualButton: function(virtualButtonName){
-        var keyCode = this.mcp.input.getVirtualButtonBoundKeyCode(virtualButtonName);
+        var keyCode = Flynn.mcp.input.getVirtualButtonBoundKeyCode(virtualButtonName);
         var keyName = virtualButtonName;
         var descriptor = new Flynn.OptionDescriptor(keyName, Flynn.OptionType.INPUT_KEY, keyCode, keyCode, keyName, null, null);
         this.optionDescriptors[keyName] = descriptor;
@@ -65,10 +64,10 @@ Flynn.OptionManager = Class.extend({
             var optionDescriptor = this.optionDescriptors[keyName];
             optionDescriptor.currentValue = value;
             if(optionDescriptor.type in this.SHADOWED_OPTION_TYPES){
-                this.mcp.options[keyName] = value;
+                Flynn.mcp.options[keyName] = value;
             }
             if(optionDescriptor.type === Flynn.OptionType.INPUT_KEY){
-                this.mcp.input.bindVirtualButtonToKey(keyName, value);
+                Flynn.mcp.input.bindVirtualButtonToKey(keyName, value);
             }
         }
         else{
@@ -98,7 +97,7 @@ Flynn.OptionManager = Class.extend({
             var descriptor = this.optionDescriptors[keyName];
             descriptor.currentValue = descriptor.defaultValue;
             if(descriptor.type in this.SHADOWED_OPTION_TYPES){
-                this.mcp.options[keyName] = descriptor.defaultValue;
+                Flynn.mcp.options[keyName] = descriptor.defaultValue;
             }
         }
     },
@@ -119,7 +118,7 @@ Flynn.OptionManager = Class.extend({
                 try{
                     var parsedValue = JSON.parse(attributeValue);
                     this.setOption(optionKey, parsedValue);
-                    if(this.mcp.developerModeEnabled){
+                    if(Flynn.mcp.developerModeEnabled){
                         console.log('DEV: flynnOptionManager: Fetched "' + optionKey + '" = "' + parsedValue + '".');
                     }
                 }
@@ -152,7 +151,7 @@ Flynn.OptionManager = Class.extend({
             var optionValue = this.getOption(optionKey);
             var cookieValue = JSON.stringify(optionValue);
             Cookies.set(cookieKey, cookieValue, { expires: Infinity });
-            if(this.mcp.developerModeEnabled){
+            if(Flynn.mcp.developerModeEnabled){
                 console.log('DEV: flynnOptionManager: Saved "' + optionKey + '" = "' + optionValue + '".');
             }
         }

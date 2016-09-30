@@ -1,18 +1,18 @@
 // Master Control Program 
 Flynn.Mcp = Class.extend({
 
-    init: function(canvasWidth, canvasHeight, input, noChangeState, gameSpeedFactor) {
+    init: function(canvasWidth, canvasHeight, noChangeState, gameSpeedFactor, stateBuilderFunc) {
         "use strict";
 
-        // TODO: This is a temporary step towart the new initialization paradigm.  
-        //       Will go away when Flynn.init() exists.
         Flynn.mcp = this;
 
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
-        this.input = input;
         this.noChangeState = noChangeState;
         this.gameSpeedFactor = gameSpeedFactor;
+        this.stateBuilderFunc = stateBuilderFunc;
+
+        this.input = new Flynn.InputHandler();
 
         this.developerModeEnabled = Flynn.Util.getUrlFlag("develop");
         this.arcadeModeEnabled = Flynn.Util.getUrlFlag("arcade");
@@ -30,7 +30,6 @@ Flynn.Mcp = Class.extend({
 
         this.version = 'v2.0';  // Flynn version
 
-        this.stateBuilderFunc = null;
         this.resizeFunc = null;
         this.slowMoDebug = false;
         this.clock = 0;
@@ -47,7 +46,7 @@ Flynn.Mcp = Class.extend({
             ["No Name", 100],
         ];
 
-        this.canvas = new Flynn.Canvas(this, canvasWidth, canvasHeight);
+        this.canvas = new Flynn.Canvas(canvasWidth, canvasHeight);
 
         if(this.iCadeModeEnabled){
             this.input.enableICade();
@@ -145,10 +144,6 @@ Flynn.Mcp = Class.extend({
             }
         };
         window.addEventListener("resize", this.resize);
-    },
-
-    setStateBuilderFunc: function(stateBuilderFunc){
-        this.stateBuilderFunc = stateBuilderFunc;
     },
 
     setResizeFunc: function(resizeFunc){

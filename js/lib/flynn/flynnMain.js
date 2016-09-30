@@ -6,6 +6,22 @@ if (typeof Flynn == "undefined") {
   var Flynn = {};  // Create namespace
 }
 
+Flynn.init = function(
+    canvasWidth,
+    canvasHeight,
+    noChangeState,
+    gameSpeedFactor, 
+    stateBuilderFunc){
+    
+    // The mcp will regester itself as Flynn.mcp when created
+    new Flynn.Mcp(
+        canvasWidth,
+        canvasHeight,
+        noChangeState,
+        gameSpeedFactor,
+        stateBuilderFunc);
+};
+
 Flynn.TICKS_PER_SECOND = 60;
 
 Flynn.DevPacingMode = {

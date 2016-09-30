@@ -38,13 +38,11 @@ Game.StateHome = Flynn.State.extend({
     TIMER_CALLBACK_TICKS: 5,
     COUNTER_ROLLOVER: 999,
 
-    init: function(mcp) {
-        this._super(mcp);
+    init: function() {
+        this._super();
         
-        this.canvasWidth = mcp.canvas.ctx.width;
-        this.canvasHeight = mcp.canvas.ctx.height;
-        this.center_x = this.canvasWidth/2;
-        this.center_y = this.canvasHeight/2;
+        this.center_x = Flynn.mcp.canvasWidth/2;
+        this.center_y = Flynn.mcp.canvasHeight/2;
         this.viewport_v = new Victor(0,0);
         this.gameClock = 0;
 
@@ -123,10 +121,10 @@ Game.StateHome = Flynn.State.extend({
 
         this.partice_gun = {
             angle: 0,
-            x: this.canvasWidth * 0.65,
-            y: this.canvasHeight*4/7,
+            x: Flynn.mcp.canvasWidth * 0.65,
+            y: Flynn.mcp.canvasHeight * 4 / 7,
             length: 100,
-            angular_velocity: Math.PI/600,
+            angular_velocity: Math.PI / 600,
             muzzle_velocity: 3
         };
 
@@ -135,33 +133,33 @@ Game.StateHome = Flynn.State.extend({
     handleInputs: function(input, paceFactor) {
 
         if (input.virtualButtonIsPressed("UI_right")){
-            this.mcp.nextState = Game.States.DEMO1;
+            Flynn.mcp.nextState = Game.States.DEMO1;
         }
         if (input.virtualButtonIsPressed("UI_left")){
-            this.mcp.nextState = Game.States.DEMO3;
+            Flynn.mcp.nextState = Game.States.DEMO3;
         }
         if (input.virtualButtonIsPressed("UI_enter")){
-            this.mcp.nextState = Game.States.END;
+            Flynn.mcp.nextState = Game.States.END;
         }
 
         if (input.virtualButtonIsPressed("UI_escape")) {
-            this.mcp.nextState = Game.States.CONFIG;
+            Flynn.mcp.nextState = Game.States.CONFIG;
         }
 
-        if(this.mcp.developerModeEnabled){
+        if(Flynn.mcp.developerModeEnabled){
             // Metrics toggle
             if (input.virtualButtonIsPressed("dev_metrics")){
-                this.mcp.canvas.showMetrics = !this.mcp.canvas.showMetrics;
+                Flynn.mcp.canvas.showMetrics = !Flynn.mcp.canvas.showMetrics;
             }
 
             // Toggle DEV pacing mode slow mo
             if (input.virtualButtonIsPressed("dev_slow_mo")){
-                this.mcp.toggleDevPacingSlowMo();
+                Flynn.mcp.toggleDevPacingSlowMo();
             }
 
             // Toggle DEV pacing mode fps 20
             if (input.virtualButtonIsPressed("dev_fps_20")){
-                this.mcp.toggleDevPacingFps20();
+                Flynn.mcp.toggleDevPacingFps20();
             }
         }
     },
@@ -176,7 +174,7 @@ Game.StateHome = Flynn.State.extend({
             this.timers.set("Explode1", this.TIMER_EXPLODE1_TICKS);
             this.particles.explosion(
                 Flynn.Util.randomIntFromInterval(
-                    this.canvasWidth-130, this.canvasWidth-80), // x
+                    Flynn.mcp.canvasWidth-130, Flynn.mcp.canvasWidth-80), // x
                 Flynn.Util.randomIntFromInterval(350, 450),     // y
                 Flynn.Util.randomIntFromInterval(10,200),       // quantity
                 2,                                              // max_velocity
@@ -339,7 +337,7 @@ Game.StateHome = Flynn.State.extend({
             this.partice_gun.y + Math.sin(this.partice_gun.angle) * this.partice_gun.length, 
             Flynn.Colors.GRAY);
 
-        ctx.drawPolygon(this.logo, this.canvasWidth-78, 76);
+        ctx.drawPolygon(this.logo, Flynn.mcp.canvasWidth-78, 76);
 
         this.particles.draw(ctx);
 

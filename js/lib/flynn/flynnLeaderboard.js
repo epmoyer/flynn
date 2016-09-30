@@ -1,7 +1,6 @@
 Flynn.Leaderboard = Class.extend({
 
-    init: function(mcp, attributeList, maxItems, sortDescending){
-        this.mcp = mcp;
+    init: function(attributeList, maxItems, sortDescending){
         this.attributeList = attributeList;
         this.maxItems = maxItems;
         this.sortDescending = sortDescending;
@@ -24,7 +23,7 @@ Flynn.Leaderboard = Class.extend({
                 var attributeName = this.attributeList[attributeIndex];
                 var key = document.title + ':LB' + numLeaderItems + '_' + attributeName;
                 var attributeValue = Cookies.get(key);
-                if(this.mcp.developerModeEnabled){
+                if(Flynn.mcp.developerModeEnabled){
                     console.log('DEV: flynnLeaderboard: Fetched ' + key + ':' + attributeValue);
                 }
                 if(attributeValue){
@@ -61,7 +60,7 @@ Flynn.Leaderboard = Class.extend({
                 var key = document.title + ':LB' + i + '_' + attributeName;
                 var value = leaderItem[attributeName];
                 Cookies.set(key, value, { expires: Infinity });
-                if(this.mcp.developerModeEnabled){
+                if(Flynn.mcp.developerModeEnabled){
                     console.log('DEV: flynnLeaderboard: Saved ' + key + ':' + value);
                 }
             }
