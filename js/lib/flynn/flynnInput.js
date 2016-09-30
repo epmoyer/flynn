@@ -128,51 +128,70 @@ Flynn.InputHandler = Class.extend({
         };
         document.addEventListener("keyup", this.keyUpHandler);
 
+        if(Flynn.mcp.mousetouchEnabled || Flynn.mcp.developerModeEnabled){
+            try{
+                document.addEventListener(
+                    'mousedown',
+                    function(event){
+                        if(Flynn.mcp.halted){
+                            Flynn.mcp.devResume();
+                        }
+                        if(Flynn.mcp.mousetouchEnabled){
+                            var canvas = Flynn.mcp.canvas.canvas;
+                            var rect = canvas.getBoundingClientRect();
+                            var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                            var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                            //console.log("DEV: mousedown ",x,y);
+                            self.handleTouchStart(x, y, self.MOUSE_IDENTIFIER);
+                        }
+                    },
+                    false
+                );
+            }
+            catch(err){
+                console.log('Warning: Could not register "mousedown" event.');
+            }
+        }
+
         if(Flynn.mcp.mousetouchEnabled){
-            document.addEventListener(
-                'mousedown',
-                function(event){
-                    if(Flynn.mcp.halted){
-                        Flynn.mcp.devResume();
-                    }
-                    var canvas = Flynn.mcp.canvas.canvas;
-                    var rect = canvas.getBoundingClientRect();
-                    var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
-                    var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
-                    //console.log("DEV: mousedown ",x,y);
-                    self.handleTouchStart(x, y, self.MOUSE_IDENTIFIER);
-                },
-                false
-            );
-
-            document.addEventListener(
-                'mouseup',
-                function(event){
-                    var canvas = Flynn.mcp.canvas.canvas;
-                    var rect = canvas.getBoundingClientRect();
-                    var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
-                    var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
-                    //console.log("DEV: mouseup ",x,y);
-                    self.handleTouchEnd(x, y, self.MOUSE_IDENTIFIER);
-                },
-                false
-            );
-
-            document.addEventListener(
-                'mousemove',
-                function(event){
-                    // If a button is pressed
-                    if(event.which){
+            try{
+                document.addEventListener(
+                    'mouseup',
+                    function(event){
                         var canvas = Flynn.mcp.canvas.canvas;
                         var rect = canvas.getBoundingClientRect();
                         var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                         var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
-                        //console.log("DEV: mousemove ",x,y);
-                        self.handleTouchMove(x, y, self.MOUSE_IDENTIFIER);
-                    }
-                },
-                false
-            );
+                        //console.log("DEV: mouseup ",x,y);
+                        self.handleTouchEnd(x, y, self.MOUSE_IDENTIFIER);
+                    },
+                    false
+                );
+            }
+            catch(err){
+                console.log('Warning: Could not register "mouseup" event.');
+            }
+
+            try{
+                document.addEventListener(
+                    'mousemove',
+                    function(event){
+                        // If a button is pressed
+                        if(event.which){
+                            var canvas = Flynn.mcp.canvas.canvas;
+                            var rect = canvas.getBoundingClientRect();
+                            var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                            var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                            //console.log("DEV: mousemove ",x,y);
+                            self.handleTouchMove(x, y, self.MOUSE_IDENTIFIER);
+                        }
+                    },
+                    false
+                );
+            }
+            catch(err){
+                console.log('Warning: Could not register "mousemove" event.');
+            }
         }
 
         try{
@@ -188,6 +207,12 @@ Flynn.InputHandler = Class.extend({
                 },
                 false
             );
+        }
+        catch(err){
+            console.log('Warning: Could not register "touchstart" event.');
+        }
+
+        try{
             document.addEventListener(
                 'touchend',
                 function(event){
@@ -202,6 +227,7 @@ Flynn.InputHandler = Class.extend({
             );
         }
         catch(err){
+            console.log('Warning: Could not register "touchend" event.');
         }
     },
 
