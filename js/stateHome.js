@@ -29,6 +29,9 @@ Game.render_page_frame = function(ctx, page_id){
         ctx.width-2*margin,
         ctx.height-2*margin,
         Flynn.Colors.GREEN);
+
+    Flynn.mcp.input.showTouchRegion('UI_left');
+    Flynn.mcp.input.showTouchRegion('UI_right');
 };
 
 Game.StateHome = Flynn.State.extend({

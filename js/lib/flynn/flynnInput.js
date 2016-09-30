@@ -200,9 +200,16 @@ Flynn.InputHandler = Class.extend({
                 function(event){
                     event.preventDefault();
                     var touch=event.changedTouches[0];
-                    var x = touch.pageX * Flynn.mcp.canvasWidth / window.innerWidth;
-                    var y = touch.pageY * Flynn.mcp.canvasHeight / window.innerHeight;
-                    //console.log("DEV: touchstart ",x,y);
+                    // var x = touch.pageX * Flynn.mcp.canvasWidth / window.innerWidth;
+                    // var y = touch.pageY * Flynn.mcp.canvasHeight / window.innerHeight;
+
+                    var canvas = Flynn.mcp.canvas.canvas;
+                    var rect = canvas.getBoundingClientRect();
+                    var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                    var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+
+
+                    console.log("DEV: touchstart ",x,y,touch.identifier);
                     self.handleTouchStart(x, y, touch.identifier);
                 },
                 false
@@ -218,10 +225,41 @@ Flynn.InputHandler = Class.extend({
                 function(event){
                     event.preventDefault();
                     var touch=event.changedTouches[0];
-                    var x = touch.pageX;
-                    var y = touch.pageY;
-                    //console.log("DEV: touchend ",x,y);
+                    // var x = touch.pageX;
+                    // var y = touch.pageY;
+                    
+                    var canvas = Flynn.mcp.canvas.canvas;
+                    var rect = canvas.getBoundingClientRect();
+                    var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                    var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+
+
+                    console.log("DEV: touchend ",x,y,touch.identifier);
                     self.handleTouchEnd(x, y, touch.identifier);
+                },
+                false
+            );
+        }
+        catch(err){
+            console.log('Warning: Could not register "touchend" event.');
+        }
+
+        try{
+            document.addEventListener(
+                'touchmove',
+                function(event){
+                    event.preventDefault();
+                    var touch=event.changedTouches[0];
+                    // var x = touch.pageX;
+                    // var y = touch.pageY;
+
+                    var canvas = Flynn.mcp.canvas.canvas;
+                    var rect = canvas.getBoundingClientRect();
+                    var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                    var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+
+                    console.log("DEV: touchmove ",x,y);
+                    self.handleTouchMove(x, y, touch.identifier);
                 },
                 false
             );
@@ -269,6 +307,11 @@ Flynn.InputHandler = Class.extend({
                     // Mark the associated virtual button as not down and clear its press reporting.
                     this.virtualButtons[name].isDown = false;
                     this.virtualButtons[name].pressWasReported = false;
+                }
+                else if (this.uiButtons[name]){
+                    // Mark the associated UI button as not down and clear its press reporting.
+                    this.uiButtons[name].isDown = false;
+                    this.uiButtons[name].pressWasReported = false;
                 }
             }
         }
