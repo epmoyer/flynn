@@ -123,8 +123,8 @@ Game.StateHome = Flynn.State.extend({
 
         this.partice_gun = {
             angle: 0,
-            x: this.canvasWidth * 0.7 ,
-            y: this.canvasHeight/2,
+            x: this.canvasWidth * 0.65,
+            y: this.canvasHeight*4/7,
             length: 100,
             angular_velocity: Math.PI/600,
             muzzle_velocity: 3
@@ -177,7 +177,7 @@ Game.StateHome = Flynn.State.extend({
             this.particles.explosion(
                 Flynn.Util.randomIntFromInterval(
                     this.canvasWidth-130, this.canvasWidth-80), // x
-                Flynn.Util.randomIntFromInterval(120, 220),     // y
+                Flynn.Util.randomIntFromInterval(350, 450),     // y
                 Flynn.Util.randomIntFromInterval(10,200),       // quantity
                 2,                                              // max_velocity
                 Flynn.Util.randomChoice(this.colors)            // color
@@ -228,7 +228,6 @@ Game.StateHome = Flynn.State.extend({
 
         var curret_y = 42;
         ctx.vectorText("LINES", 1.5, left_x, curret_y, null, heading_color);
-        ctx.vectorText("PARTICLES", 1.5, this.canvasWidth-90, curret_y, null, heading_color);
 
         curret_y += 20;
         for (i=0; i<this.colors.length; i++){
@@ -301,9 +300,7 @@ Game.StateHome = Flynn.State.extend({
         ctx.vectorText("TIMER, CALLBACK: " + this.counter_callback, 1.5, left_x + indent, curret_y, null, Flynn.Colors.WHITE);
 
         curret_y += 40;
-        // ctx.vectorText("PRESS <ESCAPE> TO ACCESS CONFIGURATION MENU", 1.5, left_x, curret_y, null, heading_color);
         ctx.vectorText("KEYBOARD CONTROLS:", 1.5, left_x, curret_y, null, heading_color);
-        // ctx.vectorText("PRESS <ENTER> TO TEST HIGH SCORE SCREEN", 1.5, left_x, curret_y, null, heading_color);
         var indent_chars = 9;
         var scale = 1.5;
         options=[
@@ -320,6 +317,9 @@ Game.StateHome = Flynn.State.extend({
             ctx.vectorText(options[i][1], scale, left_x + (indent_chars+2) * Flynn.Font.CharacterSpacing * scale,
                 curret_y, null, Flynn.Colors.WHITE);            
         }
+
+        curret_y += 40;
+        ctx.vectorText("PARTICLES", 1.5, left_x, curret_y, null, heading_color);
 
         //-----------------
         // Particle gun
@@ -339,7 +339,7 @@ Game.StateHome = Flynn.State.extend({
             this.partice_gun.y + Math.sin(this.partice_gun.angle) * this.partice_gun.length, 
             Flynn.Colors.GRAY);
 
-        ctx.drawPolygon(this.logo, this.canvasWidth-76, this.canvasHeight-40);
+        ctx.drawPolygon(this.logo, this.canvasWidth-78, 76);
 
         this.particles.draw(ctx);
 
