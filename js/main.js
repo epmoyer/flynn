@@ -88,8 +88,11 @@ Game.Main = Class.extend({
         if(!this.mcp.iCadeModeEnabled){
             this.input.addVirtualButton('fire', Flynn.KeyboardMap.z, Flynn.BUTTON_CONFIGURABLE);
             this.input.addVirtualButton('thrust', Flynn.KeyboardMap.spacebar, Flynn.BUTTON_CONFIGURABLE);
-            this.input.addVirtualButton('right', Flynn.KeyboardMap.right, Flynn.BUTTON_CONFIGURABLE);
-            this.input.addVirtualButton('left', Flynn.KeyboardMap.left, Flynn.BUTTON_CONFIGURABLE);
+            // Apologies to the world.  The defalt WASD is WARS because all my keyboards are Colemak :) 
+            this.input.addVirtualButton('up', Flynn.KeyboardMap.w, Flynn.BUTTON_CONFIGURABLE);
+            this.input.addVirtualButton('left', Flynn.KeyboardMap.a, Flynn.BUTTON_CONFIGURABLE);
+            this.input.addVirtualButton('down', Flynn.KeyboardMap.r, Flynn.BUTTON_CONFIGURABLE);
+            this.input.addVirtualButton('right', Flynn.KeyboardMap.s, Flynn.BUTTON_CONFIGURABLE);
         }
         else{
             this.input.addVirtualButton('fire', Flynn.KeyboardMap.icade_t2, Flynn.BUTTON_NOT_CONFIGURABLE);
@@ -106,37 +109,52 @@ Game.Main = Class.extend({
         // Options
         this.mcp.optionManager.addOptionFromVirtualButton('fire');
         this.mcp.optionManager.addOptionFromVirtualButton('thrust');
+        this.mcp.optionManager.addOptionFromVirtualButton('up');
+        this.mcp.optionManager.addOptionFromVirtualButton('left');
+        this.mcp.optionManager.addOptionFromVirtualButton('right');
+        this.mcp.optionManager.addOptionFromVirtualButton('down');
         this.mcp.optionManager.addOption('musicEnabled', Flynn.OptionType.BOOLEAN, true, true, 'MUSIC', null, null);
         this.mcp.optionManager.addOption('resetScores', Flynn.OptionType.COMMAND, true, true, 'RESET HIGH SCORES', null,
             function(){self.resetScores();});
         // Restore user option settings from cookies
         this.mcp.optionManager.loadFromCookies();
         
-        // Set resize handler and force a resize
+        // Setup touch controls
         var button_size = 80;
         var x, y;
+        if(self.mcp.browserSupportsTouch){
+            x = Game.CANVAS_WIDTH - 1.4*button_size;
+            y = Game.CANVAS_HEIGHT - 1.4*button_size;
+            self.input.addTouchRegion("thrust",
+                x, y, x+button_size, y+button_size,
+                'round'
+                );
+            x -= 1.5 * button_size; 
+            self.input.addTouchRegion("fire",
+                x, y, x+button_size, y+button_size,
+                'round'
+                ); 
+            //self.input.addTouchRegion("enter",0,0,width,height); // Whole screen
+
+            this.mcp.input.addVirtualJoystick({
+                pos: {x: 80, y: Game.CANVAS_HEIGHT-80},
+                name: 'stick',
+                button_map: {
+                    up:    'up',
+                    down:  'down',
+                    left:  'left',
+                    right: 'right'
+                }
+            });
+        }
+
+        // Set resize handler and force a resize
         this.mcp.setResizeFunc( function(width, height){
-            if(self.mcp.browserSupportsTouch){
-                x = Game.CANVAS_WIDTH - 1.4*button_size;
-                y = Game.CANVAS_HEIGHT - 1.4*button_size;
-                self.input.addTouchRegion("thrust",
-                    x, y, x+button_size, y+button_size,
-                    'round'
-                    );
-                x -= 1.5 * button_size; 
-                self.input.addTouchRegion("fire",
-                    x, y, x+button_size, y+button_size,
-                    'round'
-                    ); 
-                //self.input.addTouchRegion("enter",0,0,width,height); // Whole screen
-            }
+            // Nothing to do
         });
         this.mcp.resize();
 
-        this.mcp.input.addVirtualJoystick({
-            pos: {x: 80, y: Game.CANVAS_HEIGHT-80},
-            name: 'stick',
-        });
+
 
         // Audio
         // var soundMusic = new Howl({

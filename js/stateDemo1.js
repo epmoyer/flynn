@@ -18,10 +18,10 @@ Game.StateDemo1 = Flynn.State.extend({
 
     handleInputs: function(input, paceFactor) {
         
-        if (input.virtualButtonIsPressed("right")){
+        if (input.virtualButtonIsPressed("UI_right")){
             this.mcp.nextState = Game.States.DEMO2;
         }
-        if (input.virtualButtonIsPressed("left")){
+        if (input.virtualButtonIsPressed("UI_left")){
             this.mcp.nextState = Game.States.HOME;
         }
 

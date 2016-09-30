@@ -46,8 +46,8 @@ Game.StateDemo3 = Flynn.State.extend({
         };
 
         this.targets=[
-            {poly_index:1, x:this.box.center_x,  y:300},
-            {poly_index:2, x:this.box.center_x+110, y:300}
+            {poly_index:1, x:this.box.center_x,     y:310},
+            {poly_index:2, x:this.box.center_x+110, y:310}
         ];
 
         mcp.input.showTouchRegion('thrust');
@@ -57,10 +57,10 @@ Game.StateDemo3 = Flynn.State.extend({
 
     handleInputs: function(input, paceFactor) {
         
-        if (input.virtualButtonIsPressed("right")){
+        if (input.virtualButtonIsPressed("UI_right")){
             this.mcp.nextState = Game.States.HOME;
         }
-        if (input.virtualButtonIsPressed("left")){
+        if (input.virtualButtonIsPressed("UI_left")){
             this.mcp.nextState = Game.States.DEMO2;
         }
 
@@ -122,12 +122,14 @@ Game.StateDemo3 = Flynn.State.extend({
         ctx.clearAll();
 
         var left_x = 10;
-        var i, j, x;
+        var indent = 20;
+        var i, j, x, name, color;
         var heading_color = Flynn.Colors.YELLOW;
+        var button_list=['up', 'left', 'right', 'down', 'thrust', 'fire'];
+        var curret_y = 42;
         
         Game.render_page_frame (ctx, Game.States.DEMO3);
 
-        var curret_y = 42;
         ctx.vectorText("POINT COLLISIOIN", 1.5, left_x, curret_y, null, heading_color);
         ctx.vectorRect(
             this.box.x, 
@@ -157,6 +159,21 @@ Game.StateDemo3 = Flynn.State.extend({
                 this.targets[i].x,
                 this.targets[i].y
             );
+        }
+
+        left_x = 300;
+        curret_y = 42;
+        ctx.vectorText("BUTTONS", 1.5, left_x, curret_y, null, heading_color);
+        for (i=0; i<button_list.length; i++){
+            name = button_list[i];
+            if(Flynn.mcp.input.virtualButtonIsDown(name)){
+                color = Flynn.Colors.GREEN;
+            }
+            else{
+                color = Flynn.Colors.GRAY;
+            }
+            curret_y += 20;
+            ctx.vectorText(name, 1.5, left_x + indent, curret_y, null, color);
         }
     },
 
