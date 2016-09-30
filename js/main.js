@@ -82,8 +82,8 @@ Game.Main = Class.extend({
         // Setup inputs
         var input = Flynn.mcp.input;
         if(!Flynn.mcp.iCadeModeEnabled){
-            input.addVirtualButton('fire', Flynn.KeyboardMap.z, Flynn.BUTTON_CONFIGURABLE);
-            input.addVirtualButton('thrust', Flynn.KeyboardMap.spacebar, Flynn.BUTTON_CONFIGURABLE);
+            input.addVirtualButton('fire_l', Flynn.KeyboardMap.z, Flynn.BUTTON_CONFIGURABLE);
+            input.addVirtualButton('fire_r', Flynn.KeyboardMap.spacebar, Flynn.BUTTON_CONFIGURABLE);
             // Apologies to the world.  The defalt WASD is WARS because all my keyboards are Colemak :) 
             input.addVirtualButton('up', Flynn.KeyboardMap.w, Flynn.BUTTON_CONFIGURABLE);
             input.addVirtualButton('left', Flynn.KeyboardMap.a, Flynn.BUTTON_CONFIGURABLE);
@@ -91,8 +91,8 @@ Game.Main = Class.extend({
             input.addVirtualButton('right', Flynn.KeyboardMap.s, Flynn.BUTTON_CONFIGURABLE);
         }
         else{
-            input.addVirtualButton('fire', Flynn.KeyboardMap.icade_t2, Flynn.BUTTON_NOT_CONFIGURABLE);
-            input.addVirtualButton('thrust', Flynn.KeyboardMap.icade_t1, Flynn.BUTTON_NOT_CONFIGURABLE);
+            input.addVirtualButton('fire_l', Flynn.KeyboardMap.icade_t2, Flynn.BUTTON_NOT_CONFIGURABLE);
+            input.addVirtualButton('fire_r', Flynn.KeyboardMap.icade_t1, Flynn.BUTTON_NOT_CONFIGURABLE);
         }
         
 
@@ -103,8 +103,8 @@ Game.Main = Class.extend({
         }
 
         // Options
-        Flynn.mcp.optionManager.addOptionFromVirtualButton('fire');
-        Flynn.mcp.optionManager.addOptionFromVirtualButton('thrust');
+        Flynn.mcp.optionManager.addOptionFromVirtualButton('fire_l');
+        Flynn.mcp.optionManager.addOptionFromVirtualButton('fire_r');
         Flynn.mcp.optionManager.addOptionFromVirtualButton('up');
         Flynn.mcp.optionManager.addOptionFromVirtualButton('left');
         Flynn.mcp.optionManager.addOptionFromVirtualButton('right');
@@ -134,12 +134,12 @@ Game.Main = Class.extend({
 
             x = Game.CANVAS_WIDTH - 1.4*button_size;
             y = Game.CANVAS_HEIGHT - 2.9*button_size;
-            Flynn.mcp.input.addTouchRegion("thrust",
+            Flynn.mcp.input.addTouchRegion("fire_r",
                 x, y, x+button_size, y+button_size,
                 'round'
                 );
             x -= 1.5 * button_size; 
-            Flynn.mcp.input.addTouchRegion("fire",
+            Flynn.mcp.input.addTouchRegion("fire_l",
                 x, y, x+button_size, y+button_size,
                 'round'
                 ); 

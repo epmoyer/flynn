@@ -4,7 +4,9 @@ if (typeof Game == "undefined") {
 
 Game.StateDemo3 = Flynn.State.extend({
 
-    CROSSHAIR_SPEED: 1,
+    CROSSHAIR_SPEED: 3,
+    BULLET_SPEED: 4,
+    BULLET_LIFETIME: 2 * 60,
 
     init: function() {
         var i, x;
@@ -34,6 +36,11 @@ Game.StateDemo3 = Flynn.State.extend({
         this.crosshair_poly.x = this.joystick_test_rect.center_x;
         this.crosshair_poly.y = this.joystick_test_rect.center_y;
 
+        this.projectiles = new Flynn.Projectiles(
+            new Victor(this.joystick_test_rect.left, this.joystick_test_rect.top),
+            new Victor(this.joystick_test_rect.right, this.joystick_test_rect.bottom),
+            );
+
         this.bullet = {
             x:this.collision_rect.center_x, 
             y:this.collision_rect.center_y,
@@ -47,8 +54,8 @@ Game.StateDemo3 = Flynn.State.extend({
             {poly_index:2, x:this.collision_rect.center_x+110, y:310}
         ];
 
-        Flynn.mcp.input.showTouchRegion('thrust');
-        Flynn.mcp.input.showTouchRegion('fire');
+        Flynn.mcp.input.showTouchRegion('fire_l');
+        Flynn.mcp.input.showTouchRegion('fire_r');
         Flynn.mcp.input.showVirtualJoystick('stick');
     },
 
@@ -99,10 +106,35 @@ Game.StateDemo3 = Flynn.State.extend({
                 this.crosshair_poly.y + this.CROSSHAIR_SPEED * paceFactor,
                 this.joystick_test_rect.bottom);
         }
+
+        // Fire
+        if (input.virtualButtonWasPressed("fire_l")){
+            console.log("fire left");
+            // add: function(world_position_v, velocity_v, lifetime, size, color)
+            this.projectiles.add(
+                new Victor(this.crosshair_poly.x, this.crosshair_poly.y),
+                new Victor(-this.BULLET_SPEED, 0),
+                this.BULLET_LIFETIME,
+                3,
+                Flynn.Colors.YELLOW
+                )
+        }
+        if (input.virtualButtonWasPressed("fire_r")){
+            console.log("fire right");
+            // add: function(world_position_v, velocity_v, lifetime, size, color)
+            this.projectiles.add(
+                new Victor(this.crosshair_poly.x, this.crosshair_poly.y),
+                new Victor(this.BULLET_SPEED, 0),
+                this.BULLET_LIFETIME,
+                3,
+                Flynn.Colors.YELLOW
+                )
+        }
     },
 
     update: function(paceFactor) {
         this.gameClock += paceFactor;
+        this.projectiles.update(paceFactor);
 
         var i;
         for (i=0; i<this.polygons.length; i++){
@@ -139,11 +171,13 @@ Game.StateDemo3 = Flynn.State.extend({
 
         ctx.clearAll();
 
+        this.projectiles.draw(ctx, new Victor(0,0));
+
         var left_x = 10;
         var indent = 20;
         var i, j, x, name, color;
         var heading_color = Flynn.Colors.YELLOW;
-        var button_list=['up', 'left', 'right', 'down', 'thrust', 'fire'];
+        var button_list=['up', 'left', 'right', 'down', 'fire_l', 'fire_r'];
         var curret_y = 42;
         
         Game.render_page_frame (ctx, Game.States.DEMO3);
