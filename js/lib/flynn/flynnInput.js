@@ -29,6 +29,7 @@ Flynn.VirtualButton = Class.extend({
 Flynn.InputHandler = Class.extend({
 
     MOUSE_IDENTIFIER: 99999991,
+    DIRECTIONS: ['up','down','left','right'],
 
     init: function() {
 
@@ -271,7 +272,7 @@ Flynn.InputHandler = Class.extend({
 
     handleTouchStart: function(x,y,touch_identifier){
         //console.log("DEV: handleTouchStart() ",x,y);
-        var name, region;
+        var name, region, joystick;
         for(name in this.touchRegions){
             region = this.touchRegions[name];
             if ((x>region.left) && (x<region.right) && (y>region.top) && (y<region.bottom)){
@@ -290,7 +291,9 @@ Flynn.InputHandler = Class.extend({
             }
         }
         for(name in this.virtualJoysticks){
-            this.virtualJoysticks[name].handleTouchStart(x,y,touch_identifier);
+            joystick = this.virtualJoysticks[name];
+            joystick.handleTouchStart(x,y,touch_identifier);
+            this.setButtonsFromJoystick(joystick);
         }
     },
 
@@ -319,9 +322,8 @@ Flynn.InputHandler = Class.extend({
             joystick = this.virtualJoysticks[name];
             if(joystick.handleTouchEnd(x,y,touch_identifier)){
                 // The joystick was released. Clear all associated button presses
-                var directions=['up','down','left','right'];
-                for(i=0; i<directions.length; i++){
-                    direction = directions[i];
+                for(i=0; i<this.DIRECTIONS.length; i++){
+                    direction = this.DIRECTIONS[i];
                     name = joystick.buttons[direction].name;
                     if(name){
                         if(this.virtualButtons[name]){
@@ -338,25 +340,28 @@ Flynn.InputHandler = Class.extend({
     handleTouchMove: function(x,y,touch_identifier){
         //console.log("DEV: handleTouchMove() ",x,y);
         var name, direction, joystick, i;
-        var directions=['up','down','left','right'];
         for(name in this.virtualJoysticks){
             joystick = this.virtualJoysticks[name];
             joystick.handleTouchMove(x,y,touch_identifier);
-            if(joystick.in_use){
-                // Joystick in use. Assign state of all associated buttons to match joystick
-                for(i=0; i<directions.length; i++){
-                    direction = directions[i];
-                    name = joystick.buttons[direction].name;
-                    if(name){
-                        if(this.virtualButtons[name]){
-                            this.virtualButtons[name].isDown = joystick.buttons[direction].pressed;
-                        } else if (this.uiButtons[name]){
-                            this.uiButtons[name].isDown = joystick.buttons[direction].pressed;
-                        }
+            this.setButtonsFromJoystick(joystick);
+        }
+    },
+
+    setButtonsFromJoystick: function(joystick){
+        if(joystick.in_use){
+            // Joystick in use. Assign state of all associated buttons to match joystick
+            for(i=0; i<this.DIRECTIONS.length; i++){
+                direction = this.DIRECTIONS[i];
+                name = joystick.buttons[direction].name;
+                if(name){
+                    if(this.virtualButtons[name]){
+                        this.virtualButtons[name].isDown = joystick.buttons[direction].pressed;
+                    } else if (this.uiButtons[name]){
+                        this.uiButtons[name].isDown = joystick.buttons[direction].pressed;
                     }
                 }
             }
-        }
+        } 
     },
 
     setupUIButtons: function(){

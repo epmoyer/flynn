@@ -155,6 +155,18 @@ Game.Main = Class.extend({
                     right: 'right'
                 }
             });
+
+            Flynn.mcp.input.addVirtualJoystick({
+                pos: {x: 250, y: Game.CANVAS_HEIGHT-80},
+                name: 'stick2',
+                type: 'dpad',
+                button_map: {
+                    up:    'up',
+                    down:  'down',
+                    left:  'left',
+                    right: 'right'
+                }
+            });
         }
 
         // Set resize handler and force a resize

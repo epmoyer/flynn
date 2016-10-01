@@ -1,6 +1,8 @@
 Flynn.VirtualJoystick = Class.extend({
 
     STICK_LIMIT_RATIO: 0.9,
+    D_WITDH: 0.6,
+    D_LENGH: 0.85,
 
     init: function(opts) {
         opts                  = opts                    || {};
@@ -10,6 +12,7 @@ Flynn.VirtualJoystick = Class.extend({
         this.radius           = opts.radius             || 60;
         this.deadzone_radius  = opts.deadzone_radius    || 8;
         this.capture_radius   = opts.capture_radius     || this.radius;
+        this.type             = opts.type               || 'stick'
         this.name             = opts.name               || 'joystick0';
         this.buttons          = {
             up:{
@@ -56,10 +59,16 @@ Flynn.VirtualJoystick = Class.extend({
 
     handleTouchStart: function(x, y, touch_identifier){
         if(this.is_visible && Flynn.Util.distance(x, y, this.pos.x, this.pos.y) < this.capture_radius){
-            this.in_use           = true;
             this.touch_identifier = touch_identifier;
-            this.touchstart_pos   = {x:x, y:y};
-            this.stick_offset     = {x:0, y:0};
+            this.in_use           = true;
+            if(this.type=='stick'){
+                this.touchstart_pos   = {x:x, y:y};
+                this.stick_offset     = {x:0, y:0};
+            }
+            else{
+                // D-Pad
+                this.handleTouchMove(x, y, touch_identifier);
+            }
         }
     },
 
@@ -76,40 +85,93 @@ Flynn.VirtualJoystick = Class.extend({
 
     handleTouchMove: function(x, y, touch_identifier){
         if(this.is_visible && touch_identifier == this.touch_identifier){
-            var touch_offset_v = new Victor(x-this.touchstart_pos.x, y-this.touchstart_pos.y);
-            var normalized_v = touch_offset_v.clone().normalize();
-            var offset_length = touch_offset_v.length();
+            var touch_offset_v, normalized_v, offset_length;
 
-            if(offset_length > this.limit_radius){
-                touch_offset_v = normalized_v.clone().multiply(new Victor(this.limit_radius, this.limit_radius));
-                offset_length = this.limit_radius;
-            }
+            if(this.type == 'stick'){
+                touch_offset_v = new Victor(x-this.touchstart_pos.x, y-this.touchstart_pos.y);
+                normalized_v = touch_offset_v.clone().normalize();
+                offset_length = touch_offset_v.length();
 
-            this.stick_offset.x = touch_offset_v.x;
-            this.stick_offset.y = touch_offset_v.y;
+                if(offset_length > this.limit_radius){
+                    touch_offset_v = normalized_v.clone().multiply(new Victor(this.limit_radius, this.limit_radius));
+                    offset_length = this.limit_radius;
+                }
 
-            if(offset_length > this.deadzone_radius){
-                this.buttons.down.pressed  = (normalized_v.y >  this.theshold);
-                this.buttons.up.pressed    = (normalized_v.y < -this.theshold);
-                this.buttons.right.pressed = (normalized_v.x >  this.theshold);
-                this.buttons.left.pressed  = (normalized_v.x < -this.theshold);
+                this.stick_offset.x = touch_offset_v.x;
+                this.stick_offset.y = touch_offset_v.y;
+                
+                if(offset_length > this.deadzone_radius){
+                    this.buttons.down.pressed  = (normalized_v.y >  this.theshold);
+                    this.buttons.up.pressed    = (normalized_v.y < -this.theshold);
+                    this.buttons.right.pressed = (normalized_v.x >  this.theshold);
+                    this.buttons.left.pressed  = (normalized_v.x < -this.theshold);
+                }
+                else{
+                    this.buttons.down.pressed  = false;
+                    this.buttons.up.pressed    = false;
+                    this.buttons.right.pressed = false;
+                    this.buttons.left.pressed  = false;
+                }
             }
             else{
-                this.buttons.down.pressed  = false;
-                this.buttons.up.pressed    = false;
-                this.buttons.right.pressed = false;
-                this.buttons.left.pressed  = false;
+                // D-Pad
+                touch_offset_v = new Victor(x-this.pos.x, y-this.pos.y);
+                normalized_v = touch_offset_v.clone().normalize();
+                offset_length = touch_offset_v.length();
+                
+                if(  (offset_length > this.deadzone_radius)
+                   && (offset_length < this.limit_radius)){
+                //if (true){
+                    this.buttons.down.pressed  = (normalized_v.y >  this.theshold);
+                    this.buttons.up.pressed    = (normalized_v.y < -this.theshold);
+                    this.buttons.right.pressed = (normalized_v.x >  this.theshold);
+                    this.buttons.left.pressed  = (normalized_v.x < -this.theshold);
+                }
+                else{
+                    this.buttons.down.pressed  = false;
+                    this.buttons.up.pressed    = false;
+                    this.buttons.right.pressed = false;
+                    this.buttons.left.pressed  = false;
+                }
             }
+
         }
     },
 
     render: function(ctx){
         if(this.is_visible){
-            ctx.beginPath(); 
-            ctx.strokeStyle = this.strokeStyle; 
-            ctx.lineWidth = 6; 
-            ctx.arc(this.pos.x, this.pos.y, this.radius * 0.66, 0, Math.PI*2); 
-            ctx.stroke();   
+            if(this.type == 'dpad'){
+                var hw = this.radius*this.D_WITDH/2;  // Half-width
+                var l = this.radius*this.D_LENGH;
+                var x = this.pos.x;
+                var y = this.pos.y;
+
+                ctx.beginPath(); 
+                ctx.strokeStyle = this.strokeStyle; 
+                ctx.lineWidth = 6; 
+                ctx.lineCap = "square";
+                ctx.moveTo(x+hw, y-l);
+                ctx.lineTo(x+hw, y-hw);
+                ctx.lineTo(x+l, y-hw);
+                ctx.lineTo(x+l, y+hw);
+                ctx.lineTo(x+hw, y+hw);
+                ctx.lineTo(x+hw, y+l);
+                ctx.lineTo(x-hw, y+l);
+                ctx.lineTo(x-hw, y+hw);
+                ctx.lineTo(x-l, y+hw);
+                ctx.lineTo(x-l, y-hw);
+                ctx.lineTo(x-hw, y-hw);
+                ctx.lineTo(x-hw, y-l);
+                ctx.lineTo(x+hw, y-l);
+                ctx.stroke(); 
+            }
+            else{
+                ctx.beginPath(); 
+                ctx.strokeStyle = this.strokeStyle; 
+                ctx.lineWidth = 6; 
+                ctx.arc(this.pos.x, this.pos.y, this.radius * 0.66, 0, Math.PI*2); 
+                ctx.stroke();   
+            }
 
             ctx.beginPath(); 
             ctx.strokeStyle = this.strokeStyle; 
@@ -117,7 +179,7 @@ Flynn.VirtualJoystick = Class.extend({
             ctx.arc(this.pos.x, this.pos.y, this.radius, 0, Math.PI*2); 
             ctx.stroke();
         
-            if(this.in_use){
+            if(this.in_use && this.type=='stick'){
                 ctx.beginPath(); 
                 ctx.strokeStyle = this.strokeStyle; 
                 ctx.lineWidth = 6; 
