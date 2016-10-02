@@ -39,7 +39,7 @@ Game.StateDemo3 = Flynn.State.extend({
 
         this.projectiles = new Flynn.Projectiles(
             new Victor(this.joystick_test_rect.left, this.joystick_test_rect.top),
-            new Victor(this.joystick_test_rect.right, this.joystick_test_rect.bottom),
+            new Victor(this.joystick_test_rect.right, this.joystick_test_rect.bottom)
             );
 
         this.bullet = {
@@ -118,7 +118,7 @@ Game.StateDemo3 = Flynn.State.extend({
                 this.BULLET_LIFETIME,
                 3,
                 Flynn.Colors.YELLOW
-                )
+                );
         }
         if (input.virtualButtonWasPressed("fire_r")){
             console.log("fire right");
@@ -128,7 +128,7 @@ Game.StateDemo3 = Flynn.State.extend({
                 this.BULLET_LIFETIME,
                 3,
                 Flynn.Colors.YELLOW
-                )
+                );
         }
     },
 

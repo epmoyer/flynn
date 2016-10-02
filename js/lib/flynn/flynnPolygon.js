@@ -16,6 +16,7 @@ Flynn.Polygon = Class.extend({
         this.pointsMaster = p.slice(0);
         this.angle = 0;
         this.scale = scale;
+        this.visible = true;
         this.setAngle(this.angle);
     },
 
@@ -80,7 +81,34 @@ Flynn.Polygon = Class.extend({
         return c;
     },
 
+    is_colliding: function(polygon){
+        // Test for collision with another polygon.
+        // This is a lossy check.  It checks only whether the vertices of the 
+        // poygon appear within this polygon, which is sufficient for game collision detection
+        // between similar sized polygons.  It is possible to consruct polygons with long
+        // appendages which can overlap withoug triggering collisioin detection.  Exhaustive 
+        // general-case detection of edge intesection is not worth the performance hit.
+        var i, len;
+
+        if (!this.visible){
+            return false;
+        }
+        for(i=0, len=this.points.length-2; i<len; i+=2){
+            var x = this.points[i] + this.position.x;
+            var y = this.points[i+1] + this.position.y;
+
+            if (polygon.hasPoint(0,0,x,y)){
+                return true;
+            }
+        }
+        return false;
+    },
+
     render: function(ctx){
+        if(!this.visible){
+            return;
+        }
+
         var vector_color = this.color;
         var points_x, points_y;
         var draw_x, draw_y;
