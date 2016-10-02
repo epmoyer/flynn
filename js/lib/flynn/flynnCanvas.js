@@ -39,6 +39,7 @@ Flynn.Canvas = Class.extend({
             ctx.fpsMsecCount = 0;
             ctx.vectorVericies = [];
             ctx.ticks = 0;
+            ctx.is_world = false;
 
             ctx.ACODE = "A".charCodeAt(0);
             ctx.ZEROCODE = "0".charCodeAt(0);
@@ -50,11 +51,14 @@ Flynn.Canvas = Class.extend({
             ctx.UPPER_TO_LOWER = 0x20;
             
             ctx.drawPolygon = function(p, x, y) {
+                // .drawPolypon is deprecated. No world support.
+                this.is_world = false;
+
                 var points = p.points;
                 var vector_color = p.color;
                 var current_polygon_x, current_polygon_y;
 
-                this.vectorStart(vector_color);
+                this.vectorStart(vector_color, false);
                 var pen_up = false;
                 for (var i=0, len=points.length; i<len; i+=2){
                     if(points[i] == Flynn.PEN_COMMAND){
@@ -64,7 +68,7 @@ Flynn.Canvas = Class.extend({
                         else{
                             vector_color = Flynn.ColorsOrdered[points[i+1] - Flynn.PEN_COLOR0];
                             this.vectorEnd();
-                            this.vectorStart(vector_color);
+                            this.vectorStart(vector_color, false);
                             if(i>0){
                                 this.vectorMoveTo(current_polygon_x+x, current_polygon_y+y);
                             }
@@ -107,7 +111,13 @@ Flynn.Canvas = Class.extend({
             //-----------------------------
             // Vector graphic simulation
             //-----------------------------
-            ctx.vectorStart = function(color){
+            ctx.vectorStart = function(color, is_world){
+                if(typeof(is_world)==='undefined'){
+                    this.is_world = false;
+                }
+                else{
+                    this.is_world = is_world;
+                }
 
                 // Determine vector line color
                 var dim_color_rgb = Flynn.Util.hexToRgb(color);
@@ -169,6 +179,11 @@ Flynn.Canvas = Class.extend({
             };
 
             ctx.vectorLineToUnconstrained = function(x, y){
+                if(this.is_world){
+                    // World coordinates
+                    x -= Math.floor(Flynn.mcp.viewport.x);
+                    y -= Math.floor(Flynn.mcp.viewport.y);
+                }
                 this.vectorVericies.push(x, y);
                 if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
                     this.lineTo(x, y);
@@ -179,6 +194,11 @@ Flynn.Canvas = Class.extend({
             };
 
             ctx.vectorMoveToUnconstrained = function(x, y){
+                if(this.is_world){
+                    // World coordinates
+                    x -= Math.floor(Flynn.mcp.viewport.x);
+                    y -= Math.floor(Flynn.mcp.viewport.y);
+                }
                 this.vectorVericies.push(x, y);
                 if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
                     this.moveTo(x, y);
@@ -211,15 +231,19 @@ Flynn.Canvas = Class.extend({
                 }
             };
 
-            ctx.vectorRect = function(x, y, width, height, color, fill_color){
+            ctx.vectorRect = function(x, y, width, height, color, fill_color, is_world){
                 
-                if(typeof(fill_color)!=='undefined'){
+                if(typeof(fill_color)!=='undefined' && fill_color){
                     this.fillStyle = fill_color;
                     this.fillRect(x, y, width, height);
                 }
 
+                if(typeof(is_world)==='undefined'){
+                    is_world = false;
+                }
+
                 // Draw a rect using vectors
-                this.vectorStart(color);
+                this.vectorStart(color, is_world);
                 this.vectorMoveTo(x, y);
                 this.vectorLineTo(x+width-1, y);
                 this.vectorLineTo(x+width-1, y+height-1);
@@ -229,8 +253,12 @@ Flynn.Canvas = Class.extend({
             };
 
             ctx.vectorLine = function(x1, y1, x2, y2, color){
+                if(typeof(is_world)==='undefined'){
+                    is_world = false;
+                }
+
                 // Draw a vector line
-                this.vectorStart(color);
+                this.vectorStart(color, is_world);
                 this.vectorMoveTo(x1, y1);
                 this.vectorLineTo(x2, y2);
                 this.vectorEnd();
@@ -250,11 +278,15 @@ Flynn.Canvas = Class.extend({
                 return p;
             };
 
-            ctx.vectorText = function(text, scale, x, y, offset, color){
+            ctx.vectorText = function(text, scale, x, y, offset, color, is_world){
                 text = String(text);
                 if(typeof(color)==='undefined'){
                     console.log("ctx.vectorText(): default color deprecated.  Please pass a color.  Text:" + text );
                     color = Flynn.Colors.WHITE;
+                }
+
+                if(typeof(is_world)==='undefined'){
+                    is_world = false;
                 }
 
                 var step = scale*Flynn.Font.CharacterSpacing;
@@ -282,7 +314,7 @@ Flynn.Canvas = Class.extend({
                     var p = this.charToPolygon(ch);
 
                     var pen_up = false;
-                    this.vectorStart(color);
+                    this.vectorStart(color, is_world);
                     for (var j=0, len2=p.length; j<len2; j+=2){
                         if(p[j]==Flynn.PEN_COMMAND){
                             pen_up = true;
@@ -303,17 +335,20 @@ Flynn.Canvas = Class.extend({
                 this.DEBUGLOGGED = true;
             };
 
-            ctx.vectorTextArc = function(text, scale, center_x, center_y, angle, radius, color, isCentered, isReversed){
+            ctx.vectorTextArc = function(text, scale, center_x, center_y, angle, radius, color, is_centered, is_reversed, is_world){
                 text = String(text);
 
                 if(typeof(color)==='undefined'){
                     color = Flynn.Colors.GREEN;
                 }
-                if(typeof(isCentered)==='undefined'){
-                    isCentered = false;
+                if(typeof(is_centered)==='undefined'){
+                    is_centered = false;
                 }
-                if(typeof(isReversed)==='undefined'){
-                    isReversed = false;
+                if(typeof(is_reversed)==='undefined'){
+                    is_reversed = false;
+                }
+                if(typeof(is_world)==='undefined'){
+                    is_world = false;
                 }
 
                 var step = scale*Flynn.Font.CharacterSpacing;
@@ -321,21 +356,21 @@ Flynn.Canvas = Class.extend({
                 var render_angle = angle;
                 var render_angle_step = Math.asin(Flynn.Font.CharacterSpacing*scale/radius);
                 var renderAngleOffset = 0;
-                if (isCentered){
+                if (is_centered){
                     renderAngleOffset = render_angle_step * (text.length / 2 - 0.5);
-                    if(isReversed){
+                    if(is_reversed){
                         renderAngleOffset = -renderAngleOffset;
                     }
                 }
                 render_angle -= renderAngleOffset;
                 var character_angle = render_angle + Math.PI/2;
-                if(isReversed){
+                if(is_reversed){
                     character_angle += Math.PI;
                     render_angle_step = - render_angle_step;
                 }
 
                 for(var i = 0, len = text.length; i<len; i++){
-                    this.vectorStart(color);
+                    this.vectorStart(color, is_world);
                     var ch = text.charCodeAt(i);
 
                     if (ch === this.SPACECODE){
