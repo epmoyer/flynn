@@ -9,8 +9,6 @@ Flynn.Polygon = Class.extend({
         }
         this.color = color || Flynn.Colors.WHITE;
         this.position = position;
-        this.velocity = {x:0, y:0};
-        this.angular_velocity = 0;
 
         this.points = p.slice(0);
         this.pointsMaster = p.slice(0);

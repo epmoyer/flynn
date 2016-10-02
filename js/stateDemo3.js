@@ -56,10 +56,15 @@ Game.StateDemo3 = Flynn.State.extend({
                 ));
         }
 
-        this.crosshair_poly = new Flynn.Polygon(Game.Points.CROSSHAIR, Flynn.Colors.WHITE);
-        this.crosshair_poly.setScale(3);
-        this.crosshair_poly.x = this.joystick_test_rect.center_x;
-        this.crosshair_poly.y = this.joystick_test_rect.center_y;
+        this.crosshair_poly = new Flynn.Polygon(
+            Game.Points.CROSSHAIR, 
+            Flynn.Colors.WHITE,
+            3,
+            {
+                x: this.joystick_test_rect.center_x,
+                y: this.joystick_test_rect.center_y,
+                is_world: false
+            });
 
         this.projectiles = new Flynn.Projectiles(
             new Victor(this.joystick_test_rect.left, this.joystick_test_rect.top),
@@ -113,23 +118,23 @@ Game.StateDemo3 = Flynn.State.extend({
 
         // Move crosshair
         if (input.virtualButtonIsDown("left")){
-            this.crosshair_poly.x = Math.max(
-                this.crosshair_poly.x - this.CROSSHAIR_SPEED * paceFactor,
+            this.crosshair_poly.position.x = Math.max(
+                this.crosshair_poly.position.x - this.CROSSHAIR_SPEED * paceFactor,
                 this.joystick_test_rect.left);
         }
         if (input.virtualButtonIsDown("right")){
-            this.crosshair_poly.x = Math.min(
-                this.crosshair_poly.x + this.CROSSHAIR_SPEED * paceFactor,
+            this.crosshair_poly.position.x = Math.min(
+                this.crosshair_poly.position.x + this.CROSSHAIR_SPEED * paceFactor,
                 this.joystick_test_rect.right);
         }
         if (input.virtualButtonIsDown("up")){
-            this.crosshair_poly.y = Math.max(
-                this.crosshair_poly.y - this.CROSSHAIR_SPEED * paceFactor,
+            this.crosshair_poly.position.y = Math.max(
+                this.crosshair_poly.position.y - this.CROSSHAIR_SPEED * paceFactor,
                 this.joystick_test_rect.top);
         }
         if (input.virtualButtonIsDown("down")){
-            this.crosshair_poly.y = Math.min(
-                this.crosshair_poly.y + this.CROSSHAIR_SPEED * paceFactor,
+            this.crosshair_poly.position.y = Math.min(
+                this.crosshair_poly.position.y + this.CROSSHAIR_SPEED * paceFactor,
                 this.joystick_test_rect.bottom);
         }
 
@@ -137,7 +142,7 @@ Game.StateDemo3 = Flynn.State.extend({
         if (input.virtualButtonWasPressed("fire_l")){
             console.log("fire left");
             this.projectiles.add(
-                new Victor(this.crosshair_poly.x, this.crosshair_poly.y),
+                new Victor(this.crosshair_poly.position.x, this.crosshair_poly.position.y),
                 new Victor(-this.BULLET_SPEED, 0),
                 this.BULLET_LIFETIME,
                 3,
@@ -147,7 +152,7 @@ Game.StateDemo3 = Flynn.State.extend({
         if (input.virtualButtonWasPressed("fire_r")){
             console.log("fire right");
             this.projectiles.add(
-                new Victor(this.crosshair_poly.x, this.crosshair_poly.y),
+                new Victor(this.crosshair_poly.position.x, this.crosshair_poly.position.y),
                 new Victor(this.BULLET_SPEED, 0),
                 this.BULLET_LIFETIME,
                 3,
@@ -269,7 +274,8 @@ Game.StateDemo3 = Flynn.State.extend({
             this.joystick_test_rect.width,
             this.joystick_test_rect.height,
             Flynn.Colors.DODGERBLUE);
-        ctx.drawPolygon(this.crosshair_poly, this.crosshair_poly.x, this.crosshair_poly.y);
+
+        this.crosshair_poly.render(ctx);
 
     },
 

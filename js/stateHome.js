@@ -53,8 +53,12 @@ Game.StateHome = Flynn.State.extend({
         this.viewport_v = new Victor(0,0);
         this.gameClock = 0;
 
-        this.logo = new Flynn.Polygon(Game.Points.LOGO, Flynn.Colors.DODGERBLUE);
-        this.logo.setScale(3);
+        this.logo = new Flynn.Polygon(
+            Game.Points.LOGO,
+            Flynn.Colors.DODGERBLUE,
+            3, // scale
+            {x:Flynn.mcp.canvasWidth-78, y:76, is_world:false}
+            );
 
         this.polygons = [];
         this.colors=[
@@ -76,38 +80,56 @@ Game.StateHome = Flynn.State.extend({
 
         var i;
         for (i=0; i<points.length; i++){
-            this.polygons.push(new Flynn.Polygon(points[i], this.colors[i]));
-            this.polygons[i].setScale(3);
+            this.polygons.push(new Flynn.Polygon(
+                points[i],
+                this.colors[i],
+                3, // scale
+                {
+                    x: 40 + i*50,
+                    y: 207,
+                    is_world: false
+                }));
         }
 
         this.penup_polygons = [];
-        var penup_points = [
-            // [points, scale]
-            [Game.Points.PENUP_TEST1, 2.5],
-            [Game.Points.PENUP_TEST2, 3],
-            [Game.Points.PENUP_TEST3, 2],
-            [Game.Points.PENUP_TEST4, 2.6],
-            [Game.Points.PENUP_TEST5, 2.6],
+        var penup_info = [
+            {points:Game.Points.PENUP_TEST1, scale:2.5},
+            {points:Game.Points.PENUP_TEST2, scale:3},
+            {points:Game.Points.PENUP_TEST3, scale:2},
+            {points:Game.Points.PENUP_TEST4, scale:2.6},
+            {points:Game.Points.PENUP_TEST5, scale:2.6},
             ];
-        for (i=0; i<penup_points.length; i++){
-            this.penup_polygons.push(new Flynn.Polygon(penup_points[i][0], this.colors[i]));
-            this.penup_polygons[i].setScale(penup_points[i][1]);
+        for (i=0; i<penup_info.length; i++){
+            this.penup_polygons.push(new Flynn.Polygon(
+                penup_info[i].points,
+                this.colors[i],
+                penup_info[i].scale,
+                {
+                    x: 40 + i*50,
+                    y: 207 + 65,
+                    is_world: false
+                }));
         }
 
         this.multicolor_polygons = [];
-        var multicolor_points = [
-            // [points, scale]
-            [Game.Points.MUTICOLOR1, 3],
-            [Game.Points.MUTICOLOR2, 3],
-            [Game.Points.MUTICOLOR3, 3],
-            [Game.Points.MUTICOLOR4, 4.2],
-            [Game.Points.MUTICOLOR5, 2.3],
-            [Game.Points.MUTICOLOR6, 3.2],
-            // [Game.Points.PENUP_TEST1, 2.5],
+        var multicolor_info = [
+            {points:Game.Points.MUTICOLOR1, scale:3},
+            {points:Game.Points.MUTICOLOR2, scale:3},
+            {points:Game.Points.MUTICOLOR3, scale:3},
+            {points:Game.Points.MUTICOLOR4, scale:4.2},
+            {points:Game.Points.MUTICOLOR5, scale:2.3},
+            {points:Game.Points.MUTICOLOR6, scale:3.2},
             ];
-        for (i=0; i<multicolor_points.length; i++){
-            this.multicolor_polygons.push(new Flynn.Polygon(multicolor_points[i][0], this.colors[i]));
-            this.multicolor_polygons[i].setScale(multicolor_points[i][1]);
+        for (i=0; i<multicolor_info.length; i++){
+            this.multicolor_polygons.push(new Flynn.Polygon(
+                multicolor_info[i].points,
+                this.colors[i],
+                multicolor_info[i].scale,
+                {
+                    x: 40 + i*50,
+                    y: 207 + 65 + 65,
+                    is_world: false
+                }));
         }
 
         this.particles = new Flynn.Particles();
@@ -253,21 +275,21 @@ Game.StateHome = Flynn.State.extend({
         ctx.vectorText("POLYGONS", 1.5, left_x, curret_y, null, heading_color);
         curret_y += 35;
         for (i=0; i<this.polygons.length; i++){
-            ctx.drawPolygon(this.polygons[i], 40 + i*50, curret_y);
+            this.polygons[i].render(ctx);
         }
 
         curret_y += 30;
         ctx.vectorText("POLYGONS WITH PENUP NODES", 1.5, left_x, curret_y, null, heading_color);
         curret_y += 35;
         for (i=0; i<this.penup_polygons.length; i++){
-            ctx.drawPolygon(this.penup_polygons[i], 40 + i*50, curret_y);
+            this.penup_polygons[i].render(ctx);
         }
 
         curret_y += 30;
         ctx.vectorText("POLYGONS WITH COLOR NODES", 1.5, left_x, curret_y, null, heading_color);
         curret_y += 35;
         for (i=0; i<this.multicolor_polygons.length; i++){
-            ctx.drawPolygon(this.multicolor_polygons[i], 40 + i*50, curret_y);
+            this.multicolor_polygons[i].render(ctx);
         }
 
         curret_y += 30;
@@ -295,7 +317,6 @@ Game.StateHome = Flynn.State.extend({
             curret_y + y_step * 18,
             null, text_color);
 
-        //curret_y += y_step * 18 + 10;
         curret_y = 42;
         left_x = 400;
         ctx.vectorText("TIMERS", 1.5, left_x, curret_y, null, heading_color);
@@ -344,7 +365,7 @@ Game.StateHome = Flynn.State.extend({
             this.partice_gun.y + Math.sin(this.partice_gun.angle) * this.partice_gun.length, 
             Flynn.Colors.GRAY);
 
-        ctx.drawPolygon(this.logo, Flynn.mcp.canvasWidth-78, 76);
+        this.logo.render(ctx);
 
         this.particles.draw(ctx);
 

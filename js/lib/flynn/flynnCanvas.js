@@ -52,6 +52,7 @@ Flynn.Canvas = Class.extend({
             
             ctx.drawPolygon = function(p, x, y) {
                 // .drawPolypon is deprecated. No world support.
+                throw "drawPolygon() is deprecated. Use polygon's .render() method.";
                 this.is_world = false;
 
                 var points = p.points;
