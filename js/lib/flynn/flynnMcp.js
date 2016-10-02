@@ -30,6 +30,8 @@ Flynn.Mcp = Class.extend({
 
         this.version = 'v2.0';  // Flynn version
 
+        this.viewport = {x:0, y:0};
+
         this.resizeFunc = null;
         this.slowMoDebug = false;
         this.clock = 0;

@@ -3,13 +3,24 @@ if (typeof Game == "undefined") {
 }
 
 Game.render_page_frame = function(ctx, page_id){
-    // Render the name of the current page
+    // Render the frame for the current page
 
     var i, text, color;
     var margin=3;
     var x=10;
     var scale=3;
-    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION"];
+    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD"];
+
+    // Render frame box
+    ctx.vectorLine(margin, 37, ctx.width-margin-1, 37, Flynn.Colors.GREEN);
+    ctx.vectorRect(
+        margin, 
+        margin, 
+        ctx.width-2*margin,
+        ctx.height-2*margin,
+        Flynn.Colors.GREEN);
+
+    // Render page names
     for(i=0; i<page_names.length; ++i){
         text = page_names[i];
         if(i==page_id-1){
@@ -22,14 +33,7 @@ Game.render_page_frame = function(ctx, page_id){
         x += Flynn.Font.CharacterSpacing * scale * (text.length + 2);
     }
 
-    ctx.vectorLine(margin, 37, ctx.width-margin-1, 37, Flynn.Colors.GREEN);
-    ctx.vectorRect(
-        margin, 
-        margin, 
-        ctx.width-2*margin,
-        ctx.height-2*margin,
-        Flynn.Colors.GREEN);
-
+    // Show navigation buttons (on touchscreen devices)
     Flynn.mcp.input.showTouchRegion('UI_left');
     Flynn.mcp.input.showTouchRegion('UI_right');
 };
@@ -139,7 +143,7 @@ Game.StateHome = Flynn.State.extend({
             Flynn.mcp.nextState = Game.States.DEMO1;
         }
         if (input.virtualButtonWasPressed("UI_left")){
-            Flynn.mcp.nextState = Game.States.DEMO3;
+            Flynn.mcp.nextState = Game.States.DEMO4;
         }
         if (input.virtualButtonWasPressed("UI_enter")){
             Flynn.mcp.nextState = Game.States.END;

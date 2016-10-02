@@ -33,7 +33,7 @@ Flynn.StateConfig = Flynn.State.extend({
 
         this.keyAssignmentInProgress = false;
 
-        this.optionKeyNames = Fjynn.mcp.optionManager.getOptionKeyNames();
+        this.optionKeyNames = Flynn.mcp.optionManager.getOptionKeyNames();
         this.numOptions = this.optionKeyNames.length;
         this.selectedLineIndex = 0;
     },

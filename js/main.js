@@ -13,6 +13,7 @@ Game.States = {
     DEMO1:     2,
     DEMO2:     3,
     DEMO3:     4,
+    DEMO4:     5,
 
     END:       90,
     CONFIG:    91,
@@ -38,6 +39,8 @@ Game.Main = Class.extend({
                         return new Game.StateDemo2();
                     case Game.States.DEMO3:
                         return new Game.StateDemo3();
+                    case Game.States.DEMO4:
+                        return new Game.StateDemo4();
                     case Game.States.END:
                         return new Flynn.StateEnd(
                             Game.config.score,
