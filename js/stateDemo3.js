@@ -17,20 +17,44 @@ Game.StateDemo3 = Flynn.State.extend({
         this.viewport_v = new Victor(0,0);
         this.gameClock = 0;
 
+        this.collision_rect     = new Flynn.Rect( 30, 60, 150, 150);
+        this.joystick_test_rect = new Flynn.Rect(Flynn.mcp.canvasWidth-476, 60, 450, 450);
+
         this.polygons = [];
         var poly_info = [
-            {points:Game.Points.COLLISION1, scale:10.5},
-            {points:Game.Points.COLLISION1, scale:10.5},
-            {points:Game.Points.COLLISION2, scale:7.0},
+            {   points: Game.Points.COLLISION1, 
+                scale: 10.5, 
+                position:{
+                    x: this.collision_rect.center_x,
+                    y: this.collision_rect.center_y,
+                    is_world: false
+                }
+            },
+            {   points: Game.Points.COLLISION1, 
+                scale: 10.5,
+                position: {
+                    x: this.collision_rect.center_x,
+                    y: 310,
+                    is_world: false
+                }
+            },
+            {   points:Game.Points.COLLISION2, 
+                scale:7.0,
+                position:{
+                    x:this.collision_rect.center_x + 110, //110
+                    y:310,
+                    is_world: false
+                }
+            }
             ];
         for (i=0; i<poly_info.length; i++){
-            this.polygons.push(new Flynn.Polygon(poly_info[i].points, Flynn.Colors.GRAY));
-            this.polygons[i].setScale(poly_info[i].scale);
+            this.polygons.push(new Flynn.Polygon(
+                poly_info[i].points, 
+                Flynn.Colors.GRAY,
+                poly_info[i].scale,
+                poly_info[i].position
+                ));
         }
-
-        this.collision_rect     = new Flynn.Rect( 30, 60, 150, 150);
-        // this.joystick_test_rect = new Flynn.Rect(400, 60, 450, 450);
-        this.joystick_test_rect = new Flynn.Rect(Flynn.mcp.canvasWidth-476, 60, 450, 450);
 
         this.crosshair_poly = new Flynn.Polygon(Game.Points.CROSSHAIR, Flynn.Colors.WHITE);
         this.crosshair_poly.setScale(3);
@@ -50,10 +74,10 @@ Game.StateDemo3 = Flynn.State.extend({
             size:3,
         };
 
-        this.targets=[
-            {poly_index:1, x:this.collision_rect.center_x,     y:310},
-            {poly_index:2, x:this.collision_rect.center_x+110, y:310}
-        ];
+        // this.targets=[
+        //     {poly_index:1, x:this.collision_rect.center_x,     y:310},
+        //     {poly_index:2, x:this.collision_rect.center_x+110, y:310}
+        // ];
 
         Flynn.mcp.input.showTouchRegion('fire_l');
         Flynn.mcp.input.showTouchRegion('fire_r');
@@ -165,6 +189,17 @@ Game.StateDemo3 = Flynn.State.extend({
             // Not collided
             this.polygons[0].color = Flynn.Colors.GRAY;
         }
+
+        if(this.polygons[2].is_colliding(this.polygons[1])){
+            // Collided
+            this.polygons[1].color = Flynn.Colors.RED;
+            this.polygons[2].color = Flynn.Colors.RED;
+        }
+        else{
+            // Not collided
+            this.polygons[1].color = Flynn.Colors.GRAY;
+            this.polygons[2].color = Flynn.Colors.GRAY;
+        }
     },
 
     render: function(ctx){
@@ -175,7 +210,7 @@ Game.StateDemo3 = Flynn.State.extend({
 
         var left_x = 10;
         var indent = 20;
-        var i, j, x, name, color;
+        var i, j, x, name, color, len;
         var heading_color = Flynn.Colors.YELLOW;
         var button_list=['up', 'left', 'right', 'down', 'fire_l', 'fire_r'];
         var curret_y = 42;
@@ -189,12 +224,7 @@ Game.StateDemo3 = Flynn.State.extend({
             this.collision_rect.width,
             this.collision_rect.height,
             Flynn.Colors.DODGERBLUE);
-        ctx.drawPolygon(
-            this.polygons[0],
-            this.collision_rect.left + this.collision_rect.width/2,
-            this.collision_rect.top + this.collision_rect.height/2
-            );
-        // Bullet
+
         ctx.fillStyle=Flynn.Colors.YELLOW;
         ctx.fillRect(
             this.bullet.x - this.bullet.size/2,
@@ -203,14 +233,19 @@ Game.StateDemo3 = Flynn.State.extend({
             this.bullet.size);
 
         curret_y = this.collision_rect.bottom + 10;
-        ctx.vectorText("POLYGON COLLISIOIN", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("LOSSY POLYGON COLLISIOIN", 1.5, left_x, curret_y, null, heading_color);
 
-        for(i=0; i<this.targets.length; i++){
-            ctx.drawPolygon(
-                this.polygons[this.targets[i].poly_index],
-                this.targets[i].x,
-                this.targets[i].y
-            );
+        for (i=0; i<this.polygons.length; i++){
+            this.polygons[i].render(ctx);
+        }
+        // Show collision verticies
+        for (i=0, len=this.polygons[2].points.length; i<len; i+=2){
+            ctx.fillStyle=Flynn.Colors.YELLOW;
+            ctx.fillRect(
+                this.polygons[2].position.x + this.polygons[2].points[i]-1,
+                this.polygons[2].position.y + this.polygons[2].points[i+1]-1,
+                3,
+                3);
         }
 
         left_x = 450;
@@ -235,6 +270,7 @@ Game.StateDemo3 = Flynn.State.extend({
             this.joystick_test_rect.height,
             Flynn.Colors.DODGERBLUE);
         ctx.drawPolygon(this.crosshair_poly, this.crosshair_poly.x, this.crosshair_poly.y);
+
     },
 
 });

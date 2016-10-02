@@ -61,14 +61,15 @@ Flynn.Polygon = Class.extend({
         var c = false;
         var p = this.points;
         var len = p.length;
+        var i, j, px1, px2, py1, py2;
 
         // doing magic!
-        for (var i = 0, j = len-2; i < len; i += 2) {
-            var px1 = p[i] + ox;
-            var px2 = p[j] + ox;
+        for (i = 0, j = len-2; i < len; i += 2) {
+            px1 = p[i] + ox;
+            px2 = p[j] + ox;
 
-            var py1 = p[i+1] + oy;
-            var py2 = p[j+1] + oy;
+            py1 = p[i+1] + oy;
+            py2 = p[j+1] + oy;
 
             if (
                 ( py1 > y != py2 > y ) &&
@@ -81,7 +82,7 @@ Flynn.Polygon = Class.extend({
         return c;
     },
 
-    is_colliding: function(polygon){
+    is_colliding: function(target_poly){
         // Test for collision with another polygon.
         // This is a lossy check.  It checks only whether the vertices of the 
         // poygon appear within this polygon, which is sufficient for game collision detection
@@ -94,10 +95,10 @@ Flynn.Polygon = Class.extend({
             return false;
         }
         for(i=0, len=this.points.length-2; i<len; i+=2){
-            var x = this.points[i] + this.position.x;
-            var y = this.points[i+1] + this.position.y;
+            var x = this.points[i]   + this.position.x - target_poly.position.x;
+            var y = this.points[i+1] + this.position.y - target_poly.position.y;
 
-            if (polygon.hasPoint(0,0,x,y)){
+            if (target_poly.hasPoint(0,0,x,y)){
                 return true;
             }
         }
@@ -153,6 +154,7 @@ Flynn.Polygon = Class.extend({
             }
         }
         ctx.vectorEnd();
+
     },
 
 });

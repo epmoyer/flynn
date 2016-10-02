@@ -3,73 +3,45 @@ if (typeof Game == "undefined") {
 }
 
 // Star colors from http://www.vendian.org/mncharity/dir3/starcolor/
-Game.star_colors = [
-    '#9bb2ff',
-    '#9eb5ff',
-    '#a3b9ff',
-    '#aabfff',
-    '#b2c5ff',
-    '#bbccff',
-    '#c4d2ff',
-    '#ccd8ff',
-    '#d3ddff',
-    '#dae2ff',
-    '#dfe5ff',
-    '#e4e9ff',
-    '#e9ecff',
-    '#eeefff',
-    '#f3f2ff',
-    '#f8f6ff',
-    '#fef9ff',
-    '#fff9fb',
-    '#fff7f5',
-    '#fff5ef',
-    '#fff3ea',
-    '#fff1e5',
-    '#ffefe0',
-    '#ffeddb',
-    '#ffebd6',
-    '#ffe9d2',
-    '#ffe8ce',
-    '#ffe6ca',
-    '#ffe5c6',
-    '#ffe3c3',
-    '#ffe2bf',
-    '#ffe0bb',
-    '#ffdfb8',
-    '#ffddb4',
-    '#ffdbb0',
-    '#ffdaad',
-    '#ffd8a9',
-    '#ffd6a5',
-    '#ffd5a1',
-    '#ffd29c',
-    '#ffd096',
-    '#ffcc8f',
-    '#ffc885',
-    '#ffc178',
-    '#ffb765',
-    '#ffa94b',
-    '#ff9523',
-    '#ff7b00',
-    '#ff5200',
+Game.star_colors_realistic = [
+    '#9bb2ff', '#9eb5ff', '#a3b9ff', '#aabfff', '#b2c5ff', '#bbccff', '#c4d2ff', '#ccd8ff', 
+    '#d3ddff', '#dae2ff', '#dfe5ff', '#e4e9ff', '#e9ecff', '#eeefff', '#f3f2ff', '#f8f6ff', 
+    '#fef9ff', '#fff9fb', '#fff7f5', '#fff5ef', '#fff3ea', '#fff1e5', '#ffefe0', '#ffeddb', 
+    '#ffebd6', '#ffe9d2', '#ffe8ce', '#ffe6ca', '#ffe5c6', '#ffe3c3', '#ffe2bf', '#ffe0bb', 
+    '#ffdfb8', '#ffddb4', '#ffdbb0', '#ffdaad', '#ffd8a9', '#ffd6a5', '#ffd5a1', '#ffd29c', 
+    '#ffd096', '#ffcc8f', '#ffc885', '#ffc178', '#ffb765', '#ffa94b', '#ff9523', '#ff7b00', 
+    '#ff5200'
+];
+
+Game.star_colors_simple = [
+    Flynn.Colors.DODGERBLUE,
+    Flynn.Colors.CYAN,
+    Flynn.Colors.RED,
+    Flynn.Colors.YELLOW,    
 ];
 
 Game.StarField = Flynn.State.extend({
-    init: function(width, height, density) {
+    init: function(width, height, density, realistic_colors) {
         // density is in stars per 100x100 pixel area
         
         this.stars=[];
         var num_stars = Math.floor((width/100) * (height/100) * density);
         var i;
+        var star_color;
 
         for(i=0; i<num_stars; i++){
+            if(realistic_colors){
+                star_color = Flynn.Util.randomChoice(Game.star_colors_realistic);
+            }
+            else{
+                star_color = Flynn.Util.randomChoice(Game.star_colors_simple);
+            }
             this.stars.push({
                 x: Math.random() * width,
                 y: Math.random() * height,
                 color: Flynn.Util.shadeBlend(
                     -Math.random(),
-                    Flynn.Util.randomChoice(Game.star_colors))
+                    star_color)
             });
         }
     },
@@ -93,7 +65,7 @@ Game.StateDemo4 = Flynn.State.extend({
     VIEWPORT_SWEEP_ANGLE_SPEED: 0.008,
 
     init: function() {
-        var i, x,len;
+        var i, x, len;
         this._super();
    
         this.center_x = Flynn.mcp.canvasWidth/2;
@@ -106,7 +78,8 @@ Game.StateDemo4 = Flynn.State.extend({
         this.starfield = new Game.StarField(
             this.world_rect.width,
             this.world_rect.height,
-            2 // Density
+            4,    // density
+            false // realistic_colors
             );
         this.viewport_sweep_angle = 0;
 
@@ -174,6 +147,8 @@ Game.StateDemo4 = Flynn.State.extend({
     },
 
     update: function(paceFactor) {
+        var i, len;
+
         // Swirl the viewport around the world center
         this.viewport_sweep_angle += this.VIEWPORT_SWEEP_ANGLE_SPEED * paceFactor;
         Flynn.mcp.viewport.x = (
@@ -202,6 +177,9 @@ Game.StateDemo4 = Flynn.State.extend({
         var margin = 3;
         var i, j, x, len;
         var heading_color = Flynn.Colors.YELLOW;
+        var curret_y = 42;
+
+        ctx.vectorText("SCREEN COORDINATES VS. WORLD COORDINATES", 1.5, left_x, curret_y, null, heading_color);
         
         this.starfield.render(ctx);
         for (i=0,len=this.polygons.length; i<len; i++){
