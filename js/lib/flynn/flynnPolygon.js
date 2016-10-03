@@ -12,10 +12,33 @@ Flynn.Polygon = Class.extend({
 
         this.points = p.slice(0);
         this.pointsMaster = p.slice(0);
+        
+        // Allow a boudary region polygon to be substituted for collision detection.
+        this.bounding_enabled = false;
+        this.bounding_visible = false;
+        this.points_bounding = null;
+        this.points_bounding_master = null;
+        this.points_bounding_dirty = true;
+
         this.angle = 0;
         this.scale = scale;
         this.visible = true;
         this.setAngle(this.angle);
+    },
+
+    setBoundingPoly: function(points){
+        // Enable bounding polygon (for collision detection)
+        this.points_bounding_master = points.slice(0);
+        this.points_bounding = points.slice(0);
+        this.bounding_enabled = true;
+
+        for(var i=0, len=this.points_bounding_master.length; i<len; i+=2){
+            var x = this.points_bounding_master[i];
+
+            if(x==Flynn.PEN_COMMAND){
+                throw "Bounding poly cannot contain PEN_COMMAND.";
+            }
+        }
     },
 
     setAngle: function(theta){
@@ -37,11 +60,30 @@ Flynn.Polygon = Class.extend({
                 this.points[i+1] = (s*x + c*y) * this.scale;
             }
         }
+        this.points_bounding_dirty = true;
     },
 
     setScale: function(c){
         this.scale = c;
         this.setAngle(this.angle);
+        this.points_bounding_dirty = true;
+    },
+
+    updateBoundingPoly: function(){
+        if(this.points_bounding_dirty){
+            this.points_bounding_dirty = false;
+
+            var c = Math.cos(this.angle);
+            var s = Math.sin(this.angle);
+
+            for(var i=0, len=this.points_bounding_master.length; i<len; i+=2){
+                var x = this.points_bounding_master[i];
+                var y = this.points_bounding_master[i+1];
+
+                this.points_bounding[i] = (c*x - s*y) * this.scale;
+                this.points_bounding[i+1] = (s*x + c*y) * this.scale;
+            }
+        }
     },
 
 
@@ -57,7 +99,14 @@ Flynn.Polygon = Class.extend({
      */
     hasPoint: function(ox, oy, x, y) {
         var c = false;
-        var p = this.points;
+        var p;
+        if(!this.bounding_enabled){
+            p=this.points;
+        }
+        else{
+            this.updateBoundingPoly();
+            p=this.points_bounding;
+        }
         var len = p.length;
         var i, j, px1, px2, py1, py2;
 
@@ -153,6 +202,25 @@ Flynn.Polygon = Class.extend({
         }
         ctx.vectorEnd();
 
+        // Draw bounding polygon (if enabled for devlopment debug)
+        if(this.bounding_visible){
+            this.updateBoundingPoly();
+            vector_color=(Flynn.Colors.GRAY);
+            pen_up = true;
+            ctx.vectorStart(vector_color);
+            for (i=0, len=this.points_bounding.length; i<len; i+=2){
+                points_x = this.points_bounding[i];
+                points_y = this.points_bounding[i+1];
+                if(i===0 || pen_up){
+                    ctx.vectorMoveTo(points_x+draw_x, points_y+draw_y);
+                    pen_up = false;
+                }
+                else {
+                    ctx.vectorLineTo(points_x+draw_x, points_y+draw_y);
+                }
+            }
+            ctx.vectorEnd();
+        }
     },
 
 });
