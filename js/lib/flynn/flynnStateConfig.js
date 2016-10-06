@@ -187,7 +187,7 @@ Flynn.StateConfig = Flynn.State.extend({
                         optionDescriptor.promptText + ':',
                         2, menu_center_x - this.OPTION_CENTER_GAP_WIDTH/2,
                         menu_top_y + menu_line_height * i,
-                        0, this.menuTextColor);
+                        'right', this.menuTextColor);
                     break;
             }
 
@@ -259,7 +259,7 @@ Flynn.StateConfig = Flynn.State.extend({
                 valueText,
                 2, menu_center_x + this.OPTION_CENTER_GAP_WIDTH/2,
                 menu_top_y + menu_line_height * i,
-                null, valueColor);
+                'left', valueColor);
             if(i === this.selectedLineIndex){
                 selectionBox = lineSelectionBox;
             }

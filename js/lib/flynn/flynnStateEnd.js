@@ -91,8 +91,8 @@ Flynn.StateEnd = Flynn.State.extend({
             ctx.vectorText(this.title, 4, null, 130, null, this.color);
             for (var i = 0, len = this.leaderboard.leaderList.length; i < len; i++) {
                 var leader = this.leaderboard.leaderList[i];
-                ctx.vectorText(leader['name'], 2, 360, 200+25*i, null, this.color);
-                ctx.vectorText(this.scoreToString(leader['score']), 2, 550, 200+25*i,   10, this.color);
+                ctx.vectorText(leader['name'], 2, 360, 200+25*i, 'left', this.color);
+                ctx.vectorText(this.scoreToString(leader['score']), 2, 660, 200+25*i,'right', this.color);
             }
             ctx.vectorText("PRESS <ENTER> TO CONTINUE", 2, null, 450, null, this.color);
 

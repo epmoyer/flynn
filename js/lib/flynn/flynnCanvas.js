@@ -279,7 +279,20 @@ Flynn.Canvas = Class.extend({
                 return p;
             };
 
-            ctx.vectorText = function(text, scale, x, y, offset, color, is_world){
+            ctx.vectorText = function(text, scale, x, y, justify, color, is_world){
+                // text: String (the text to display)
+                // x: number or null
+                //    number: The x location to display the text
+                //    null: Center text horizontally on screen
+                // y: number or null
+                //    number: The y location to display the text
+                //    null: Center text vertically on screen
+                // justify: String.  'left', 'right', or 'center'
+                //    If x is null, then lustify can be null (it is ignored)
+                // color: String.  Text color.
+                // is_world: Boolean
+                //    true: Use world coordinates
+                //    false: Use screen coordinates
                 text = String(text);
                 if(typeof(color)==='undefined'){
                     console.log("ctx.vectorText(): default color deprecated.  Please pass a color.  Text:" + text );
@@ -293,8 +306,27 @@ Flynn.Canvas = Class.extend({
                 var step = scale*Flynn.Font.CharacterSpacing;
 
                 // add offset if specified
-                if (typeof offset === "number") {
-                    x += step*(offset - text.length) + scale * Flynn.Font.CharacterGap;
+                if (typeof justify === "number") {
+                    throw '5th parameter is now "justify" (was "offset").  Pass "left", "right", or "center".';
+                }
+                else{
+                    switch(justify){
+                        case 'right':
+                            x -= step * text.length - scale * Flynn.Font.CharacterGap;
+                            break;
+                        case 'center':
+                            x -= step * text.length / 2 - scale * Flynn.Font.CharacterGap / 2;
+                            break;
+                        case 'left':
+                            break;
+                        default:
+                            // If x is null, will center horizontally on screen.
+                            // If x is a number, then a justification must be specified
+                            if(typeof x == "number"){
+                                throw '5th parameter is now "justify" (was "offset").  Pass "left", "right", or "center".';
+                            }
+                            break;
+                    }
                 }
 
                 // Center x/y if they are not numbers

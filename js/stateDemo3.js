@@ -256,9 +256,9 @@ Game.StateDemo3 = Flynn.State.extend({
         
         Game.render_page_frame (ctx, Game.States.DEMO3);
 
-        ctx.vectorText("POINT COLLISION", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("POINT COLLISION", 1.5, left_x, curret_y, 'left', heading_color);
         curret_y += 175;
-        ctx.vectorText("POINT COLLISION WITH BOUNDING POLYGON", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("POINT COLLISION WITH BOUNDING POLYGON", 1.5, left_x, curret_y, 'left', heading_color);
         for(i=0; i<this.collision_rects.length; i++){
             ctx.vectorRect(
                 this.collision_rects[i].left, 
@@ -271,13 +271,13 @@ Game.StateDemo3 = Flynn.State.extend({
             1.5, 
             this.collision_rects[1].left + 8, 
             this.collision_rects[1].top + 8,
-            null, 
+            'left', 
             Flynn.Colors.YELLOW);
         ctx.vectorText("VISIBLE", 
             1.5, 
             this.collision_rects[2].left + 8, 
             this.collision_rects[2].top + 8,
-            null, 
+            'left', 
             Flynn.Colors.YELLOW);
 
         ctx.fillStyle=Flynn.Colors.YELLOW;
@@ -307,7 +307,7 @@ Game.StateDemo3 = Flynn.State.extend({
             this.bullet.size);
 
         curret_y = this.collision_rects[1].bottom + 10;
-        ctx.vectorText("LOSSY POLYGON COLLISIOIN", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("LOSSY POLYGON COLLISIOIN", 1.5, left_x, curret_y, 'left', heading_color);
 
         for (i=0; i<this.polygons.length; i++){
             this.polygons[i].render(ctx);
@@ -324,7 +324,7 @@ Game.StateDemo3 = Flynn.State.extend({
 
         left_x = 450;
         curret_y = 42;
-        ctx.vectorText("BUTTONS", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("BUTTONS", 1.5, left_x, curret_y, 'left', heading_color);
         for (i=0; i<button_list.length; i++){
             name = button_list[i];
             if(Flynn.mcp.input.virtualButtonIsDown(name)){
@@ -334,7 +334,7 @@ Game.StateDemo3 = Flynn.State.extend({
                 color = Flynn.Colors.GRAY;
             }
             curret_y += 20;
-            ctx.vectorText(name, 1.5, left_x + indent, curret_y, null, color);
+            ctx.vectorText(name, 1.5, left_x + indent, curret_y, 'left', color);
         }
 
         ctx.vectorRect(

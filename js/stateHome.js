@@ -29,7 +29,7 @@ Game.render_page_frame = function(ctx, page_id){
         else{
             color = Flynn.Colors.GRAY_DK;
         }
-        ctx.vectorText(text, scale, x, 11, null, color);
+        ctx.vectorText(text, scale, x, 11, 'left', color);
         x += Flynn.Font.CharacterSpacing * scale * (text.length + 2);
     }
 
@@ -98,6 +98,7 @@ Game.StateHome = Flynn.State.extend({
             {points:Game.Points.PENUP_TEST3, scale:2},
             {points:Game.Points.PENUP_TEST4, scale:2.6},
             {points:Game.Points.PENUP_TEST5, scale:2.6},
+            {points:Game.Points.PENUP_TEST6, scale:2.0},
             ];
         for (i=0; i<penup_info.length; i++){
             this.penup_polygons.push(new Flynn.Polygon(
@@ -254,7 +255,7 @@ Game.StateHome = Flynn.State.extend({
         Game.render_page_frame (ctx, Game.States.HOME);
 
         var curret_y = 42;
-        ctx.vectorText("LINES", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("LINES", 1.5, left_x, curret_y, 'left', heading_color);
 
         curret_y += 20;
         for (i=0; i<this.colors.length; i++){
@@ -264,7 +265,7 @@ Game.StateHome = Flynn.State.extend({
         }
 
         curret_y += 45;
-        ctx.vectorText("RECTS", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("RECTS", 1.5, left_x, curret_y, 'left', heading_color);
         curret_y += 20;
         for (i=0; i<this.colors.length; i++){
             x = left_x + 30 + i*50;
@@ -272,21 +273,21 @@ Game.StateHome = Flynn.State.extend({
         }
 
         curret_y += 45;
-        ctx.vectorText("POLYGONS", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("POLYGONS", 1.5, left_x, curret_y, 'left', heading_color);
         curret_y += 35;
         for (i=0; i<this.polygons.length; i++){
             this.polygons[i].render(ctx);
         }
 
         curret_y += 30;
-        ctx.vectorText("POLYGONS WITH PENUP NODES", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("POLYGONS WITH PENUP NODES", 1.5, left_x, curret_y, 'left', heading_color);
         curret_y += 35;
         for (i=0; i<this.penup_polygons.length; i++){
             this.penup_polygons[i].render(ctx);
         }
 
         curret_y += 30;
-        ctx.vectorText("POLYGONS WITH COLOR NODES", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("POLYGONS WITH COLOR NODES", 1.5, left_x, curret_y, 'left', heading_color);
         curret_y += 35;
         for (i=0; i<this.multicolor_polygons.length; i++){
             this.multicolor_polygons[i].render(ctx);
@@ -294,39 +295,39 @@ Game.StateHome = Flynn.State.extend({
 
         curret_y += 30;
         var text_color = Flynn.Colors.WHITE;
-        ctx.vectorText("TEXT", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("TEXT", 1.5, left_x, curret_y, 'left', heading_color);
         curret_y += 15;
         var low, high;
         var x_step = 20;
         var y_step = 20;
         var indent = 20;
         for (high=0; high<=15; ++high){
-            ctx.vectorText(high.toString(16), 2, left_x + indent + x_step * (high+1), curret_y, null, Flynn.Colors.CYAN);
+            ctx.vectorText(high.toString(16), 2, left_x + indent + x_step * (high+1), curret_y, 'left', Flynn.Colors.CYAN);
             for (low=0; low<=15; ++low){
                 if(high === 0){
-                    ctx.vectorText(low.toString(16), 2, left_x + indent, curret_y + y_step * (low + 1), null, Flynn.Colors.CYAN);
+                    ctx.vectorText(low.toString(16), 2, left_x + indent, curret_y + y_step * (low + 1), 'left', Flynn.Colors.CYAN);
                 }
                 ctx.vectorText(String.fromCharCode(high*16 + low), 2, 
                     left_x + indent + x_step * (high+1),
                     curret_y + y_step * (low + 1),
-                    null, text_color);
+                    'left', text_color);
             }
         }
         ctx.vectorText("JACKDAWS LOVE MY BIG SPHINX OF QUARTZ", 2, 
             left_x + indent, 
             curret_y + y_step * 18,
-            null, text_color);
+            'left', text_color);
 
         curret_y = 42;
         left_x = 400;
-        ctx.vectorText("TIMERS", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("TIMERS", 1.5, left_x, curret_y, 'left', heading_color);
         curret_y += 20;
-        ctx.vectorText("TIMER, POLLED: " + this.counter_polled, 1.5, left_x + indent, curret_y, null, Flynn.Colors.WHITE);
+        ctx.vectorText("TIMER, POLLED: " + this.counter_polled, 1.5, left_x + indent, curret_y, 'left', Flynn.Colors.WHITE);
         curret_y += 20;
-        ctx.vectorText("TIMER, CALLBACK: " + this.counter_callback, 1.5, left_x + indent, curret_y, null, Flynn.Colors.WHITE);
+        ctx.vectorText("TIMER, CALLBACK: " + this.counter_callback, 1.5, left_x + indent, curret_y, 'left', Flynn.Colors.WHITE);
 
         curret_y += 40;
-        ctx.vectorText("KEYBOARD CONTROLS:", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("KEYBOARD CONTROLS:", 1.5, left_x, curret_y, 'left', heading_color);
         var indent_chars = 9;
         var scale = 1.5;
         options=[
@@ -339,13 +340,13 @@ Game.StateHome = Flynn.State.extend({
         for(i=0; i<options.length; i++){
             curret_y += 20;
             ctx.vectorText(options[i][0], scale, left_x + indent_chars * Flynn.Font.CharacterSpacing * scale,
-                curret_y, 0, Flynn.Colors.ORANGE);
+                curret_y, 'right', Flynn.Colors.ORANGE);
             ctx.vectorText(options[i][1], scale, left_x + (indent_chars+2) * Flynn.Font.CharacterSpacing * scale,
-                curret_y, null, Flynn.Colors.WHITE);            
+                curret_y, 'left', Flynn.Colors.WHITE);            
         }
 
         curret_y += 40;
-        ctx.vectorText("PARTICLES", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("PARTICLES", 1.5, left_x, curret_y, 'left', heading_color);
 
         //-----------------
         // Particle gun

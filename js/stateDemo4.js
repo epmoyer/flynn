@@ -179,7 +179,7 @@ Game.StateDemo4 = Flynn.State.extend({
         var heading_color = Flynn.Colors.YELLOW;
         var curret_y = 42;
 
-        ctx.vectorText("SCREEN COORDINATES VS. WORLD COORDINATES", 1.5, left_x, curret_y, null, heading_color);
+        ctx.vectorText("SCREEN COORDINATES VS. WORLD COORDINATES", 1.5, left_x, curret_y, 'left', heading_color);
         
         this.starfield.render(ctx);
         for (i=0,len=this.polygons.length; i<len; i++){
@@ -188,9 +188,9 @@ Game.StateDemo4 = Flynn.State.extend({
             ctx.vectorText(
                 "SHIP "+i, 
                 1.5, // scale
-                this.polygons[i].position.x-24, 
+                this.polygons[i].position.x, 
                 this.polygons[i].position.y+30, 
-                null,
+                'center',
                 Flynn.Colors.YELLOW,
                 true // is_world
                 );
