@@ -93,9 +93,8 @@ Game.StateDemo3 = Flynn.State.extend({
             });
 
         this.projectiles = new Flynn.Projectiles(
-            new Victor(this.joystick_test_rect.left, this.joystick_test_rect.top),
-            new Victor(this.joystick_test_rect.right, this.joystick_test_rect.bottom),
-            false // is_world=false (use screen coordinates)
+            this.joystick_test_rect, // bounds_rect
+            false                    // is_world=false (use screen coordinates)
             );
 
         this.bullet = {
@@ -169,8 +168,8 @@ Game.StateDemo3 = Flynn.State.extend({
         if (input.virtualButtonWasPressed("fire_l")){
             console.log("fire left");
             this.projectiles.add(
-                new Victor(this.crosshair_poly.position.x, this.crosshair_poly.position.y),
-                new Victor(-this.BULLET_SPEED, 0),
+                this.crosshair_poly.position,
+                {x:-this.BULLET_SPEED, y:0},
                 this.BULLET_LIFETIME,
                 3,
                 Flynn.Colors.YELLOW
@@ -179,8 +178,8 @@ Game.StateDemo3 = Flynn.State.extend({
         if (input.virtualButtonWasPressed("fire_r")){
             console.log("fire right");
             this.projectiles.add(
-                new Victor(this.crosshair_poly.position.x, this.crosshair_poly.position.y),
-                new Victor(this.BULLET_SPEED, 0),
+                this.crosshair_poly.position,
+                {x:this.BULLET_SPEED, y:0},
                 this.BULLET_LIFETIME,
                 3,
                 Flynn.Colors.YELLOW
@@ -307,7 +306,7 @@ Game.StateDemo3 = Flynn.State.extend({
             this.bullet.size);
 
         curret_y = this.collision_rects[1].bottom + 10;
-        ctx.vectorText("LOSSY POLYGON COLLISIOIN", 1.5, left_x, curret_y, 'left', heading_color);
+        ctx.vectorText("LOSSY POLYGON COLLISION", 1.5, left_x, curret_y, 'left', heading_color);
 
         for (i=0; i<this.polygons.length; i++){
             this.polygons[i].render(ctx);

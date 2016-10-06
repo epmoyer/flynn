@@ -254,6 +254,8 @@ Flynn.Font.Points = {
 
 Flynn.Rect= Class.extend({
     init: function(left, top, width, height){
+        this.object_id = 'Flynn.Rect';
+
         this.left = left;
         this.top = top;
         this.width = width;
