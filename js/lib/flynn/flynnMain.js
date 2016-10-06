@@ -263,4 +263,13 @@ Flynn.Rect= Class.extend({
         this.right = this.left + this.width;
         this.bottom = this.top + this.height;
     },
+
+    clone: function(){
+        return new Flynn.Rect(
+            this.left,
+            this.top,
+            this.width,
+            this.height
+            );
+    }
 });
