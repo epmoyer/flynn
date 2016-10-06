@@ -3,6 +3,9 @@ Flynn.BUTTON_NOT_CONFIGURABLE = false;
 
 Flynn.TouchRegion = Class.extend({
     init: function(name, left, top, right, bottom, shape, visible_states) {
+        if(!((shape=='round') || (shape=='rect'))){
+            throw ("Parameter 'shape' must be 'round' or 'rect'");
+        }
         this.name = name;
         this.left = left;
         this.top = top;
@@ -594,6 +597,7 @@ Flynn.InputHandler = Class.extend({
             region = this.touchRegions[name];
             if(region.show){
                 if(region.shape == 'round'){
+                    // Draw circular touch region
                     ctx.beginPath();
                     ctx.arc(
                         (region.left + region.right) / 2,
@@ -602,6 +606,25 @@ Flynn.InputHandler = Class.extend({
                         0, 2*Math.PI,
                         false
                         );
+                    if(this.virtualButtonIsDown(name)){
+                        ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+                    }
+                    else{
+                        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+                    }
+                    ctx.fill();
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+                    ctx.stroke();
+                }
+                else{
+                    // Draw rectangular touch region
+                    ctx.beginPath();
+                    ctx.rect(
+                        region.left,
+                        region.top,
+                        (region.right - region.left),
+                        (region.bottom - region.top));
                     if(this.virtualButtonIsDown(name)){
                         ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
                     }

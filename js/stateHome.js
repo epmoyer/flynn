@@ -49,13 +49,6 @@ Game.StateHome = Flynn.State.extend({
         this.viewport_v = new Victor(0,0);
         this.gameClock = 0;
 
-        this.logo = new Flynn.Polygon(
-            Game.Points.LOGO,
-            Flynn.Colors.DODGERBLUE,
-            3, // scale
-            {x:Flynn.mcp.canvasWidth-78, y:76, is_world:false}
-            );
-
         this.polygons = [];
         this.colors=[
             Flynn.Colors.DODGERBLUE,
@@ -362,7 +355,11 @@ Game.StateHome = Flynn.State.extend({
             this.partice_gun.y + Math.sin(this.partice_gun.angle) * this.partice_gun.length, 
             Flynn.Colors.GRAY);
 
-        this.logo.render(ctx);
+        Flynn.mcp.renderLogo(
+            ctx, 
+            {   x:Flynn.mcp.canvasWidth-78, 
+                y:75
+            });
 
         this.particles.draw(ctx);
 

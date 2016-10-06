@@ -29,7 +29,7 @@ Flynn.Mcp = Class.extend({
         this.devLowFpsPaceFactor = 0;
         this.devLowFpsFrameCount = 0;
 
-        this.version = 'v2.0';  // Flynn version
+        this.version = 'v2.1';  // Flynn version
 
         this.viewport = {x:0, y:0};
 
@@ -57,6 +57,15 @@ Flynn.Mcp = Class.extend({
             this.arcadeModeEnabled = true; // iCade mode forces arcade mode
         }
         this.input.setupUIButtons();
+
+        this.flynn_logo = new Flynn.Polygon(
+            Flynn.Points.FLYNN_LOGO,
+            Flynn.Colors.DODGERBLUE,
+            3, // scale
+            {   x:Flynn.mcp.canvasWidth-78, 
+                y:Flynn.mcp.canvasHeight-50, 
+                is_world:false}
+            );
 
         //--------------------------
         // Browser/platform support
@@ -234,6 +243,21 @@ Flynn.Mcp = Class.extend({
 
         // Drop the last
         this.highscores.splice(this.highscores.length-1, 1);
+    },
+
+    renderLogo(ctx, position){
+        if(typeof position !== 'undefined'){
+            this.flynn_logo.position = position;
+        }
+        this.flynn_logo.render(ctx);
+        ctx.vectorText(
+            this.version,
+            1.5,
+            this.flynn_logo.position.x,
+            this.flynn_logo.position.y + 31,
+            'center',
+            Flynn.Colors.GRAY
+            );
     },
 
     run: function(){

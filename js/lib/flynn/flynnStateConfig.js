@@ -78,7 +78,7 @@ Flynn.StateConfig = Flynn.State.extend({
         }
         if (input.virtualButtonWasPressed("UI_escape")) {
             // Exit back to the parent state
-            Flynn.mcp.nextState = this.parentState;
+            Flynn.mcp.changeState(this.parentState);
         }
         if (input.virtualButtonWasPressed("UI_down")) {
             ++this.selectedLineIndex;

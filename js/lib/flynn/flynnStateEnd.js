@@ -47,7 +47,7 @@ Flynn.StateEnd = Flynn.State.extend({
         if (this.hasEnteredName) {
             if (input.virtualButtonWasPressed("UI_enter")) {
                 // Exit back to the parent state
-                Flynn.mcp.nextState = this.parentState;
+                Flynn.mcp.changeState(this.parentState);
             }
         } else {
             if (input.virtualButtonWasPressed("UI_enter")) {

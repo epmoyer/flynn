@@ -141,13 +141,13 @@ Game.Main = Class.extend({
             y = Game.CANVAS_HEIGHT - 2.9*button_size;
             Flynn.mcp.input.addTouchRegion("fire_r",
                 x, y, x+button_size, y+button_size,
-                'round',
+                'rect',
                 [Game.States.DEMO3]  // visible_states
                 );
             x -= 1.5 * button_size; 
             Flynn.mcp.input.addTouchRegion("fire_l",
                 x, y, x+button_size, y+button_size,
-                'round',
+                'rect',
                 [Game.States.DEMO3]  // visible_states
                 ); 
             //self.input.addTouchRegion("enter",0,0,width,height); // Whole screen
