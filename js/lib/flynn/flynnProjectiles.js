@@ -1,13 +1,14 @@
 Flynn.Projectile= Class.extend({
-    init: function(world_position_v, velocity_v, lifetime, size, color, min_bounds_v, max_bounds_v){
+    init: function(position_v, velocity_v, lifetime, size, color, min_bounds_v, max_bounds_v, is_world){
 
-        this.world_position_v = world_position_v.clone();
+        this.position_v = position_v.clone();
         this.velocity_v = velocity_v.clone();
         this.lifetime = lifetime;
         this.size = size;
         this.color = color;
         this.min_bounds_v = min_bounds_v;
         this.max_bounds_v = max_bounds_v;
+        this.is_world = is_world;
     },
 
     kill: function(){
@@ -26,44 +27,59 @@ Flynn.Projectile= Class.extend({
         }
         else{
             // Add impulse
-            this.world_position_v.x += this.velocity_v.x * paceFactor;
-            this.world_position_v.y += this.velocity_v.y * paceFactor;
+            this.position_v.x += this.velocity_v.x * paceFactor;
+            this.position_v.y += this.velocity_v.y * paceFactor;
         }
-        if ((this.world_position_v.x < this.min_bounds_v.x) ||
-            (this.world_position_v.y < this.min_bounds_v.y) ||
-            (this.world_position_v.x > this.max_bounds_v.x) ||
-            (this.world_position_v.y > this.max_bounds_v.y)){
+        if ((this.position_v.x < this.min_bounds_v.x) ||
+            (this.position_v.y < this.min_bounds_v.y) ||
+            (this.position_v.x > this.max_bounds_v.x) ||
+            (this.position_v.y > this.max_bounds_v.y)){
             isAlive = false;
         }
         return isAlive;
     },
 
-    draw: function(ctx, viewport_v) {
+    render: function(ctx) {
         ctx.fillStyle=this.color;
-        ctx.fillRect(
-            this.world_position_v.x - viewport_v.x,
-            this.world_position_v.y - viewport_v.y,
-            this.size,
-            this.size);
+        if(this.is_world){
+            // Render as world coordinates
+            ctx.fillRect(
+                this.position_v.x - Flynn.mcp.viewport.x,
+                this.position_v.y - Flynn.mcp.viewport.y,
+                this.size,
+                this.size);
+        }
+        else{
+            // Render as screen coordinates
+            ctx.fillRect(
+                this.position_v.x,
+                this.position_v.y,
+                this.size,
+                this.size);
+        }
     }
 
 });
 
 Flynn.Projectiles = Class.extend({
 
-    init: function(min_bounds_v, max_bounds_v){
+    init: function(min_bounds_v, max_bounds_v, is_world){
+        if(typeof(is_world)=='undefined'){
+            is_world = false; // Default to screen coordinates
+        }
         this.projectiles=[];
         this.min_bounds_v = min_bounds_v;
         this.max_bounds_v = max_bounds_v;
+        this.is_world = is_world;
     },
 
     reset: function(){
         this.init(this.min_bounds_v, this.max_bounds_v);
     },
 
-    add: function(world_position_v, velocity_v, lifetime, size, color) {
+    add: function(position_v, velocity_v, lifetime, size, color) {
         this.projectiles.push(new Flynn.Projectile(
-            world_position_v, velocity_v, lifetime, size, color, this.min_bounds_v, this.max_bounds_v));
+            position_v, velocity_v, lifetime, size, color, this.min_bounds_v, this.max_bounds_v, this.is_world));
     },
 
     advanceFrame: function() {
@@ -82,9 +98,9 @@ Flynn.Projectiles = Class.extend({
         }
     },
 
-    draw: function(ctx, viewport_v) {
+    render: function(ctx) {
         for(var i=0, len=this.projectiles.length; i<len; i+=1){
-            this.projectiles[i].draw(ctx, viewport_v);
+            this.projectiles[i].render(ctx);
         }
     }
 });

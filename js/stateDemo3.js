@@ -94,7 +94,8 @@ Game.StateDemo3 = Flynn.State.extend({
 
         this.projectiles = new Flynn.Projectiles(
             new Victor(this.joystick_test_rect.left, this.joystick_test_rect.top),
-            new Victor(this.joystick_test_rect.right, this.joystick_test_rect.bottom)
+            new Victor(this.joystick_test_rect.right, this.joystick_test_rect.bottom),
+            false // is_world=false (use screen coordinates)
             );
 
         this.bullet = {
@@ -244,7 +245,7 @@ Game.StateDemo3 = Flynn.State.extend({
 
         ctx.clearAll();
 
-        this.projectiles.draw(ctx, new Victor(0,0));
+        this.projectiles.render(ctx);
 
         var left_x = 10;
         var indent = 20;
