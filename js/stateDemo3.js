@@ -104,25 +104,15 @@ Game.StateDemo3 = Flynn.State.extend({
             dy: 0.35,
             size:3,
         };
-
-        // this.targets=[
-        //     {poly_index:1, x:this.collision_rects[0].center_x,     y:310},
-        //     {poly_index:2, x:this.collision_rects[0].center_x+110, y:310}
-        // ];
-
-        Flynn.mcp.input.showTouchRegion('fire_l');
-        Flynn.mcp.input.showTouchRegion('fire_r');
-        Flynn.mcp.input.showVirtualJoystick('stick');
-        Flynn.mcp.input.showVirtualJoystick('stick2');
     },
 
     handleInputs: function(input, paceFactor) {
         
         if (input.virtualButtonWasPressed("UI_right")){
-            Flynn.mcp.nextState = Game.States.DEMO4;
+            Flynn.mcp.changeState(Game.States.DEMO4);
         }
         if (input.virtualButtonWasPressed("UI_left")){
-            Flynn.mcp.nextState = Game.States.DEMO2;
+            Flynn.mcp.changeState(Game.States.DEMO2);
         }
 
         if(Flynn.mcp.developerModeEnabled){

@@ -61,7 +61,7 @@ Game.Main = Class.extend({
                 }
             }
         );
-        Flynn.mcp.nextState = Game.States.HOME;
+        Flynn.mcp.changeState(Game.States.HOME);
 
         Game.config = {}
         Game.config.score = 500001;
@@ -127,26 +127,35 @@ Game.Main = Class.extend({
             y = Game.CANVAS_HEIGHT - 1.4*button_size;
             Flynn.mcp.input.addTouchRegion("UI_right",
                 x, y, x+button_size, y+button_size,
-                'round'
+                'round',
+                null // Visible in all states
                 );
             x -= 1.5 * button_size; 
             Flynn.mcp.input.addTouchRegion("UI_left",
                 x, y, x+button_size, y+button_size,
-                'round'
+                'round',
+                null // Visible in all states
                 ); 
 
             x = Game.CANVAS_WIDTH - 1.4*button_size;
             y = Game.CANVAS_HEIGHT - 2.9*button_size;
             Flynn.mcp.input.addTouchRegion("fire_r",
                 x, y, x+button_size, y+button_size,
-                'round'
+                'round',
+                [Game.States.DEMO3]  // visible_states
                 );
             x -= 1.5 * button_size; 
             Flynn.mcp.input.addTouchRegion("fire_l",
                 x, y, x+button_size, y+button_size,
-                'round'
+                'round',
+                [Game.States.DEMO3]  // visible_states
                 ); 
             //self.input.addTouchRegion("enter",0,0,width,height); // Whole screen
+
+        }
+
+        // Set resize handler and force a resize
+        Flynn.mcp.setResizeFunc( function(width, height){
 
             Flynn.mcp.input.addVirtualJoystick({
                 pos: {x: 80, y: Game.CANVAS_HEIGHT-80},
@@ -156,7 +165,8 @@ Game.Main = Class.extend({
                     down:  'down',
                     left:  'left',
                     right: 'right'
-                }
+                },
+                visible_states: [Game.States.DEMO3],
             });
 
             Flynn.mcp.input.addVirtualJoystick({
@@ -168,13 +178,9 @@ Game.Main = Class.extend({
                     down:  'down',
                     left:  'left',
                     right: 'right'
-                }
+                },
+                visible_states: [Game.States.DEMO3],
             });
-        }
-
-        // Set resize handler and force a resize
-        Flynn.mcp.setResizeFunc( function(width, height){
-            // Nothing to do
         });
         Flynn.mcp.resize();
 

@@ -2,17 +2,36 @@ Flynn.BUTTON_CONFIGURABLE = true;
 Flynn.BUTTON_NOT_CONFIGURABLE = false;
 
 Flynn.TouchRegion = Class.extend({
-    init: function(name, left, top, right, bottom, shape) {
+    init: function(name, left, top, right, bottom, shape, visible_states) {
         this.name = name;
         this.left = left;
         this.top = top;
         this.right = right;
         this.bottom = bottom;
         this.shape = shape;
+        this.visible_states = visible_states;
 
         this.show = false;
         this.touchStartIdentifier = 0; // Unique identifier of most recent touchstart event
-    }
+    },
+
+    updateVisibility: function(current_state){
+        var i, len;
+        if(!this.visible_states){
+            this.show = true;
+            return;
+        }
+        else{
+            for(i=0, len=this.visible_states; i<len; i++){
+                if(current_state == this.visible_states[i]){
+                    this.show = true;
+                    return;
+                }
+            }
+        }
+        // Button is not declared as visible in the current state.  Hide it.
+        this.show = false;
+    },
 });
 
 Flynn.VirtualButton = Class.extend({
@@ -522,7 +541,7 @@ Flynn.InputHandler = Class.extend({
         }
     },
 
-    addTouchRegion: function(name, left, top, right, bottom, shape){
+    addTouchRegion: function(name, left, top, right, bottom, shape, visible_states){
         // The 'name' must match a virtual button for touches to be reported.
         // All touches are reported as virtual buttons.
         // Touch regions can be bound to virtual buttons which are also bound to keys.
@@ -537,33 +556,17 @@ Flynn.InputHandler = Class.extend({
             // Remove old region if it exists.  Regions can thus be 
             // redefined by calling addTouchRegion again with the 
             // same name
+            console.log(
+                'Flynn: Info: addTouchRegion() was called for region  "' + name +
+                '" and that touch region already exists. The old touch region will be removed first.');
             delete this.touchRegions[name];
         }
-        touchRegion = new Flynn.TouchRegion(name, left, top, right, bottom, shape);
+        touchRegion = new Flynn.TouchRegion(name, left, top, right, bottom, shape, visible_states);
         this.touchRegions[name] = touchRegion;
         if (!(name in this.virtualButtons) && !(name in this.uiButtons)){
             console.log('Flynn: Warning: touch region name "' + name +
                         '" does not match an existing virtual button name.  Touches to this region will be unreported' +
                         ' unless (until) a virtual button with the same name is created.');
-        }
-    },
-
-    showTouchRegion: function(name){
-        if(name in this.touchRegions){
-            this.touchRegions[name].show = true;
-        }
-    },
-
-    hideTouchRegion: function(name){
-         if(name in this.touchRegions){
-            this.touchRegions[name].show = false;
-        }
-    },
-
-    hideTouchRegionAll: function(){
-        var name;
-        for(name in this.touchRegions){
-            this.touchRegions[name].show = false;
         }
     },
 
@@ -671,23 +674,25 @@ Flynn.InputHandler = Class.extend({
     addVirtualJoystick: function(opts){
         opts = opts || {};
         var joystick = new Flynn.VirtualJoystick(opts);
+
+        // Remove old joystick if it exists.  Joysticks can thus be 
+        // redefined by calling addVirtualJoystick again with the same name
+        if (this.virtualJoysticks[joystick.name]){
+            console.log(
+                'Flynn: Info: addVirtualJoystick() was called for virtual joystick  "' + joystick.name +
+                '" and that virtual joystick already exists. The old virtual joystick will be removed first.');
+            delete(this.virtualJoysticks[joystick.name]);
+        }
         this.virtualJoysticks[joystick.name] = joystick;
     },
 
-    showVirtualJoystick: function(name) {
-        if(this.virtualJoysticks[name]){
-            this.virtualJoysticks[name].show();
-        }
-        else{
-            console.log('Flynn: Warning: showVirtualJoystick() was called for "' + name +
-                '" but no virtual joystick with that name exists.');
-        }
-    },
-
-    hideVirtualJoystickAll: function() {
+    updateVisibilityAllControls: function() {
         var name;
         for(name in this.virtualJoysticks){
-            this.virtualJoysticks[name].hide();
+            this.virtualJoysticks[name].updateVisibility(Flynn.mcp.current_state_id);
+        }
+        for(name in this.touchRegions){
+            this.touchRegions[name].updateVisibility(Flynn.mcp.current_state_id);
         }
     },
 

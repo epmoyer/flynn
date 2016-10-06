@@ -32,10 +32,6 @@ Game.render_page_frame = function(ctx, page_id){
         ctx.vectorText(text, scale, x, 11, 'left', color);
         x += Flynn.Font.CharacterSpacing * scale * (text.length + 2);
     }
-
-    // Show navigation buttons (on touchscreen devices)
-    Flynn.mcp.input.showTouchRegion('UI_left');
-    Flynn.mcp.input.showTouchRegion('UI_right');
 };
 
 Game.StateHome = Flynn.State.extend({
@@ -163,17 +159,17 @@ Game.StateHome = Flynn.State.extend({
     handleInputs: function(input, paceFactor) {
 
         if (input.virtualButtonWasPressed("UI_right")){
-            Flynn.mcp.nextState = Game.States.DEMO1;
+            Flynn.mcp.changeState(Game.States.DEMO1);
         }
         if (input.virtualButtonWasPressed("UI_left")){
-            Flynn.mcp.nextState = Game.States.DEMO4;
+            Flynn.mcp.changeState(Game.States.DEMO4);
         }
         if (input.virtualButtonWasPressed("UI_enter")){
-            Flynn.mcp.nextState = Game.States.END;
+            Flynn.mcp.changeState(Game.States.END);
         }
 
         if (input.virtualButtonWasPressed("UI_escape")) {
-            Flynn.mcp.nextState = Game.States.CONFIG;
+            Flynn.mcp.changeState(Game.States.CONFIG);
         }
 
         if(Flynn.mcp.developerModeEnabled){

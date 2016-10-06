@@ -12,6 +12,7 @@ Flynn.VirtualJoystick = Class.extend({
         this.radius           = opts.radius             || 60;
         this.deadzone_radius  = opts.deadzone_radius    || 8;
         this.capture_radius   = opts.capture_radius     || this.radius;
+        this.visible_states   = opts.visible_states     || null;
         this.type             = opts.type               || 'stick'
         this.name             = opts.name               || 'joystick0';
         this.buttons          = {
@@ -48,14 +49,28 @@ Flynn.VirtualJoystick = Class.extend({
         this.buttons.left.pressed  = false;
     },
 
-    show: function(){
-        this.is_visible = true;
+    updateVisibility: function(current_state){
+        var i, len;
+        if(!this.visible_states){
+            this.is_visible = true;
+            return;
+        }
+        else{
+            for(i=0, len=this.visible_states; i<len; i++){
+                if(current_state == this.visible_states[i]){
+                    this.is_visible = true;
+                    return;
+                }
+            }
+        }
+        // Stick is not declared as visible in the current state.  Hide it.
+        this.is_visible = false;
     },
 
-    hide: function(){
-        this.is_visible = false;
-        this.clear_all();
-    },
+    // hide: function(){
+    //     this.is_visible = false;
+    //     this.clear_all();
+    // },
 
     handleTouchStart: function(x, y, touch_identifier){
         if(this.is_visible && Flynn.Util.distance(x, y, this.pos.x, this.pos.y) < this.capture_radius){

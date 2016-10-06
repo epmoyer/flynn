@@ -21,8 +21,9 @@ Flynn.Mcp = Class.extend({
         
         this.halted = false;
         this.credits = 0;
-        this.nextState = noChangeState;
-        this.currentState = null;
+        this.next_state_id = noChangeState;
+        this.current_state_id = null;
+        this.current_state = null;
 
         this.devPacingMode = Flynn.DevPacingMode.NORMAL;
         this.devLowFpsPaceFactor = 0;
@@ -145,12 +146,20 @@ Flynn.Mcp = Class.extend({
             if(self.resizeFunc){
                 self.resizeFunc(viewport.width, viewport.height);
             }
+
+            // Update controls visibility.   Controls may have been redefined in resize function
+            // and need to be made visible if configured as visible from the current state.
+            self.input.updateVisibilityAllControls();
         };
         window.addEventListener("resize", this.resize);
     },
 
     setResizeFunc: function(resizeFunc){
         this.resizeFunc = resizeFunc;
+    },
+
+    changeState(next_state_id){
+        this.next_state_id = next_state_id;
     },
 
     devHalt: function(){
@@ -263,17 +272,21 @@ Flynn.Mcp = Class.extend({
 
             if(!skipThisFrame){
                 // Change state (if pending)
-                if (self.nextState !== self.noChangeState) {
+                if (self.next_state_id !== self.noChangeState) {
 
                     // Hide all touch controls on a state change
-                    self.input.hideTouchRegionAll();
-                    self.input.hideVirtualJoystickAll();
+                    //self.input.hideTouchRegionAll();
+                    //self.input.hideVirtualJoystickAll();
 
-                    if(self.currentState && self.currentState.destructor){
-                        self.currentState.destructor();
+                    if(self.current_state && self.current_state.destructor){
+                        self.current_state.destructor();
                     }
-                    self.currentState = self.stateBuilderFunc(self.nextState);
-                    self.nextState = self.noChangeState;
+                    self.current_state = self.stateBuilderFunc(self.next_state_id);
+                    self.current_state_id = self.next_state_id;
+                    self.next_state_id = self.noChangeState;
+
+                    // Update controls visibility to reflect new state
+                    self.input.updateVisibilityAllControls();
 
                 }
 
@@ -282,10 +295,10 @@ Flynn.Mcp = Class.extend({
                 self.timers.update(paceFactor);
 
                 // Process state (if set)
-                if(self.currentState){
-                    self.currentState.handleInputs(self.input, paceFactor);
-                    self.currentState.update(paceFactor);
-                    self.currentState.render(self.canvas.ctx);
+                if(self.current_state){
+                    self.current_state.handleInputs(self.input, paceFactor);
+                    self.current_state.update(paceFactor);
+                    self.current_state.render(self.canvas.ctx);
 
                     if(label){
                         self.canvas.ctx.vectorText(label, 1.5, 10, self.canvasHeight-20, 'left', Flynn.Colors.GRAY);
