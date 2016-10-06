@@ -8,8 +8,19 @@ Flynn.TouchRegion = Class.extend({
         this.top = top;
         this.right = right;
         this.bottom = bottom;
+        this.center_x = (this.right + this.left) / 2;
+        this.center_y = (this.top + this.bottom) / 2;
         this.shape = shape;
         this.visible_states = visible_states;
+        if(shape=='round'){
+            if (Math.abs( (this.right - this.left) -  (this.bottom - this.top)) > 3){
+                throw "Round touch regions must have matching width and height";
+            }
+            this.radius = (this.right - this.left) / 2;
+        }
+        else{
+            this.radius = null;
+        }
 
         this.show = false;
         this.touchStartIdentifier = 0; // Unique identifier of most recent touchstart event
@@ -291,10 +302,17 @@ Flynn.InputHandler = Class.extend({
 
     handleTouchStart: function(x,y,touch_identifier){
         //console.log("DEV: handleTouchStart() ",x,y);
-        var name, region, joystick;
+        var name, region, joystick, touched;
         for(name in this.touchRegions){
             region = this.touchRegions[name];
-            if ((x>region.left) && (x<region.right) && (y>region.top) && (y<region.bottom)){
+            if(region.shape == 'round'){
+                touched = Math.pow(x-region.center_x,2) + Math.pow(y-region.center_y,2) < 
+                   Math.pow(region.radius, 2);
+            }
+            else{
+                touched = (x>region.left) && (x<region.right) && (y>region.top) && (y<region.bottom);
+            }
+            if (touched){
                 // A touch event was detected in the region 'name'
                 //console.log("DEV: Touch in region:", name);
                 if(this.virtualButtons[name]){
