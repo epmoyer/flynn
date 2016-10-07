@@ -63,7 +63,7 @@ Game.Main = Class.extend({
         );
         Flynn.mcp.changeState(Game.States.HOME);
 
-        Game.config = {}
+        Game.config = {};
         Game.config.score = 500001;
         Game.config.leaderboard = new Flynn.Leaderboard(
             ['name', 'score'],  // attributeList

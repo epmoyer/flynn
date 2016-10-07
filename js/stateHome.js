@@ -356,9 +356,9 @@ Game.StateHome = Flynn.State.extend({
             Flynn.Colors.GRAY);
 
         Flynn.mcp.renderLogo(
-            ctx, 
-            {   x:Flynn.mcp.canvasWidth-78, 
-                y:75
+            ctx,
+            {   x:Flynn.mcp.canvasWidth-55, 
+                y:65
             });
 
         this.particles.draw(ctx);

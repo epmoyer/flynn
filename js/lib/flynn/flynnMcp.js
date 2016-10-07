@@ -61,9 +61,9 @@ Flynn.Mcp = Class.extend({
         this.flynn_logo = new Flynn.Polygon(
             Flynn.Points.FLYNN_LOGO,
             Flynn.Colors.DODGERBLUE,
-            3, // scale
-            {   x:Flynn.mcp.canvasWidth-78, 
-                y:Flynn.mcp.canvasHeight-50, 
+            2, // scale
+            {   x:Flynn.mcp.canvasWidth-55, 
+                y:Flynn.mcp.canvasHeight-41, 
                 is_world:false}
             );
 
@@ -254,7 +254,7 @@ Flynn.Mcp = Class.extend({
             this.version,
             1.5,
             this.flynn_logo.position.x,
-            this.flynn_logo.position.y + 31,
+            this.flynn_logo.position.y + 23,
             'center',
             Flynn.Colors.GRAY
             );
