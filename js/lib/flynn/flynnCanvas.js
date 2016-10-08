@@ -265,21 +265,21 @@ Flynn.Canvas = Class.extend({
                 this.vectorEnd();
             };
 
-            ctx.charToPolygon = function(ch){
+            ctx.charToPolygon = function(ch, font){
                 var p;
                 if ((ch >= this.EXCLAMATIONCODE) && (ch <= this.LOWERCASE_Z)){
                     if(ch >= this.LOWERCASE_A){
                         ch -= this.UPPER_TO_LOWER;
                     }
-                    p = Flynn.Font.Points.ASCII[ch - this.EXCLAMATIONCODE];
+                    p = font.Points.ASCII[ch - this.EXCLAMATIONCODE];
                 }
                 else{
-                    p = Flynn.Font.Points.UNIMPLEMENTED_CHAR;
+                    p = font.Points.UNIMPLEMENTED_CHAR;
                 }
                 return p;
             };
 
-            ctx.vectorText = function(text, scale, x, y, justify, color, is_world){
+            ctx.vectorText = function(text, scale, x, y, justify, color, is_world, font){
                 // text: String (the text to display)
                 // x: number or null
                 //    number: The x location to display the text
@@ -293,17 +293,20 @@ Flynn.Canvas = Class.extend({
                 // is_world: Boolean
                 //    true: Use world coordinates
                 //    false: Use screen coordinates
+                // font: Flynn font object (Flynn.Font.Normal, Flynn.Font.Block, etc.)
                 text = String(text);
                 if(typeof(color)==='undefined'){
                     console.log("ctx.vectorText(): default color deprecated.  Please pass a color.  Text:" + text );
                     color = Flynn.Colors.WHITE;
                 }
-
                 if(typeof(is_world)==='undefined'){
                     is_world = false;
                 }
+                if(typeof(font)==='undefined'){
+                    font = Flynn.Font.Normal;
+                }
 
-                var step = scale*Flynn.Font.CharacterSpacing;
+                var step = scale*font.CharacterSpacing;
 
                 // add offset if specified
                 if (typeof justify === "number") {
@@ -312,10 +315,10 @@ Flynn.Canvas = Class.extend({
                 else{
                     switch(justify){
                         case 'right':
-                            x -= step * text.length - scale * Flynn.Font.CharacterGap;
+                            x -= step * text.length - scale * font.CharacterGap;
                             break;
                         case 'center':
-                            x -= step * text.length / 2 - scale * Flynn.Font.CharacterGap / 2;
+                            x -= step * text.length / 2 - scale * font.CharacterGap / 2;
                             break;
                         case 'left':
                             break;
@@ -331,7 +334,7 @@ Flynn.Canvas = Class.extend({
 
                 // Center x/y if they are not numbers
                 if (typeof x !== "number"){
-                    x = Math.round((this.width - (text.length*step-(Flynn.Font.CharacterGap*scale)))/2);
+                    x = Math.round((this.width - (text.length*step-(font.CharacterGap*scale)))/2);
                 }
                 if (typeof y !== "number"){
                     y = Math.round((this.height - step)/2);
@@ -344,7 +347,7 @@ Flynn.Canvas = Class.extend({
                         x += step;
                         continue;
                     }
-                    var p = this.charToPolygon(ch);
+                    var p = this.charToPolygon(ch, font);
 
                     var pen_up = false;
                     this.vectorStart(color, is_world);
@@ -368,7 +371,7 @@ Flynn.Canvas = Class.extend({
                 this.DEBUGLOGGED = true;
             };
 
-            ctx.vectorTextArc = function(text, scale, center_x, center_y, angle, radius, color, is_centered, is_reversed, is_world){
+            ctx.vectorTextArc = function(text, scale, center_x, center_y, angle, radius, color, is_centered, is_reversed, is_world, font){
                 text = String(text);
 
                 if(typeof(color)==='undefined'){
@@ -383,11 +386,14 @@ Flynn.Canvas = Class.extend({
                 if(typeof(is_world)==='undefined'){
                     is_world = false;
                 }
+                if(typeof(font)==='undefined'){
+                    font = Flynn.Font.Normal;
+                }
 
-                var step = scale*Flynn.Font.CharacterSpacing;
+                var step = scale*font.CharacterSpacing;
 
                 var render_angle = angle;
-                var render_angle_step = Math.asin(Flynn.Font.CharacterSpacing*scale/radius);
+                var render_angle_step = Math.asin(font.CharacterSpacing*scale/radius);
                 var renderAngleOffset = 0;
                 if (is_centered){
                     renderAngleOffset = render_angle_step * (text.length / 2 - 0.5);
@@ -413,7 +419,7 @@ Flynn.Canvas = Class.extend({
                     }
 
                     // Get the character vector points
-                    var p = this.charToPolygon(ch);
+                    var p = this.charToPolygon(ch, font);
 
                     // Render character
                     var pen_up = false;
@@ -423,8 +429,8 @@ Flynn.Canvas = Class.extend({
                             pen_up = true;
                         }
                         else{
-                            var x = p[j] - Flynn.Font.CharacterWidth/2;
-                            var y = p[j+1] - Flynn.Font.CharacterHeight/2;
+                            var x = p[j] - font.CharacterWidth/2;
+                            var y = p[j+1] - font.CharacterHeight/2;
                             var c = Math.cos(character_angle);
                             var s = Math.sin(character_angle);
                             var draw_x = (c*x - s*y) * scale + Math.cos(render_angle) * radius + center_x;

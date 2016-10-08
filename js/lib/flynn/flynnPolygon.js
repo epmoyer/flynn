@@ -91,15 +91,14 @@ Flynn.Polygon = Class.extend({
      * Useful point in polygon check, taken from:
      * http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
      *
-     * @param  {number} ox offset x coordinate
-     * @param  {number} oy offset y coordinate
      * @param  {number}  x test x coordinate
      * @param  {number}  y test y coordinate
      * @return {Boolean}   result from check
      */
-    hasPoint: function(ox, oy, x, y) {
+    hasPoint: function(x, y) {
         var c = false;
         var p;
+        var pos_x, pos_y;
         if(!this.bounding_enabled){
             p=this.points;
         }
@@ -107,16 +106,20 @@ Flynn.Polygon = Class.extend({
             this.updateBoundingPoly();
             p=this.points_bounding;
         }
+
+        pos_x = this.position.x;
+        pos_y = this.position.y;
+
         var len = p.length;
         var i, j, px1, px2, py1, py2;
 
         // doing magic!
         for (i = 0, j = len-2; i < len; i += 2) {
-            px1 = p[i] + ox;
-            px2 = p[j] + ox;
+            px1 = p[i] + pos_x;
+            px2 = p[j] + pos_x;
 
-            py1 = p[i+1] + oy;
-            py2 = p[j+1] + oy;
+            py1 = p[i+1] + pos_y;
+            py2 = p[j+1] + pos_y;
 
             if (
                 ( py1 > y != py2 > y ) &&
@@ -136,16 +139,19 @@ Flynn.Polygon = Class.extend({
         // between similar sized polygons.  It is possible to consruct polygons with long
         // appendages which can overlap withoug triggering collisioin detection.  Exhaustive 
         // general-case detection of edge intesection is not worth the performance hit.
-        var i, len;
+        var i, len, pos_x, pos_y;
 
         if (!this.visible){
             return false;
         }
+        pos_x = this.position.x;
+        pos_y = this.position.y;
         for(i=0, len=this.points.length-2; i<len; i+=2){
-            var x = this.points[i]   + this.position.x - target_poly.position.x;
-            var y = this.points[i+1] + this.position.y - target_poly.position.y;
 
-            if (target_poly.hasPoint(0,0,x,y)){
+            if (target_poly.hasPoint(
+                    this.points[i]   + pos_x, 
+                    this.points[i+1] + pos_y
+                )){
                 return true;
             }
         }

@@ -115,7 +115,7 @@ Game.StateDemo1 = Flynn.State.extend({
             for(i=0; i<15; i++){
                 var scale = 1.0 + 0.25*i;
                 ctx.vectorText("SCALE = " + scale.toFixed(2), scale, text_x, curret_y, 'left', Flynn.Colors.WHITE);
-                curret_y += scale * Flynn.Font.CharacterHeight + 8;
+                curret_y += scale * Flynn.Font.Normal.CharacterHeight + 8;
             }
 
             ctx.vectorText("HORIZONTAL CENTERING", 1.5, null, 50, null, Flynn.Colors.WHITE);

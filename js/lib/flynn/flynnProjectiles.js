@@ -68,13 +68,14 @@ Flynn.Projectiles = Class.extend({
         if(typeof(is_world)=='undefined'){
             is_world = false; // Default to screen coordinates
         }
-        this.projectiles=[];
         this.bounds_rect = bounds_rect.clone();
         this.is_world = is_world;
+        
+        this.projectiles=[];
     },
 
     reset: function(){
-        this.init(this.min_bounds_v, this.max_bounds_v);
+        this.projectiles=[];
     },
 
     add: function(position, velocity, lifetime, size, color) {

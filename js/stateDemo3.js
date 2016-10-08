@@ -201,9 +201,8 @@ Game.StateDemo3 = Flynn.State.extend({
         }
 
         if(this.polygons[0].hasPoint(
-            0,0,
-            this.bullet.x-this.collision_rects[0].center_x,
-            this.bullet.y-this.collision_rects[0].center_y)){
+            this.bullet.x,
+            this.bullet.y)){
             // Collided
             this.polygons[0].color = Flynn.Colors.RED;
         }
@@ -213,9 +212,8 @@ Game.StateDemo3 = Flynn.State.extend({
         }
 
         this.bounding_collision = this.polygons[3].hasPoint(
-            0,0,
-            this.bullet.x-this.collision_rects[0].center_x,
-            this.bullet.y-this.collision_rects[0].center_y
+            this.bullet.x-this.collision_rects[0].center_x+this.collision_rects[1].center_x,
+            this.bullet.y-this.collision_rects[0].center_y+this.collision_rects[1].center_y
             );
 
         if(this.polygons[2].is_colliding(this.polygons[1])){

@@ -9,7 +9,7 @@ Game.render_page_frame = function(ctx, page_id){
     var margin=3;
     var x=10;
     var scale=3;
-    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD"];
+    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD", "FONT"];
 
     // Render frame box
     ctx.vectorLine(margin, 37, ctx.width-margin-1, 37, Flynn.Colors.GREEN);
@@ -30,7 +30,7 @@ Game.render_page_frame = function(ctx, page_id){
             color = Flynn.Colors.GRAY_DK;
         }
         ctx.vectorText(text, scale, x, 11, 'left', color);
-        x += Flynn.Font.CharacterSpacing * scale * (text.length + 2);
+        x += Flynn.Font.Normal.CharacterSpacing * scale * (text.length + 2);
     }
 };
 
@@ -155,7 +155,7 @@ Game.StateHome = Flynn.State.extend({
             Flynn.mcp.changeState(Game.States.DEMO1);
         }
         if (input.virtualButtonWasPressed("UI_left")){
-            Flynn.mcp.changeState(Game.States.DEMO4);
+            Flynn.mcp.changeState(Game.States.DEMO5);
         }
         if (input.virtualButtonWasPressed("UI_enter")){
             Flynn.mcp.changeState(Game.States.END);
@@ -328,9 +328,9 @@ Game.StateHome = Flynn.State.extend({
         ];
         for(i=0; i<options.length; i++){
             curret_y += 20;
-            ctx.vectorText(options[i][0], scale, left_x + indent_chars * Flynn.Font.CharacterSpacing * scale,
+            ctx.vectorText(options[i][0], scale, left_x + indent_chars * Flynn.Font.Normal.CharacterSpacing * scale,
                 curret_y, 'right', Flynn.Colors.ORANGE);
-            ctx.vectorText(options[i][1], scale, left_x + (indent_chars+2) * Flynn.Font.CharacterSpacing * scale,
+            ctx.vectorText(options[i][1], scale, left_x + (indent_chars+2) * Flynn.Font.Normal.CharacterSpacing * scale,
                 curret_y, 'left', Flynn.Colors.WHITE);            
         }
 
