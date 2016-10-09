@@ -1,3 +1,5 @@
+(function () { "use strict";
+    
 Flynn.VirtualJoystick = Class.extend({
 
     STICK_LIMIT_RATIO: 0.9,
@@ -208,3 +210,4 @@ Flynn.VirtualJoystick = Class.extend({
     },
 });
 
+}()); // "use strict" wrapper

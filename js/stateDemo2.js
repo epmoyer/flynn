@@ -2,6 +2,8 @@ if (typeof Game == "undefined") {
    var Game = {};  // Create namespace
 }
 
+(function () { "use strict";
+
 Game.StateDemo2 = Flynn.State.extend({
 
     GRAVITY_X: 0,
@@ -145,5 +147,6 @@ Game.StateDemo2 = Flynn.State.extend({
 
         this.physics.render(ctx);
     },
-
 });
+
+}()); // "use strict" wrapper

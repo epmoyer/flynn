@@ -2,6 +2,8 @@ if (typeof Game == "undefined") {
    var Game = {};  // Create namespace
 }
 
+(function () { "use strict";
+
 Game.render_page_frame = function(ctx, page_id){
     // Render the frame for the current page
 
@@ -319,7 +321,7 @@ Game.StateHome = Flynn.State.extend({
         ctx.vectorText("KEYBOARD CONTROLS:", 1.5, left_x, curret_y, 'left', heading_color);
         var indent_chars = 9;
         var scale = 1.5;
-        options=[
+        var options=[
             ['ESCAPE', 'CONFIGURATION MENU'],
             ['ENTER', 'HIGH SCORE SCREEN'],
             ['6', '(DEVELOPER MODE) TOGGLE METRICS'],
@@ -365,3 +367,5 @@ Game.StateHome = Flynn.State.extend({
 
     }
 });
+
+}()); // "use strict" wrapper

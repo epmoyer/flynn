@@ -1,3 +1,5 @@
+(function () { "use strict"; 
+
 Flynn.OptionType = {
     BOOLEAN: 0,
     MULTI: 1,
@@ -196,3 +198,5 @@ Flynn.OptionManager = Class.extend({
     },
 
 });
+
+}()); // "use strict" wrapper

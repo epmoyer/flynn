@@ -2,6 +2,8 @@ if (typeof Game == "undefined") {
    var Game = {};  // Create namespace
 }
 
+(function () { "use strict";
+    
 Game.StateDemo3 = Flynn.State.extend({
 
     CROSSHAIR_SPEED: 3,
@@ -332,7 +334,7 @@ Game.StateDemo3 = Flynn.State.extend({
             Flynn.Colors.DODGERBLUE);
 
         this.crosshair_poly.render(ctx);
-
     },
-
 });
+
+}()); // "use strict" wrapper

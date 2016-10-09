@@ -2,6 +2,8 @@ if (typeof Game == "undefined") {
    var Game = {};  // Create namespace
 }
 
+(function () { "use strict";
+
 // Star colors from http://www.vendian.org/mncharity/dir3/starcolor/
 Game.star_colors_realistic = [
     '#9bb2ff', '#9eb5ff', '#a3b9ff', '#aabfff', '#b2c5ff', '#bbccff', '#c4d2ff', '#ccd8ff', 
@@ -229,5 +231,6 @@ Game.StateDemo4 = Flynn.State.extend({
             this.extra_lives_poly.render(ctx);
         }
     },
-
 });
+    
+}()); // "use strict" wrapper

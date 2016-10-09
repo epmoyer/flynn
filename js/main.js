@@ -2,6 +2,8 @@ if (typeof Game == "undefined") {
    var Game = {};  // Create namespace
 }
 
+(function () { "use strict";
+
 Game.CANVAS_HEIGHT = 768;
 Game.CANVAS_WIDTH = 1024;
 Game.SPEED_FACTOR = 1.0;
@@ -23,7 +25,6 @@ Game.States = {
 Game.Main = Class.extend({
     
     init: function() {
-        "use strict";
 
         Flynn.init(
             Game.CANVAS_WIDTH,
@@ -209,3 +210,5 @@ Game.Main = Class.extend({
         Flynn.mcp.run();
     }
 });
+
+}()); // "use strict" wrapper

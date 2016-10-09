@@ -1,4 +1,7 @@
 // Master Control Program 
+
+(function () { "use strict"; 
+
 Flynn.Mcp = Class.extend({
 
     init: function(canvasWidth, canvasHeight, noChangeState, gameSpeedFactor, stateBuilderFunc) {
@@ -343,3 +346,5 @@ Flynn.Mcp = Class.extend({
     },
 
 });
+
+}()); // "use strict" wrapper

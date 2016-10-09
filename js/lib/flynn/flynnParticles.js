@@ -1,3 +1,5 @@
+(function () { "use strict"; 
+
 Flynn.Particle = Class.extend({
 
     PARTICLE_LIFE_VARIATION: 20,
@@ -90,3 +92,5 @@ Flynn.Particles = Class.extend({
         }
     }
 });
+
+}()); // "use strict" wrapper

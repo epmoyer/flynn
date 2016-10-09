@@ -1,3 +1,5 @@
+(function () { "use strict";
+
 Flynn.Leaderboard = Class.extend({
 
     init: function(attributeList, maxItems, sortDescending){
@@ -107,3 +109,5 @@ Flynn.Leaderboard = Class.extend({
         this.saveToCookies();
     }
 });
+
+}()); // "use strict" wrapper

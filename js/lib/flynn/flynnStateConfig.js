@@ -3,6 +3,8 @@
 //    Allow user to configure game options
 //--------------------------------------------
 
+(function () { "use strict";
+
 Flynn.StateConfig = Flynn.State.extend({
 
     init: function(mainTextColor, menuTextColor, selectionBoxColor, menuPromptColor, parentState){
@@ -277,3 +279,5 @@ Flynn.StateConfig = Flynn.State.extend({
     }
 
 });
+
+}()); // "use strict" wrapper

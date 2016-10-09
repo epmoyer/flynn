@@ -2,6 +2,8 @@ if (typeof Game == "undefined") {
    var Game = {};  // Create namespace
 }
 
+(function () { "use strict";
+    
 Game.StateDemo1 = Flynn.State.extend({
 
     init: function() {
@@ -140,6 +142,7 @@ Game.StateDemo1 = Flynn.State.extend({
                 -Math.PI/2, 
                 230, Flynn.Colors.CYAN, true, false);
         }
-
     }
 });
+
+}()); // "use strict" wrapper

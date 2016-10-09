@@ -1,3 +1,5 @@
+(function () { "use strict"; 
+    
 Flynn.State = Class.extend({
 
     init: function(){
@@ -6,3 +8,5 @@ Flynn.State = Class.extend({
     update: function() {},
     render: function(ctx) {}
 });
+
+}()); // "use strict" wrapper

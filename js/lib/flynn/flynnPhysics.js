@@ -8,6 +8,9 @@
 //-----------------------------------
 // Add helper functions to Box2D.Dynamics.b2Body
 //-----------------------------------
+
+(function () { "use strict"; 
+
 Box2D.Dynamics.b2Body.prototype.ApplyAngularImpulse = function (impulse) {
       if (this.m_type != Box2D.Dynamics.b2Body.b2_dynamicBody) {
          return;
@@ -242,3 +245,5 @@ Flynn.Body= Class.extend({
         context.restore();
     },
 });
+
+}()); // "use strict" wrapper

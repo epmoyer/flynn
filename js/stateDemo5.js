@@ -2,6 +2,8 @@ if (typeof Game == "undefined") {
    var Game = {};  // Create namespace
 }
 
+(function () { "use strict";
+
 Game.StateDemo5 = Flynn.State.extend({
 
     init: function() {
@@ -86,8 +88,8 @@ Game.StateDemo5 = Flynn.State.extend({
             ctx.vectorText(strings[i], 1.5, text_x, curret_y + i*15, 'center', Flynn.Colors.WHITE, is_world, Flynn.Font.Block);
         }
 
-        curret_x = Flynn.mcp.canvasWidth * 0.73;
-        curret_y = Flynn.mcp.canvasHeight * 0.4;
+        var curret_x = Flynn.mcp.canvasWidth * 0.73;
+        var curret_y = Flynn.mcp.canvasHeight * 0.4;
         ctx.vectorTextArc(
             "ARC TEXT WITH REVERSE ENABLED", 3.0, 
             curret_x, curret_y, 
@@ -130,7 +132,7 @@ Game.StateDemo5 = Flynn.State.extend({
                     'left', text_color, is_world, Flynn.Font.Block);
             }
         }
-
-
     }
 });
+
+}()); // "use strict" wrapper

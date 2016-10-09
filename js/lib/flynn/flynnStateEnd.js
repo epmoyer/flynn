@@ -3,6 +3,8 @@
 //    End of game screens (leaderboard score entry/table)
 //--------------------------------------------
 
+(function () { "use strict";
+
 Flynn.StateEnd = Flynn.State.extend({
 
     CURSOR_BLINK_RATE: 2,
@@ -109,3 +111,5 @@ Flynn.StateEnd = Flynn.State.extend({
         }
     }
 });
+
+}()); // "use strict" wrapper

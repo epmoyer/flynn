@@ -1,3 +1,5 @@
+(function () { "use strict"; 
+    
 Flynn.Polygon = Class.extend({
 
     init: function(p, color, scale, position){
@@ -230,3 +232,5 @@ Flynn.Polygon = Class.extend({
     },
 
 });
+
+}()); // "use strict" wrapper

@@ -1,3 +1,5 @@
+(function () { "use strict";
+    
 Flynn.Timer = Class.extend({
     init: function(timerName, initialTicks, callback){
         this.name = timerName;
@@ -82,3 +84,5 @@ Flynn.Timers = Class.extend({
     },
 
 });
+
+}()); // "use strict" wrapper

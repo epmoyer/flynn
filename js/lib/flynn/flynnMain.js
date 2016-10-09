@@ -6,6 +6,8 @@ if (typeof Flynn == "undefined") {
   var Flynn = {};  // Create namespace
 }
 
+(function () { "use strict"; 
+ 
 Flynn.init = function(
     canvasWidth,
     canvasHeight,
@@ -360,3 +362,5 @@ Flynn.Rect= Class.extend({
             );
     }
 });
+
+}()); // "use strict" wrapper

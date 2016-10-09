@@ -1,3 +1,5 @@
+(function () { "use strict"; 
+
 Flynn.Projectile= Class.extend({
     init: function(position, velocity, lifetime, size, color, projectiles){
 
@@ -105,3 +107,5 @@ Flynn.Projectiles = Class.extend({
         }
     }
 });
+
+}()); // "use strict" wrapper

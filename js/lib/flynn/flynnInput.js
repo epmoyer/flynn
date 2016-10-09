@@ -1,3 +1,5 @@
+(function () { "use strict";
+
 Flynn.BUTTON_CONFIGURABLE = true;
 Flynn.BUTTON_NOT_CONFIGURABLE = false;
 
@@ -582,7 +584,7 @@ Flynn.InputHandler = Class.extend({
                 '" and that touch region already exists. The old touch region will be removed first.');
             delete this.touchRegions[name];
         }
-        touchRegion = new Flynn.TouchRegion(name, left, top, right, bottom, shape, visible_states);
+        var touchRegion = new Flynn.TouchRegion(name, left, top, right, bottom, shape, visible_states);
         this.touchRegions[name] = touchRegion;
         if (!(name in this.virtualButtons) && !(name in this.uiButtons)){
             console.log('Flynn: Warning: touch region name "' + name +
@@ -745,3 +747,5 @@ Flynn.InputHandler = Class.extend({
     },
 
 });
+
+}()); // "use strict" wrapper

@@ -1,3 +1,5 @@
+(function () { "use strict";
+
 Flynn.Util = {
     getUrlValue: function(VarSearch){
         var SearchString = window.location.search.substring(1);
@@ -171,3 +173,5 @@ Flynn.Util = {
     },
 
 };
+
+}()); // "use strict" wrapper

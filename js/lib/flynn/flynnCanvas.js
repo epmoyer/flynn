@@ -1,4 +1,6 @@
 // Vector rendering emulation modes
+(function () { "use strict";
+
 Flynn.VectorMode = {
     PLAIN:     0,   // No Vector rendering emulation (plain lines)
     V_THIN:    1,   // Thin Vector rendering 
@@ -253,7 +255,7 @@ Flynn.Canvas = Class.extend({
                 this.vectorEnd();
             };
 
-            ctx.vectorLine = function(x1, y1, x2, y2, color){
+            ctx.vectorLine = function(x1, y1, x2, y2, color, is_world){
                 if(typeof(is_world)==='undefined'){
                     is_world = false;
                 }
@@ -542,3 +544,5 @@ Flynn.Canvas = Class.extend({
         refresh_f(callback_f, this.canvas );
     }
 });
+
+}()); // "use strict" wrapper
