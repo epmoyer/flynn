@@ -81,16 +81,20 @@ Flynn.Util = {
     interceptSolution: function(B_v, u_v, A_v, gun_velocity){
         // Returns a targeting solution object
         //    Input:
-        //       B_v      Target position vector
-        //       u_v      Target velocity vector
-        //       A_v      Gun position vectorr
+        //       B_v          Victor    Target position vector
+        //       u_v          Victor    Target velocity vector
+        //       A_v          Victor    Gun position vector
+        //       gun_velocity number    Gun velocity
         //   
-        //    perfect:    Boolean   (true if a perfect solution was possible.  Otherwise a "near" solution will be returned)
-        //    velocity_v: Victor    (solution velocity vector)
+        //    Returns:
+        //    {
+        //       perfect:    Boolean   (true if a perfect solution was possible.  Otherwise a "near" solution will be returned)
+        //       velocity_v: Victor    (solution velocity vector)
+        //    }
         //
         //  Input and output vectors are 2d victor.js objects (http://victorjs.org/)
         //
-        // Method is described by http://danikgames.com/blog/how-to-intersect-a-moving-target-in-2d/
+        //  Method is described by http://danikgames.com/blog/how-to-intersect-a-moving-target-in-2d/
         //
         var solution = {perfect:false, velocity_v:null};
 

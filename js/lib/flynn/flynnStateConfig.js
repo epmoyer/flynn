@@ -11,10 +11,10 @@ Flynn.StateConfig = Flynn.State.extend({
         this.OPTION_SELECTION_MARGIN = 5;
         this.OPTION_SELECTION_MARGININ_SET = 2;
         this.OPTION_TEXT_SCALE = 2.0;
-        this.OPTION_CENTER_GAP_WIDTH = Flynn.Font.CharacterWidth * 2 * this.OPTION_TEXT_SCALE;
+        this.OPTION_CENTER_GAP_WIDTH = Flynn.Font.Normal.CharacterWidth * 2 * this.OPTION_TEXT_SCALE;
         this.OPTION_KEY_PROMPT = "PRESS NEW KEY";
         this.OPTION_INPUT_KEY_VALUE_WIDTH = (
-            this.OPTION_TEXT_SCALE * Flynn.Font.CharacterSpacing * 
+            this.OPTION_TEXT_SCALE * Flynn.Font.Normal.CharacterSpacing * 
             this.OPTION_KEY_PROMPT.length + 1 +
             this.OPTION_SELECTION_MARGIN * 2
             );
@@ -174,12 +174,12 @@ Flynn.StateConfig = Flynn.State.extend({
                         menu_top_y + menu_line_height * i,
                         null, this.menuTextColor);
 
-                    textWidth = (optionDescriptor.promptText.length * Flynn.Font.CharacterSpacing - Flynn.Font.CharacterGap) * this.OPTION_TEXT_SCALE;
+                    textWidth = (optionDescriptor.promptText.length * Flynn.Font.Normal.CharacterSpacing - Flynn.Font.Normal.CharacterGap) * this.OPTION_TEXT_SCALE;
                     lineSelectionBox = {
                         x: Flynn.mcp.canvasWidth/2 - textWidth/2 - this.OPTION_SELECTION_MARGIN,
                         y: menu_top_y + menu_line_height * i - this.OPTION_SELECTION_MARGIN,
                         width: textWidth + this.OPTION_SELECTION_MARGIN * 2,
-                        height: Flynn.Font.CharacterHeight * this.OPTION_TEXT_SCALE + this.OPTION_SELECTION_MARGIN * 2};
+                        height: Flynn.Font.Normal.CharacterHeight * this.OPTION_TEXT_SCALE + this.OPTION_SELECTION_MARGIN * 2};
 
                     break;
                 default:
@@ -203,12 +203,12 @@ Flynn.StateConfig = Flynn.State.extend({
                         valueText = "OFF";
                     }
 
-                    textWidth = (3 * Flynn.Font.CharacterSpacing - Flynn.Font.CharacterGap) * this.OPTION_TEXT_SCALE;
+                    textWidth = (3 * Flynn.Font.Normal.CharacterSpacing - Flynn.Font.Normal.CharacterGap) * this.OPTION_TEXT_SCALE;
                     lineSelectionBox = {
                         x: menu_center_x + this.OPTION_CENTER_GAP_WIDTH/2 - this.OPTION_SELECTION_MARGIN,
                         y: menu_top_y + menu_line_height * i - this.OPTION_SELECTION_MARGIN,
                         width: textWidth + this.OPTION_SELECTION_MARGIN * 2,
-                        height: Flynn.Font.CharacterHeight * this.OPTION_TEXT_SCALE + this.OPTION_SELECTION_MARGIN * 2};
+                        height: Flynn.Font.Normal.CharacterHeight * this.OPTION_TEXT_SCALE + this.OPTION_SELECTION_MARGIN * 2};
                     break;
 
                 case Flynn.OptionType.MULTI:
@@ -223,12 +223,12 @@ Flynn.StateConfig = Flynn.State.extend({
                             characterSkip += optionDescriptor.promptValues[j][0].length + 2;
                         }
                     }
-                    textWidth = (optionDescriptor.promptValues[currentPromptValueIndex][0].length * Flynn.Font.CharacterSpacing - Flynn.Font.CharacterGap) * this.OPTION_TEXT_SCALE;
+                    textWidth = (optionDescriptor.promptValues[currentPromptValueIndex][0].length * Flynn.Font.Normal.CharacterSpacing - Flynn.Font.Normal.CharacterGap) * this.OPTION_TEXT_SCALE;
                     lineSelectionBox = {
-                        x: menu_center_x + this.OPTION_CENTER_GAP_WIDTH/2 - this.OPTION_SELECTION_MARGIN + (characterSkip * Flynn.Font.CharacterSpacing * this.OPTION_TEXT_SCALE) ,
+                        x: menu_center_x + this.OPTION_CENTER_GAP_WIDTH/2 - this.OPTION_SELECTION_MARGIN + (characterSkip * Flynn.Font.Normal.CharacterSpacing * this.OPTION_TEXT_SCALE) ,
                         y: menu_top_y + menu_line_height * i - this.OPTION_SELECTION_MARGIN,
                         width: textWidth + this.OPTION_SELECTION_MARGIN * 2,
-                        height: Flynn.Font.CharacterHeight * this.OPTION_TEXT_SCALE + this.OPTION_SELECTION_MARGIN * 2};
+                        height: Flynn.Font.Normal.CharacterHeight * this.OPTION_TEXT_SCALE + this.OPTION_SELECTION_MARGIN * 2};
 
                     ctx.vectorRect(
                         lineSelectionBox.x+this.OPTION_SELECTION_MARGININ_SET,
@@ -251,7 +251,7 @@ Flynn.StateConfig = Flynn.State.extend({
                         x: menu_center_x + this.OPTION_CENTER_GAP_WIDTH/2 - this.OPTION_SELECTION_MARGIN,
                         y: menu_top_y + menu_line_height * i - this.OPTION_SELECTION_MARGIN,
                         width: this.OPTION_INPUT_KEY_VALUE_WIDTH,
-                        height: Flynn.Font.CharacterHeight * this.OPTION_TEXT_SCALE + this.OPTION_SELECTION_MARGIN * 2};
+                        height: Flynn.Font.Normal.CharacterHeight * this.OPTION_TEXT_SCALE + this.OPTION_SELECTION_MARGIN * 2};
                     break;
 
             }
