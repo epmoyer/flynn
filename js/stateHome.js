@@ -34,6 +34,28 @@ Game.render_page_frame = function(ctx, page_id){
     }
 };
 
+Game.navigate = function(direction){
+    // Advance forward or back one page
+
+    var next_state = Flynn.mcp.current_state_id;
+    if(direction == 'right'){
+        // Go right 
+        next_state += 1;
+        if(next_state > Game.States.LAST_PAGE){
+            next_state = Game.States.HOME;
+        }
+    }
+    else { 
+        // Go left
+        next_state -= 1;
+        if(next_state < Game.States.HOME){
+            next_state = Game.States.LAST_PAGE;
+        }
+    }
+    Flynn.mcp.changeState(next_state);
+    Game.sounds.navigate.play();
+};
+
 Game.StateHome = Flynn.State.extend({
 
     TIMER_EXPLODE1_TICKS: 0.3 * Flynn.TICKS_PER_SECOND,
@@ -152,10 +174,10 @@ Game.StateHome = Flynn.State.extend({
     handleInputs: function(input, paceFactor) {
 
         if (input.virtualButtonWasPressed("UI_right")){
-            Flynn.mcp.changeState(Game.States.DEMO1);
+            Game.navigate('right');
         }
         if (input.virtualButtonWasPressed("UI_left")){
-            Flynn.mcp.changeState(Game.States.DEMO5);
+            Game.navigate('left');
         }
         if (input.virtualButtonWasPressed("UI_enter")){
             Flynn.mcp.changeState(Game.States.END);

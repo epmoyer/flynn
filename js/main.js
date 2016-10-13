@@ -16,6 +16,8 @@ Game.States = {
     DEMO4:     5,
     DEMO5:     6,
 
+    LAST_PAGE: 6, // Match highest page above (used for navigation)
+
     END:       90,
     CONFIG:    91,
 };
@@ -107,6 +109,55 @@ Game.Main = Class.extend({
             input.addVirtualButton('dev_fps_20', Flynn.KeyboardMap.backslash, Flynn.BUTTON_NOT_CONFIGURABLE);
         }
 
+        //----------------------
+        // Sounds
+        //----------------------
+        Game.sounds = {
+            music:{ 
+                background: new Howl({
+                    src: ['sounds/SpaceThemev3.mp3'],
+                    loop: true,
+                    buffer: !this.browserIsIos,  // Buffering causes problems on iOS devices
+                    volume: 0.5 }),
+            },
+
+            // Interface
+            acknowledge: new Howl({
+                src: ['sounds/InsertCoin.ogg','sounds/InsertCoin.mp3'],
+                volume: 0.5 }),
+            navigate: new Howl({
+                src: ['sounds/MenuBlip.ogg','sounds/MenuBlip.mp3'],
+                volume: 1.0 }),
+        };
+
+        Game.updateMusic = function(){
+            var enabled = (
+                Flynn.mcp.optionManager.getOption('musicEnabled') &&
+                Flynn.mcp.optionManager.getOption('soundEnabled')
+                );
+            if(enabled){
+                if(!Game.sounds.music.background.playing()){
+                    Game.sounds.music.background.play();
+                }
+            }
+            else{
+                Game.sounds.music.background.stop();
+            }
+        };
+        Game.updateSound = function(){
+            var sound_enabled = Flynn.mcp.optionManager.getOption('soundEnabled');
+            Flynn.mcp.muteAudio(!sound_enabled);
+            Game.updateMusic();
+        };
+        Game.updateSoundOptionChange = function(){
+            Game.updateSound();
+            var sound;
+            var sound_enabled = Flynn.mcp.optionManager.getOption('soundEnabled');
+            if (sound_enabled){
+                Game.sounds.acknowledge.play();
+            }
+        };
+
         // Options
         Flynn.mcp.optionManager.addOptionFromVirtualButton('fire_l');
         Flynn.mcp.optionManager.addOptionFromVirtualButton('fire_r');
@@ -114,7 +165,12 @@ Game.Main = Class.extend({
         Flynn.mcp.optionManager.addOptionFromVirtualButton('left');
         Flynn.mcp.optionManager.addOptionFromVirtualButton('right');
         Flynn.mcp.optionManager.addOptionFromVirtualButton('down');
-        Flynn.mcp.optionManager.addOption('musicEnabled', Flynn.OptionType.BOOLEAN, true, true, 'MUSIC', null, null);
+        Flynn.mcp.optionManager.addOption('soundEnabled', Flynn.OptionType.BOOLEAN, true, true, 'SOUND', null,
+            Game.updateSoundOptionChange // Callback on option change
+            );
+        Flynn.mcp.optionManager.addOption('musicEnabled', Flynn.OptionType.BOOLEAN, true, true, 'MUSIC', null,
+            Game.updateMusic // Callback on option change
+            );
         Flynn.mcp.optionManager.addOption('resetScores', Flynn.OptionType.COMMAND, true, true, 'RESET HIGH SCORES', null,
             function(){self.resetScores();});
         // Restore user option settings from cookies
@@ -186,17 +242,9 @@ Game.Main = Class.extend({
         });
         Flynn.mcp.resize();
 
-
-
-        // Audio
-        // var soundMusic = new Howl({
-        //  //src: ['sounds/song_roundabout.ogg', 'sounds/song_roundabout.mp3'],
-        //  // src: ['sounds/ThemeIntroRDB.ogg', 'sounds/ThemeIntroRDB.mp3'],
-        //  src: ['sounds/SpaceThemev3.mp3'],
-        //  loop: true,
-        //  buffer: !this.browserIsIos,  // Buffering causes problems on iOS devices
-        //  volume: 0.5,
-        // }).play();
+        // Initialize sound and music
+        Game.updateSound();
+        Game.updateMusic();
     },
 
     resetScores: function(){

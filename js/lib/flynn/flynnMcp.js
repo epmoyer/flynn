@@ -22,6 +22,8 @@ Flynn.Mcp = Class.extend({
         this.mousetouchEnabled = Flynn.Util.getUrlFlag("mousetouch");
         
         this.halted = false;
+        this.audio_mute_enabled = false;
+
         this.credits = 0;
         this.next_state_id = noChangeState;
         this.current_state_id = null;
@@ -168,6 +170,11 @@ Flynn.Mcp = Class.extend({
         this.next_state_id = next_state_id;
     },
 
+    muteAudio(mute_enable){
+        this.audio_mute_enabled = mute_enable;
+        Howler.mute(mute_enable);
+    },
+
     devHalt: function(){
         var ctx = this.canvas.ctx;
         var box_height = 60;
@@ -182,12 +189,17 @@ Flynn.Mcp = Class.extend({
             Flynn.Colors.CYAN,
             Flynn.Colors.BLACK);
         ctx.vectorText("MCP HALTED.  CLICK TO RESUME.", 4.0, null, null, null, Flynn.Colors.WHITE);
+
+        Howler.mute(true);
     },
 
     devResume: function(){
         this.halted = false;
         console.log('DEV: Execution resumed');
         this.run();
+
+        // Restore audio mute to its state before the halt
+        Howler.mute(this.audio_mute_enabled);
     },
 
     cycleDevPacingMode: function(){

@@ -42,6 +42,7 @@ Flynn.StateConfig = Flynn.State.extend({
 
     handleInputs: function(input, paceFactor) {
         var optionKeyName = this.optionKeyNames[this.selectedLineIndex];
+        var commandHandler;
 
         if(this.keyAssignmentInProgress){
             var capturedKeyCode = input.getCapturedKeyCode();
@@ -99,6 +100,10 @@ Flynn.StateConfig = Flynn.State.extend({
                 case Flynn.OptionType.BOOLEAN:
                     // Toggle boolean
                     Flynn.mcp.optionManager.setOption(optionDescriptor.keyName, !optionDescriptor.currentValue);
+                    commandHandler = optionDescriptor.commandHandler;
+                    if (commandHandler !== null){
+                        commandHandler();
+                    }
                     break;
 
                 case Flynn.OptionType.INPUT_KEY:
