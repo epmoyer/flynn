@@ -341,7 +341,7 @@ Flynn.InputHandler = Class.extend({
 
     handleTouchEnd: function(x,y,touch_identifier){
         //console.log("DEV: handleTouchEnd() ",x,y);
-        var name, region, joystick;
+        var name, region, joystick, direction;
         for(name in this.touchRegions){
             region = this.touchRegions[name];
             // If the unique identifier associated with this touchend event matches
@@ -390,6 +390,7 @@ Flynn.InputHandler = Class.extend({
     },
 
     setButtonsFromJoystick: function(joystick){
+        var direction, name;
         if(joystick.in_use){
             // Joystick in use. Assign state of all associated buttons to match joystick
             for(i=0; i<this.DIRECTIONS.length; i++){

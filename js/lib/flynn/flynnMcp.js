@@ -33,8 +33,6 @@ Flynn.Mcp = Class.extend({
         this.devLowFpsPaceFactor = 0;
         this.devLowFpsFrameCount = 0;
 
-        this.version = 'v2.1';  // Flynn version
-
         this.viewport = {x:0, y:0};
 
         this.resizeFunc = null;
@@ -239,7 +237,7 @@ Flynn.Mcp = Class.extend({
         }
         this.flynn_logo.render(ctx);
         ctx.vectorText(
-            this.version,
+            Flynn.VERSION,
             1.5,
             this.flynn_logo.position.x,
             this.flynn_logo.position.y + 23,

@@ -52,8 +52,8 @@ Game.StarField = Flynn.State.extend({
         for(i=0, len=this.stars.length; i<len; i++){
             ctx.fillStyle=this.stars[i].color;
             ctx.fillRect(
-                this.stars[i].x - Flynn.mcp.viewport.x,
-                this.stars[i].y - Flynn.mcp.viewport.y,
+                this.stars[i].x - Math.floor(Flynn.mcp.viewport.x),
+                this.stars[i].y - Math.floor(Flynn.mcp.viewport.y),
                 2,
                 2);
         }

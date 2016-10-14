@@ -54,44 +54,7 @@ Flynn.Canvas = Class.extend({
             
             ctx.drawPolygon = function(p, x, y) {
                 // .drawPolypon is deprecated. No world support.
-                throw "drawPolygon() is deprecated. Use polygon's .render() method.";
-                this.is_world = false;
-
-                var points = p.points;
-                var vector_color = p.color;
-                var current_polygon_x, current_polygon_y;
-
-                this.vectorStart(vector_color, false);
-                var pen_up = false;
-                for (var i=0, len=points.length; i<len; i+=2){
-                    if(points[i] == Flynn.PEN_COMMAND){
-                        if(points[i+1] == Flynn.PEN_UP){
-                            pen_up = true;
-                        }
-                        else{
-                            vector_color = Flynn.ColorsOrdered[points[i+1] - Flynn.PEN_COLOR0];
-                            this.vectorEnd();
-                            this.vectorStart(vector_color, false);
-                            if(i>0){
-                                this.vectorMoveTo(current_polygon_x+x, current_polygon_y+y);
-                            }
-                            //pen_up = true;
-                            //this.vectorMoveTo(current_polygon_x+x, current_polygon_y+y);
-                        }
-                    }
-                    else{
-                        current_polygon_x = points[i];
-                        current_polygon_y = points[i+1];
-                        if(i===0 || pen_up){
-                            this.vectorMoveTo(current_polygon_x+x, current_polygon_y+y);
-                            pen_up = false;
-                        }
-                        else {
-                            this.vectorLineTo(current_polygon_x+x, current_polygon_y+y);
-                        }
-                    }
-                }
-                this.vectorEnd();
+                throw "drawPolygon() is obsolete. Use polygon's .render() method.";
             };
 
             ctx.drawFpsGague = function(x, y, color, percentage){
@@ -516,8 +479,8 @@ Flynn.Canvas = Class.extend({
             //---------------------------
             // Do animation
             //---------------------------
-            var start;
-            var end;
+            var start=0;
+            var end=0;
             if(Flynn.mcp.browserSupportsPerformance){
                 start = performance.now();
             }
@@ -528,11 +491,34 @@ Flynn.Canvas = Class.extend({
                 end = performance.now();
             }
 
+            var color, percentage;
             if (self.showMetrics){
-                self.ctx.drawFpsGague(self.canvas.width-70, self.canvas.height-15, Flynn.Colors.GREEN, self.ctx.fps/120);
                 if(Flynn.mcp.browserSupportsPerformance){
-                    self.ctx.drawFpsGague(self.canvas.width-70, self.canvas.height-21, Flynn.Colors.YELLOW, (end-start)/(1000/120));
+                    // Render Time 
+                    //   Green: Good
+                    //   Red:   Too long
+                    percentage = (end-start)/(1000/30); // 100% of bar is the 30fps render time (50% is 60fps)
+                    self.ctx.drawFpsGague(
+                        self.canvas.width-70,
+                        self.canvas.height-21,
+                        percentage<=50 ? Flynn.Colors.GREEN: Flynn.Colors.RED,
+                        percentage);
                 }
+                // FPS:
+                //   Green:  Good
+                //   Orange: < 59 fps
+                //   Red:    < 30 fps
+                percentage = self.ctx.fps/60; // 100% of bar is 60fps
+                if(self.ctx.fps<59){
+                    color = Flynn.Colors.ORANGE;
+                }
+                else if (self.ctx.fps<30){
+                    color = Flynn.Colors.RED;
+                }
+                else{
+                    color = Flynn.Colors.GREEN;
+                }
+                self.ctx.drawFpsGague(self.canvas.width-70, self.canvas.height-15, color, percentage);
             }
             
             // Update screen and request callback
