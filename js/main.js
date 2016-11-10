@@ -60,7 +60,9 @@ Game.Main = Class.extend({
                             Flynn.Colors.YELLOW, 
                             Flynn.Colors.GREEN,
                             Flynn.Colors.MAGENTA,
-                            Game.States.HOME // Parent state
+                            Game.States.HOME, // Parent state
+                            Game.States.HOME, // Abort state
+                            false             // Abort enable
                             );
                 }
             }

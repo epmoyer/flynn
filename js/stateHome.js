@@ -339,10 +339,14 @@ Game.StateHome = Flynn.State.extend({
         var indent_chars = 9;
         var scale = 1.5;
         var options=[
-            ['TAB', 'EXIT (BROWSER BACK)'],
             ['ESCAPE', 'CONFIGURATION MENU'],
             ['ENTER', 'HIGH SCORE SCREEN'],
         ];
+        if(Flynn.mcp.backEnabled){
+            options = options.concat([
+                ['TAB', 'EXIT (BROWSER BACK)'],
+            ]);
+        }
         if(Flynn.mcp.developerModeEnabled){
             options = options.concat([
                 ['6', '(DEVELOPER MODE) TOGGLE METRICS'],

@@ -7,7 +7,15 @@
 
 Flynn.StateConfig = Flynn.State.extend({
 
-    init: function(mainTextColor, menuTextColor, selectionBoxColor, menuPromptColor, parentState){
+    init: function(
+            mainTextColor,
+            menuTextColor,
+            selectionBoxColor,
+            menuPromptColor,
+            parentState,
+            abortState,
+            abortEnable
+            ){
         this._super();
 
         this.OPTION_SELECTION_MARGIN = 5;
@@ -21,15 +29,41 @@ Flynn.StateConfig = Flynn.State.extend({
             this.OPTION_SELECTION_MARGIN * 2
             );
 
-        if(typeof(parentState)==='undefined'){
-            throw("API has changed. parentState is now a required parameter.");
+        if(   typeof(parentState)==='undefined'
+           || typeof(abortState) ==='undefined'
+           || typeof(abortEnable)==='undefined')
+        {
+            throw("API has changed. parentState, abortState & abortEnable are required parameters.");
         }
 
         this.parentState = parentState;
+        this.abortState = abortState;
         this.mainTextColor = mainTextColor;
         this.menuTextColor = menuTextColor;
         this.selectionBoxColor = selectionBoxColor;
         this.menuPromptColor = menuPromptColor;
+
+        Flynn.mcp.optionManager.removeOption('exitToMenu');
+        Flynn.mcp.optionManager.removeOption('exitGame');
+        if(abortEnable){
+            var self = this;
+            Flynn.mcp.optionManager.addOption(
+                'exitToMenu', Flynn.OptionType.COMMAND, true, true, 
+                'EXIT TO MENU', null,
+                function(){
+                    Flynn.mcp.changeState(self.abortState);
+                });
+        }
+        else{
+            if(Flynn.mcp.backEnabled){
+                Flynn.mcp.optionManager.addOption(
+                    'exitGame', Flynn.OptionType.COMMAND, true, true, 
+                    'EXIT GAME', null,
+                    function(){
+                        window.history.back();
+                    });
+            }
+        }
 
         this.configurableVirtualButtonNames = Flynn.mcp.input.getConfigurableVirtualButtonNames();
 
