@@ -6,7 +6,7 @@ var Flynn = Flynn || {}; // Create namespace
 
 (function () { "use strict"; 
 
-Flynn.VERSION = "2.1.2";
+Flynn.VERSION = "2.1.3";
  
 Flynn.init = function(
     canvasWidth,

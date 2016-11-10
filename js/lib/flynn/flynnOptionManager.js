@@ -54,6 +54,11 @@ Flynn.OptionManager = Class.extend({
         this.optionDescriptors[keyName] = descriptor;
     },
 
+    removeOption: function(keyName){
+        delete Flynn.mcp.options[keyName];
+        delete this.optionDescriptors[keyName];
+    },
+
     addOptionFromVirtualButton: function(virtualButtonName){
         var keyCode = Flynn.mcp.input.getVirtualButtonBoundKeyCode(virtualButtonName);
         var keyName = virtualButtonName;
