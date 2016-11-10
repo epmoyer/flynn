@@ -15,33 +15,7 @@ Game.StateDemo1 = Flynn.State.extend({
     },
 
     handleInputs: function(input, paceFactor) {
-        
-        if (input.virtualButtonWasPressed("UI_right")){
-            Game.navigate('right');
-        }
-        if (input.virtualButtonWasPressed("UI_left")){
-            Game.navigate('left');
-        }
-        if (input.virtualButtonWasPressed("UI_exit") && Flynn.mcp.backEnabled){
-            window.history.back();
-        }
-
-        if(Flynn.mcp.developerModeEnabled){
-            // Metrics toggle
-            if (input.virtualButtonWasPressed("dev_metrics")){
-                Flynn.mcp.canvas.showMetrics = !Flynn.mcp.canvas.showMetrics;
-            }
-
-            // Toggle DEV pacing mode slow mo
-            if (input.virtualButtonWasPressed("dev_slow_mo")){
-                Flynn.mcp.toggleDevPacingSlowMo();
-            }
-
-            // Toggle DEV pacing mode fps 20
-            if (input.virtualButtonWasPressed("dev_fps_20")){
-                Flynn.mcp.toggleDevPacingFps20();
-            }
-        }
+        Game.handleInputs_common(input);
     },
 
     update: function(paceFactor) {

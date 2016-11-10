@@ -34,26 +34,53 @@ Game.render_page_frame = function(ctx, page_id){
     }
 };
 
-Game.navigate = function(direction){
-    // Advance forward or back one page
+Game.handleInputs_common = function(input){
+    // Handle input commands common to all screens
 
     var next_state = Flynn.mcp.current_state_id;
-    if(direction == 'right'){
-        // Go right 
+
+    if (input.virtualButtonWasPressed("UI_right")){
         next_state += 1;
         if(next_state > Game.States.LAST_PAGE){
             next_state = Game.States.HOME;
         }
+        Flynn.mcp.changeState(next_state);
+        Game.sounds.navigate.play();
     }
-    else { 
-        // Go left
+    if (input.virtualButtonWasPressed("UI_left")){
         next_state -= 1;
         if(next_state < Game.States.HOME){
             next_state = Game.States.LAST_PAGE;
         }
+        Flynn.mcp.changeState(next_state);
+        Game.sounds.navigate.play();
     }
-    Flynn.mcp.changeState(next_state);
-    Game.sounds.navigate.play();
+    if (input.virtualButtonWasPressed("UI_enter")){
+        Flynn.mcp.changeState(Game.States.END);
+    }
+    if (input.virtualButtonWasPressed("UI_escape")) {
+        Flynn.mcp.changeState(Game.States.CONFIG);
+    }
+    if (input.virtualButtonWasPressed("UI_exit") && Flynn.mcp.backEnabled){
+        window.history.back();
+    }
+
+    if(Flynn.mcp.developerModeEnabled){
+        // Metrics toggle
+        if (input.virtualButtonWasPressed("dev_metrics")){
+            Flynn.mcp.canvas.showMetrics = !Flynn.mcp.canvas.showMetrics;
+        }
+
+        // Toggle DEV pacing mode slow mo
+        if (input.virtualButtonWasPressed("dev_slow_mo")){
+            Flynn.mcp.toggleDevPacingSlowMo();
+        }
+
+        // Toggle DEV pacing mode fps 20
+        if (input.virtualButtonWasPressed("dev_fps_20")){
+            Flynn.mcp.toggleDevPacingFps20();
+        }
+    }
 };
 
 Game.StateHome = Flynn.State.extend({
@@ -172,39 +199,7 @@ Game.StateHome = Flynn.State.extend({
     },
 
     handleInputs: function(input, paceFactor) {
-
-        if (input.virtualButtonWasPressed("UI_right")){
-            Game.navigate('right');
-        }
-        if (input.virtualButtonWasPressed("UI_left")){
-            Game.navigate('left');
-        }
-        if (input.virtualButtonWasPressed("UI_enter")){
-            Flynn.mcp.changeState(Game.States.END);
-        }
-        if (input.virtualButtonWasPressed("UI_escape")) {
-            Flynn.mcp.changeState(Game.States.CONFIG);
-        }
-        if (input.virtualButtonWasPressed("UI_exit") && Flynn.mcp.backEnabled){
-            window.history.back();
-        }
-
-        if(Flynn.mcp.developerModeEnabled){
-            // Metrics toggle
-            if (input.virtualButtonWasPressed("dev_metrics")){
-                Flynn.mcp.canvas.showMetrics = !Flynn.mcp.canvas.showMetrics;
-            }
-
-            // Toggle DEV pacing mode slow mo
-            if (input.virtualButtonWasPressed("dev_slow_mo")){
-                Flynn.mcp.toggleDevPacingSlowMo();
-            }
-
-            // Toggle DEV pacing mode fps 20
-            if (input.virtualButtonWasPressed("dev_fps_20")){
-                Flynn.mcp.toggleDevPacingFps20();
-            }
-        }
+        Game.handleInputs_common(input);
     },
 
     update: function(paceFactor) {
