@@ -182,9 +182,11 @@ Game.StateHome = Flynn.State.extend({
         if (input.virtualButtonWasPressed("UI_enter")){
             Flynn.mcp.changeState(Game.States.END);
         }
-
         if (input.virtualButtonWasPressed("UI_escape")) {
             Flynn.mcp.changeState(Game.States.CONFIG);
+        }
+        if (input.virtualButtonWasPressed("UI_exit") && Flynn.mcp.backEnabled){
+            window.history.back();
         }
 
         if(Flynn.mcp.developerModeEnabled){

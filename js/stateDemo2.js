@@ -108,6 +108,9 @@ Game.StateDemo2 = Flynn.State.extend({
         if (input.virtualButtonWasPressed("UI_left")){
             Game.navigate('left');
         }
+        if (input.virtualButtonWasPressed("UI_exit") && Flynn.mcp.backEnabled){
+            window.history.back();
+        }
 
         if(Flynn.mcp.developerModeEnabled){
             // Metrics toggle
