@@ -4,7 +4,7 @@
 
 Flynn.Mcp = Class.extend({
 
-    init: function(canvasWidth, canvasHeight, noChangeState, gameSpeedFactor, stateBuilderFunc) {
+    init: function(canvasWidth, canvasHeight, noChangeState, gameSpeedFactor, stateBuilderFunc, hideCanvas, hideVectorModeOption) {
 
         Flynn.mcp = this;
 
@@ -13,7 +13,15 @@ Flynn.Mcp = Class.extend({
         this.noChangeState = noChangeState;
         this.gameSpeedFactor = gameSpeedFactor;
         this.stateBuilderFunc = stateBuilderFunc;
-
+        if(typeof(hideCanvas)==='undefined'){
+            this.hideCanvas = false;
+        }
+        else{
+            this.hideCanvas = hideCanvas;
+        }
+        if(typeof(hideVectorModeOption)==='undefined'){
+            hideVectorModeOption = false;
+        }
 
         this.developerModeEnabled = Flynn.Util.getUrlFlag("develop");
         this.arcadeModeEnabled = Flynn.Util.getUrlFlag("arcade");
@@ -114,13 +122,15 @@ Flynn.Mcp = Class.extend({
                 vectorMode = Flynn.VectorMode.V_THIN;
             }
         }
-        this.optionManager.addOption('vectorMode', Flynn.OptionType.MULTI, vectorMode, vectorMode, 'VECTOR DISPLAY EMULATION',
-            [   ['NONE',     Flynn.VectorMode.PLAIN],
-                ['NORMAL',   Flynn.VectorMode.V_THIN],
-                ['THICK' ,   Flynn.VectorMode.V_THICK],
-                ['FLICKER' , Flynn.VectorMode.V_FLICKER]
-            ],
-            null);
+        if(!hideVectorModeOption){
+            this.optionManager.addOption('vectorMode', Flynn.OptionType.MULTI, vectorMode, vectorMode, 'VECTOR DISPLAY EMULATION',
+                [   ['NONE',     Flynn.VectorMode.PLAIN],
+                    ['NORMAL',   Flynn.VectorMode.V_THIN],
+                    ['THICK' ,   Flynn.VectorMode.V_THICK],
+                    ['FLICKER' , Flynn.VectorMode.V_FLICKER]
+                ],
+                null);
+        }
 
         //--------------------------
         // Resize handler
@@ -143,7 +153,9 @@ Flynn.Mcp = Class.extend({
             var left = Math.floor(viewport.width/2 - actualCanvasWidth/2);
 
             var element = document.getElementById("gameCanvas");
-            element.style.display = "block";
+            if(!self.hideCanvas){
+                element.style.display = "block";
+            }
             element.style.width = actualCanvasWidth + "px";
             element.style.height = actualCanvasHeight + "px";
             element.style.top = top + "px";

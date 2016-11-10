@@ -344,12 +344,18 @@ Game.StateHome = Flynn.State.extend({
         var indent_chars = 9;
         var scale = 1.5;
         var options=[
+            ['TAB', 'EXIT (BROWSER BACK)'],
             ['ESCAPE', 'CONFIGURATION MENU'],
             ['ENTER', 'HIGH SCORE SCREEN'],
-            ['6', '(DEVELOPER MODE) TOGGLE METRICS'],
-            ['7', '(DEVELOPER MODE) TOGGLE SLOW MO'],
-            ['\\', '(DEVELOPER MODE) TOGGLE 20 FPS'],
         ];
+        if(Flynn.mcp.developerModeEnabled){
+            options = options.concat([
+                ['6', '(DEVELOPER MODE) TOGGLE METRICS'],
+                ['7', '(DEVELOPER MODE) TOGGLE SLOW MO'],
+                ['\\', '(DEVELOPER MODE) TOGGLE 20 FPS'],
+            ]);
+        }
+
         for(i=0; i<options.length; i++){
             curret_y += 20;
             ctx.vectorText(options[i][0], scale, left_x + indent_chars * Flynn.Font.Normal.CharacterSpacing * scale,

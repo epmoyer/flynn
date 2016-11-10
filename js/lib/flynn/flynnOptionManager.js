@@ -98,8 +98,13 @@ Flynn.OptionManager = Class.extend({
         for (var keyName in this.optionDescriptors){
             var descriptor = this.optionDescriptors[keyName];
             descriptor.currentValue = descriptor.defaultValue;
+            // Change the option
             if(descriptor.type in this.SHADOWED_OPTION_TYPES){
                 Flynn.mcp.options[keyName] = descriptor.defaultValue;
+            }
+            // Re-bind the associated key (for input options)
+            if(descriptor.type == Flynn.OptionType.INPUT_KEY){
+                this.setOption(descriptor.keyName, descriptor.currentValue);
             }
         }
     },

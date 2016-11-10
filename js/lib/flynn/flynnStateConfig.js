@@ -43,6 +43,7 @@ Flynn.StateConfig = Flynn.State.extend({
     handleInputs: function(input, paceFactor) {
         var optionKeyName = this.optionKeyNames[this.selectedLineIndex];
         var commandHandler;
+        var currentlyAssignedKeyCode;
 
         if(this.keyAssignmentInProgress){
             var capturedKeyCode = input.getCapturedKeyCode();

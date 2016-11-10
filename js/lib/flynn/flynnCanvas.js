@@ -27,6 +27,7 @@ Flynn.Canvas = Class.extend({
         this.canvas = document.getElementById("gameCanvas");
         this.canvas.width = width;
         this.canvas.height = height;
+        this.canvas.style.backgroundColor = '#000';
         this.previousTimestamp = 0;
 
         this.DEBUGLOGGED = false;

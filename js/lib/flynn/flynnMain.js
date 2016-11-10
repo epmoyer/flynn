@@ -6,14 +6,23 @@ var Flynn = Flynn || {}; // Create namespace
 
 (function () { "use strict"; 
 
-Flynn.VERSION = "2.1.1";
+Flynn.VERSION = "2.1.2";
  
 Flynn.init = function(
     canvasWidth,
     canvasHeight,
     noChangeState,
     gameSpeedFactor, 
-    stateBuilderFunc){
+    stateBuilderFunc,
+    hideCanvas,
+    hideVectorModeOption){
+
+    if(typeof(hideCanvas)==='undefined'){
+        hideCanvas= false;
+    }
+    if(typeof(hideVectorModeOption)==='undefined'){
+        hideVectorModeOption= false;
+    }
     
     // The mcp will regester itself as Flynn.mcp when created
     new Flynn.Mcp(
@@ -21,7 +30,9 @@ Flynn.init = function(
         canvasHeight,
         noChangeState,
         gameSpeedFactor,
-        stateBuilderFunc);
+        stateBuilderFunc,
+        hideCanvas,
+        hideVectorModeOption);
 };
 
 Flynn.TICKS_PER_SECOND = 60;
@@ -129,18 +140,20 @@ Flynn.KeyboardMap = {
     'right_bracket': 221, // ]
     'grave_accent':  192, // `
 
-    'tab':      9,
-    'enter':    13,
-    'shift':    16,
-    'control':  17,
-    'option':   18,
-    'escape':   27,
-    'spacebar': 32,
-    'left':     37,
-    'up':       38,
-    'right':    39,
-    'down':     40,
-    'command':  91,
+    'delete':    8,
+    'tab':       9,
+    'enter':     13,
+    'shift':     16,
+    'control':   17,
+    'option':    18,
+    'escape':    27,
+    'spacebar':  32,
+    'left':      37,
+    'up':        38,
+    'right':     39,
+    'down':      40,
+    'l_command': 91,
+    'r_command': 93,
 
     'f1':       112,
     'f2':       113,
