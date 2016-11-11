@@ -18,6 +18,8 @@ Flynn.StateConfig = Flynn.State.extend({
             ){
         this._super();
 
+        Flynn.sounds.ui_select.play();
+
         this.OPTION_SELECTION_MARGIN = 5;
         this.OPTION_SELECTION_MARGININ_SET = 2;
         this.OPTION_TEXT_SCALE = 2.0;
@@ -86,22 +88,26 @@ Flynn.StateConfig = Flynn.State.extend({
                     // The chosen keyCode is available.  Assign it.
                     Flynn.mcp.optionManager.setOption(optionKeyName, capturedKeyCode);
                     this.keyAssignmentInProgress = false;
+                    Flynn.sounds.ui_success.play();
                 } else{
                     currentlyAssignedKeyCode = Flynn.mcp.optionManager.getOption(optionKeyName);
                     if (currentlyAssignedKeyCode === capturedKeyCode){
                         // User pressed the key which was already assigned.  Do nothing.
                         this.keyAssignmentInProgress = false;
+                        Flynn.sounds.ui_cancel.play();
                     } else{
                         // The chosen keyCode is not availble. Keep waiting for a valid key.
                         input.armKeyCodeCapture();
                         // TODO: Prompt user that key is in use.
                         console.log("that key is in use");
+                        Flynn.sounds.ui_error.play();
                     }
                 }
             }
 
             if (input.virtualButtonWasPressed("UI_escape")) {
                 this.keyAssignmentInProgress = false;
+                Flynn.sounds.ui_cancel.play();
             }
             return;
         }
@@ -117,18 +123,21 @@ Flynn.StateConfig = Flynn.State.extend({
         if (input.virtualButtonWasPressed("UI_escape")) {
             // Exit back to the parent state
             Flynn.mcp.changeState(this.parentState);
+            Flynn.sounds.ui_cancel.play();
         }
         if (input.virtualButtonWasPressed("UI_down")) {
             ++this.selectedLineIndex;
             if(this.selectedLineIndex >= this.numOptions){
                 this.selectedLineIndex = 0;
             }
+            Flynn.sounds.ui_move.play();
         }
         if (input.virtualButtonWasPressed("UI_up")) {
             --this.selectedLineIndex;
             if(this.selectedLineIndex < 0){
                 this.selectedLineIndex = this.numOptions-1;
             }
+            Flynn.sounds.ui_move.play();
         }
         if (input.virtualButtonWasPressed("UI_enter")) {
             switch(optionDescriptor.type){
@@ -153,6 +162,7 @@ Flynn.StateConfig = Flynn.State.extend({
                     }
                     break;
             }
+            Flynn.sounds.ui_select.play();
         }
         var optionIndexDelta = 0;
         if (input.virtualButtonWasPressed("UI_left")) {
@@ -172,6 +182,7 @@ Flynn.StateConfig = Flynn.State.extend({
                     currentPromptIndex = 0;
                 }
                 Flynn.mcp.optionManager.setOption(optionDescriptor.keyName, optionDescriptor.promptValues[currentPromptIndex][1]);
+                Flynn.sounds.ui_select.play();
             }
         }
 

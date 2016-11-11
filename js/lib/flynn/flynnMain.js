@@ -350,6 +350,25 @@ Flynn.Font.Block.Points.ASCII = [
     Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR,      // `
 ];
 
+
+Flynn.sounds = {
+    ui_move: new Howl({
+        src: ['sounds/UI_move.webm','sounds/UI_move.mp3'],
+        volume: 0.4 }),
+    ui_select: new Howl({
+        src: ['sounds/UI_select.webm','sounds/UI_select.mp3'],
+        volume: 0.4 }),
+    ui_cancel: new Howl({
+        src: ['sounds/UI_cancel.webm','sounds/UI_cancel.mp3'],
+        volume: 0.4 }),
+    ui_success: new Howl({
+        src: ['sounds/UI_success.webm','sounds/UI_success.mp3'],
+        volume: 0.4 }),
+    ui_error: new Howl({
+        src: ['sounds/UI_error.webm','sounds/UI_error.mp3'],
+        volume: 0.4 }),
+};
+
 Flynn.Rect= Class.extend({
     init: function(left, top, width, height){
         this.object_id = 'Flynn.Rect';

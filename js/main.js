@@ -156,7 +156,7 @@ Game.Main = Class.extend({
             var sound;
             var sound_enabled = Flynn.mcp.optionManager.getOption('soundEnabled');
             if (sound_enabled){
-                Game.sounds.acknowledge.play();
+                Flynn.sounds.ui_select.play();
             }
         };
 
@@ -173,8 +173,6 @@ Game.Main = Class.extend({
         Flynn.mcp.optionManager.addOption('musicEnabled', Flynn.OptionType.BOOLEAN, true, true, 'MUSIC', null,
             Game.updateMusic // Callback on option change
             );
-        Flynn.mcp.optionManager.addOption('resetScores', Flynn.OptionType.COMMAND, true, true, 'RESET HIGH SCORES', null,
-            function(){self.resetScores();});
         // Restore user option settings from cookies
         Flynn.mcp.optionManager.loadFromCookies();
         

@@ -45,7 +45,7 @@ Game.handleInputs_common = function(input){
             next_state = Game.States.HOME;
         }
         Flynn.mcp.changeState(next_state);
-        Game.sounds.navigate.play();
+        Flynn.sounds.ui_move.play();
     }
     if (input.virtualButtonWasPressed("UI_left")){
         next_state -= 1;
@@ -53,16 +53,18 @@ Game.handleInputs_common = function(input){
             next_state = Game.States.LAST_PAGE;
         }
         Flynn.mcp.changeState(next_state);
-        Game.sounds.navigate.play();
+        Flynn.sounds.ui_move.play();
     }
     if (input.virtualButtonWasPressed("UI_enter")){
         Flynn.mcp.changeState(Game.States.END);
+        Flynn.sounds.ui_select.play();
     }
     if (input.virtualButtonWasPressed("UI_escape")) {
         Flynn.mcp.changeState(Game.States.CONFIG);
     }
     if (input.virtualButtonWasPressed("UI_exit") && Flynn.mcp.backEnabled){
         window.history.back();
+        Flynn.sounds.ui_cancel.play();
     }
 
     if(Flynn.mcp.developerModeEnabled){

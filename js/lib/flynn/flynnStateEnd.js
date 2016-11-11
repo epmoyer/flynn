@@ -50,6 +50,7 @@ Flynn.StateEnd = Flynn.State.extend({
             if (input.virtualButtonWasPressed("UI_enter")) {
                 // Exit back to the parent state
                 Flynn.mcp.changeState(this.parentState);
+                Flynn.sounds.ui_move.play();
             }
         } else {
             if (input.virtualButtonWasPressed("UI_enter")) {
@@ -63,6 +64,7 @@ Flynn.StateEnd = Flynn.State.extend({
                 this.nick = this.nick.substring(0,13); // Limit name length
 
                 this.leaderboard.add({'name':this.nick, 'score':this.score});
+                Flynn.sounds.ui_success.play();
             }
         }
     },
