@@ -117,7 +117,8 @@ Game.Main = Class.extend({
         Game.sounds = {
             music:{ 
                 background: new Howl({
-                    src: ['sounds/SpaceThemev3.mp3'],
+                    // src: ['sounds/SpaceThemev3.mp3'],
+                    src: ['sounds/DST-Horizon515.mp3'],
                     loop: true,
                     buffer: !this.browserIsIos,  // Buffering causes problems on iOS devices
                     volume: 0.5 }),
