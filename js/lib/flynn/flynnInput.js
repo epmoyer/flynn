@@ -91,7 +91,7 @@ Flynn.InputHandler = Class.extend({
             buttonCodes:  [],
         };
         //                    Name          Down Up
-        this.addiCadeMapping('icade_up',    'w', 'e'); // Joytick
+        this.addiCadeMapping('icade_up',    'w', 'e'); // Joystick
         this.addiCadeMapping('icade_down',  'x', 'z');
         this.addiCadeMapping('icade_left',  'a', 'q');
         this.addiCadeMapping('icade_right', 'd', 'c');
@@ -519,12 +519,19 @@ Flynn.InputHandler = Class.extend({
     },
 
     getVirtualButtonBoundKeyName: function(name){
+        var boundKeyCode, boundKeyName;
+
         if(this.virtualButtons[name]){
-            var boundKeyCode = this.virtualButtons[name].boundKeyCode;
-            var boundKeyName = this.keyCodeToKeyName(boundKeyCode);
+            boundKeyCode = this.virtualButtons[name].boundKeyCode;
+            boundKeyName = this.keyCodeToKeyName(boundKeyCode);
             return(boundKeyName);
         }
-        else{
+        else if(this.uiButtons[name]){
+            boundKeyCode = this.uiButtons[name].boundKeyCode;
+            boundKeyName = this.keyCodeToKeyName(boundKeyCode);
+            return(boundKeyName);
+        }
+        else {
             // Button does not exist
             console.log(
                 'Flynn: Warning: getVirtualButtonBoundKeyName() was called for virtual button  "' + name +
