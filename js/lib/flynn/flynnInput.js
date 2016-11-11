@@ -106,6 +106,11 @@ Flynn.InputHandler = Class.extend({
 
         var self = this;
         this.keyDownHandler = function(evt){
+            if(evt.keyCode == Flynn.KeyboardMap.escape){
+                // Prevent default for 'Escape'.  This keeps Safari
+                // from exiting full-screen mode when escape is pressed.
+                evt.preventDefault();
+            }
             //console.log("KeyDown: Code:" + evt.keyCode);
             if(self.iCadeModeEnabled){
                 var index = self.iCade.keyDownCodes.indexOf(evt.keyCode);

@@ -1,12 +1,12 @@
 // flynnMain
 //------------
-// This must be the first flynn script loaded
+// This must be the first Flynn script loaded
 
 var Flynn = Flynn || {}; // Create namespace
 
 (function () { "use strict"; 
 
-Flynn.VERSION = "2.1.5";
+Flynn.VERSION = "2.1.6";
  
 Flynn.init = function(
     canvasWidth,
@@ -24,7 +24,7 @@ Flynn.init = function(
         hideVectorModeOption= false;
     }
     
-    // The mcp will regester itself as Flynn.mcp when created
+    // The mcp will register itself as Flynn.mcp when created
     new Flynn.Mcp(
         canvasWidth,
         canvasHeight,
