@@ -22,9 +22,15 @@ Flynn.Config.VECTOR_OVERDRIVE_FACTOR = 0.2;  // White overdrive for vertex point
 
 Flynn.Canvas = Class.extend({
 
-    init: function(width, height) {
+    init: function(width, height, canvas) {
         this.showMetrics = false;
-        this.canvas = document.getElementById("gameCanvas");
+        if(typeof(canvas)==='undefined'){
+            this.canvas = document.getElementById("gameCanvas");
+        }
+        else{
+            this.canvas = canvas;
+        }
+        
         this.canvas.width = width;
         this.canvas.height = height;
         this.canvas.style.backgroundColor = '#000';
@@ -427,7 +433,7 @@ Flynn.Canvas = Class.extend({
 
         this.ctx.strokeStyle = Flynn.Colors.WHITE;
 
-        document.body.appendChild(this.canvas);
+        // document.body.appendChild(this.canvas);
     },
 
     animate: function(animation_callback_f) {
