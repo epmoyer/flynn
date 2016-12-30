@@ -362,7 +362,7 @@ Flynn.Canvas = Class.extend({
                     font = Flynn.Font.Normal;
                 }
                 if(typeof(stretch)==='undefined'){
-                    stretch = false;
+                    stretch = null;
                 }
 
                 var step = scale*font.CharacterSpacing;
@@ -408,20 +408,27 @@ Flynn.Canvas = Class.extend({
                         }
                         else{
                             if(stretch){
-                                var sign = -1.0;
+                                var sign = 1;
                                 if (is_reversed){
-                                    sign = 1.0;
+                                    sign = -sign;
                                 }
                                 var a = render_angle;
                                 var r = radius;
-                                a -= sign * (p[j] - font.CharacterWidth/2) / font.CharacterWidth * Math.PI/9;
+                                // a += sign * (p[j] - font.CharacterWidth/2) / font.CharacterWidth * Math.PI/9;
+                                a += sign * (p[j] - font.CharacterWidth/2) / font.CharacterWidth * Math.PI/(Math.PI * radius / (font.CharacterSpacing*scale));
                                 var character_x = p[j+1];
                                 if (!is_reversed){
                                     character_x = font.CharacterHeight - character_x;
                                 }
-                                var x_log = Flynn.Util.logish(character_x, 0, font.CharacterHeight, 1.6);
-                                // r += sign * (p[j+1] - font.CharacterHeight/2) / font.CharacterWidth * 30;
-                                r += (x_log - font.CharacterHeight/2) / font.CharacterWidth * 30;
+                                // Remap x coordinate onto a logarithmic scale
+                                var x_log = Flynn.Util.logish(
+                                    character_x, 
+                                    0,                      // min
+                                    font.CharacterHeight,   // max
+                                    1.5                     // power
+                                    );
+                                // r += (x_log - font.CharacterHeight/2) / font.CharacterWidth * 30;
+                                r += (x_log - font.CharacterHeight/2) * scale * stretch;
 
                                 var c = Math.cos(a);
                                 var s = Math.sin(a);

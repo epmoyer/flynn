@@ -178,8 +178,8 @@ Flynn.VALogo = Class.extend({
 
     render: function(ctx){
         var text_scale = 1.4;
-        var radius_scale = 35;
-        var stretch = true;
+        var radius_scale = 40;
+        var stretch = 2.0;
         var text_color = "#C0E0C0";
 
         // Draw bubbles
@@ -229,6 +229,21 @@ Flynn.VALogo = Class.extend({
             Flynn.Font.Block,
             stretch
             );
+
+        // ctx.vectorTextArc(
+        //     "TESTING TEXT", 
+        //     this.scale * text_scale,
+        //     this.pos.x,
+        //     this.pos.y, 
+        //     -Math.PI/2 + this.angle, 
+        //     this.scale * (radius_scale + 40), 
+        //     Flynn.Colors.MAGENTA, 
+        //     true,  // is_centered
+        //     false, // is_reversed
+        //     false, // is_world
+        //     Flynn.Font.Block,
+        //     stretch
+        //     );
     }
 });
 
