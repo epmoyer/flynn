@@ -200,12 +200,14 @@ Game.StateHome = Flynn.State.extend({
 
         this.va_logo = new Flynn.VALogo(
             Flynn.mcp.canvasWidth/2,
-            Flynn.mcp.canvasHeight - 140,
+            Flynn.mcp.canvasHeight - 150,
             2);
         this.va_logo2 = new Flynn.VALogo(
             Flynn.mcp.canvasWidth/2 + 180,
-            Flynn.mcp.canvasHeight - 140,
-            1);
+            Flynn.mcp.canvasHeight - 150,
+            1,
+            false
+            );
     },
 
     handleInputs: function(input, paceFactor) {

@@ -1,13 +1,17 @@
+//-----------------------------------
+// flynnVaLogo
+//
+//    Implements the "Vector Alchemy" logo.
+//
+//-----------------------------------
+
 var Game = Game || {}; // Create namespace
 
 (function () { "use strict";
 
-
-
 Flynn.VALogo = Class.extend({
 
     POINTS:{
-        // FLASK: [-5,-12,9000,8012,-4,-12,-4,-1,-9,6,-9,10,-7,12,8,12,10,10,10,6,5,-1,5,-12,6,-12,9000,7000,3,-9,9000,8009,3,0,8,7,8,9,7,10,9000,8009,-6,10,-7,9,-7,7,-2,0,-2,-9,3,-9],
         FLASK: [-6,-12,9000,8012,-5,-12,-5,-1,-10,6,-10,10,-8,12,8,12,10,10,10,6,5,-1,5,-12,6,-12,9000,7000,3,-9,9000,8009,3,0,8,7,8,9,7,10,-7,10,-8,9,-8,7,-3,0,-3,-9,3,-9],
         INNER_BOUNDS: [3,-9,3,0,8,7,8,9,7,10,-7,10,-8,9,-8,7,-3,0,-3,-9,3,-9],
     },
@@ -31,12 +35,21 @@ Flynn.VALogo = Class.extend({
     WIGGLE_RATE_MAX: 0.03,
     WIGGLE_DISPLACEMENT_ANGLE: Math.PI/6,
 
-    init: function(x, y, scale){
+    init: function(x, y, scale, color){
         this.pos = {x: x, y:y};
         this.scale = scale;
         this.bubbles = [];
         this.wiggle_angle = 0;
         this.wiggle_rate = 0;
+        if(typeof(color)==='undefined'){
+            color = true;
+        }
+        if(color){
+            this.text_color = "#C0E0C0";
+        }
+        else{
+            this.text_color = Flynn.Colors.GRAY;
+        }
 
         this.flask = new Flynn.Polygon(
             this.POINTS.FLASK,
@@ -180,7 +193,6 @@ Flynn.VALogo = Class.extend({
         var text_scale = 1.4;
         var radius_scale = 40;
         var stretch = 2.0;
-        var text_color = "#C0E0C0";
 
         // Draw bubbles
         var length = this.bubbles.length;
@@ -207,7 +219,7 @@ Flynn.VALogo = Class.extend({
             this.pos.y, 
             -Math.PI/2 + this.angle, 
             this.scale * radius_scale, 
-            text_color, 
+            this.text_color, 
             true,  // is_centered
             false, // is_reversed
             false, // is_world
@@ -222,28 +234,13 @@ Flynn.VALogo = Class.extend({
             this.pos.y, 
             Math.PI/2 + this.angle, 
             this.scale * radius_scale, 
-            text_color, 
+            this.text_color, 
             true,  // is_centered
             true,  // is_reversed 
             false, // is_world
             Flynn.Font.Block,
             stretch
             );
-
-        // ctx.vectorTextArc(
-        //     "TESTING TEXT", 
-        //     this.scale * text_scale,
-        //     this.pos.x,
-        //     this.pos.y, 
-        //     -Math.PI/2 + this.angle, 
-        //     this.scale * (radius_scale + 40), 
-        //     Flynn.Colors.MAGENTA, 
-        //     true,  // is_centered
-        //     false, // is_reversed
-        //     false, // is_world
-        //     Flynn.Font.Block,
-        //     stretch
-        //     );
     }
 });
 

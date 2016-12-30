@@ -370,7 +370,7 @@ Flynn.Canvas = Class.extend({
                 var render_angle = angle;
                 var render_angle_step = Math.asin(font.CharacterSpacing*scale/radius);
                 if(stretch){
-                    render_angle_step *= 1.2;
+                    render_angle_step *= 1.4;
                 }
                 var renderAngleOffset = 0;
                 if (is_centered){
@@ -412,28 +412,24 @@ Flynn.Canvas = Class.extend({
                                 if (is_reversed){
                                     sign = -sign;
                                 }
-                                var a = render_angle;
-                                var r = radius;
-                                // a += sign * (p[j] - font.CharacterWidth/2) / font.CharacterWidth * Math.PI/9;
-                                a += sign * (p[j] - font.CharacterWidth/2) / font.CharacterWidth * Math.PI/(Math.PI * radius / (font.CharacterSpacing*scale));
+                                
+                                // Remap x coordinate onto a logarithmic scale
                                 var character_x = p[j+1];
                                 if (!is_reversed){
                                     character_x = font.CharacterHeight - character_x;
                                 }
-                                // Remap x coordinate onto a logarithmic scale
                                 var x_log = Flynn.Util.logish(
                                     character_x, 
                                     0,                      // min
                                     font.CharacterHeight,   // max
-                                    1.5                     // power
+                                    1.2                     // power
                                     );
-                                // r += (x_log - font.CharacterHeight/2) / font.CharacterWidth * 30;
-                                r += (x_log - font.CharacterHeight/2) * scale * stretch;
-
-                                var c = Math.cos(a);
-                                var s = Math.sin(a);
-                                var draw_x = Math.cos(a) * r + center_x;
-                                var draw_y = Math.sin(a) * r + center_y;
+                                
+                                var draw_radius = radius + (x_log - font.CharacterHeight/2) * scale * stretch;
+                                var draw_angle = render_angle +
+                                    sign * (p[j] - font.CharacterWidth/2) * font.CharacterSpacing * scale / (font.CharacterWidth * radius);
+                                var draw_x = Math.cos(draw_angle) * draw_radius + center_x;
+                                var draw_y = Math.sin(draw_angle) * draw_radius + center_y;
                             }
                             else{
                                 var x = p[j] - font.CharacterWidth/2;
