@@ -102,8 +102,8 @@ Flynn.VALogo = Class.extend({
 
         // Update bubbles
         var length = this.bubbles.length;
-        var pacedAcceleration = Math.pow(this.BUBBLE_ACCELERATION, paceFactor);
-        var pacedDeceleration = Math.pow(this.BUBBLE_DECELERARION, paceFactor);
+        var pacedAcceleration = this.BUBBLE_ACCELERATION * paceFactor;
+        var pacedDeceleration = this.BUBBLE_DECELERARION * paceFactor;
         for(var i=0; i<length; i++){
             var bubble = this.bubbles[i];
 
@@ -130,7 +130,7 @@ Flynn.VALogo = Class.extend({
                     continue;
                 }
             }
-            bubble.y += bubble.velocity;
+            bubble.y += bubble.velocity * paceFactor;
             
             // Drift
             if(bubble.y > this.FLASK_INNER_Y_MIN){
@@ -148,8 +148,6 @@ Flynn.VALogo = Class.extend({
                 // Smoke drift
                 bubble.x += 0.07 * paceFactor;
             }
-
-
 
             // Expire
             if(bubble.y < this.FLASK_VAPOR_Y_MIN){
