@@ -27,10 +27,16 @@ Flynn.VALogo = Class.extend({
     BUBBLE_DIE_RATE_MIN: -0.001,
     BUBBLE_DIE_RATE_MAX: -0.05,
 
+    WIGGLE_RATE_ACCELERATION: 0.0001,
+    WIGGLE_RATE_MAX: 0.03,
+    WIGGLE_DISPLACEMENT_ANGLE: Math.PI/6,
+
     init: function(x, y, scale){
         this.pos = {x: x, y:y};
         this.scale = scale;
         this.bubbles = [];
+        this.wiggle_angle = 0;
+        this.wiggle_rate = 0;
 
         this.flask = new Flynn.Polygon(
             this.POINTS.FLASK,
@@ -62,7 +68,11 @@ Flynn.VALogo = Class.extend({
     },
 
     update: function(paceFactor){
-        this.angle += this.spin_rate * paceFactor;
+        // this.angle += this.spin_rate * paceFactor;
+        this.wiggle_rate += this.WIGGLE_RATE_ACCELERATION;
+        this.wiggle_rate = Math.min(this.wiggle_rate, this.WIGGLE_RATE_MAX);
+        this.wiggle_angle += this.wiggle_rate;
+        this.angle = Math.sin(this.wiggle_angle) * this.WIGGLE_DISPLACEMENT_ANGLE;
 
         // Create new bubbles
         this.bubble_time += paceFactor;
@@ -146,7 +156,7 @@ Flynn.VALogo = Class.extend({
             }
             else{
                 // Smoke drift
-                bubble.x += 0.07 * paceFactor;
+                bubble.x += 0.2 * paceFactor * Math.sin(this.wiggle_angle - Math.PI/4);
             }
 
             // Expire
