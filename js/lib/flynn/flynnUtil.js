@@ -149,9 +149,12 @@ Flynn.Util = {
             );
     },
 
-    randomIntFromInterval: function(min,max)
-    {
-        return Math.floor(Math.random()*(max-min+1)+min);
+    randomIntFromInterval: function(min, max){
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    },
+
+    randomFromInterval: function(min, max){
+        return Math.random() * (max - min) + min;
     },
 
     randomChoice: function(array)
@@ -170,6 +173,11 @@ Flynn.Util = {
             var f=w(c0.slice(1),16),t=w((c1?c1:p<0?"#000000":"#FFFFFF").slice(1),16),R1=f>>16,G1=f>>8&0x00FF,B1=f&0x0000FF;
             return "#"+(0x1000000+(u(((t>>16)-R1)*n)+R1)*0x10000+(u(((t>>8&0x00FF)-G1)*n)+G1)*0x100+(u(((t&0x0000FF)-B1)*n)+B1)).toString(16).slice(1)
         }
+    },
+
+    logish: function(value, min, max, power){
+        var normalized = (value-min)/(max-min);
+        return(Math.pow(normalized, power)*(max-min) + min);
     },
 
 };

@@ -198,6 +198,10 @@ Game.StateHome = Flynn.State.extend({
             muzzle_velocity: 3
         };
 
+        this.va_logo = new Flynn.VALogo(
+            Flynn.mcp.canvasWidth/2,
+            Flynn.mcp.canvasHeight - 140,
+            2);
     },
 
     handleInputs: function(input, paceFactor) {
@@ -252,6 +256,8 @@ Game.StateHome = Flynn.State.extend({
         }
 
         this.partice_gun.angle += this.partice_gun.angular_velocity * paceFactor;
+
+        this.va_logo.update(paceFactor);
     },
 
     render: function(ctx){
@@ -393,6 +399,7 @@ Game.StateHome = Flynn.State.extend({
             });
 
         this.particles.draw(ctx);
+        this.va_logo.render(ctx);
 
     }
 });

@@ -343,7 +343,7 @@ Flynn.Canvas = Class.extend({
                 this.DEBUGLOGGED = true;
             };
 
-            ctx.vectorTextArc = function(text, scale, center_x, center_y, angle, radius, color, is_centered, is_reversed, is_world, font){
+            ctx.vectorTextArc = function(text, scale, center_x, center_y, angle, radius, color, is_centered, is_reversed, is_world, font, stretch){
                 text = String(text);
 
                 if(typeof(color)==='undefined'){
@@ -361,11 +361,17 @@ Flynn.Canvas = Class.extend({
                 if(typeof(font)==='undefined'){
                     font = Flynn.Font.Normal;
                 }
+                if(typeof(stretch)==='undefined'){
+                    stretch = false;
+                }
 
                 var step = scale*font.CharacterSpacing;
 
                 var render_angle = angle;
                 var render_angle_step = Math.asin(font.CharacterSpacing*scale/radius);
+                if(stretch){
+                    render_angle_step *= 1.2;
+                }
                 var renderAngleOffset = 0;
                 if (is_centered){
                     renderAngleOffset = render_angle_step * (text.length / 2 - 0.5);
@@ -401,13 +407,35 @@ Flynn.Canvas = Class.extend({
                             pen_up = true;
                         }
                         else{
-                            var x = p[j] - font.CharacterWidth/2;
-                            var y = p[j+1] - font.CharacterHeight/2;
-                            var c = Math.cos(character_angle);
-                            var s = Math.sin(character_angle);
-                            var draw_x = (c*x - s*y) * scale + Math.cos(render_angle) * radius + center_x;
-                            var draw_y = (s*x + c*y) * scale + Math.sin(render_angle) * radius + center_y;
+                            if(stretch){
+                                var sign = -1.0;
+                                if (is_reversed){
+                                    sign = 1.0;
+                                }
+                                var a = render_angle;
+                                var r = radius;
+                                a -= sign * (p[j] - font.CharacterWidth/2) / font.CharacterWidth * Math.PI/9;
+                                var character_x = p[j+1];
+                                if (!is_reversed){
+                                    character_x = font.CharacterHeight - character_x;
+                                }
+                                var x_log = Flynn.Util.logish(character_x, 0, font.CharacterHeight, 1.6);
+                                // r += sign * (p[j+1] - font.CharacterHeight/2) / font.CharacterWidth * 30;
+                                r += (x_log - font.CharacterHeight/2) / font.CharacterWidth * 30;
 
+                                var c = Math.cos(a);
+                                var s = Math.sin(a);
+                                var draw_x = Math.cos(a) * r + center_x;
+                                var draw_y = Math.sin(a) * r + center_y;
+                            }
+                            else{
+                                var x = p[j] - font.CharacterWidth/2;
+                                var y = p[j+1] - font.CharacterHeight/2;
+                                var c = Math.cos(character_angle);
+                                var s = Math.sin(character_angle);
+                                var draw_x = (c*x - s*y) * scale + Math.cos(render_angle) * radius + center_x;
+                                var draw_y = (s*x + c*y) * scale + Math.sin(render_angle) * radius + center_y;
+                            }
                             if(j===0 || pen_up){
                                 this.vectorMoveToUnconstrained(draw_x, draw_y);
                                 pen_up = false;
