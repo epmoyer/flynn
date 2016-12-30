@@ -132,8 +132,9 @@ Flynn.VALogo = Class.extend({
             }
             bubble.y += bubble.velocity;
             
-            // Wall drift
+            // Drift
             if(bubble.y > this.FLASK_INNER_Y_MIN){
+                // Wall drift
                 if(!this.bubble_in_inner(bubble))
                 {
                     if(bubble.x > 0){
@@ -143,6 +144,12 @@ Flynn.VALogo = Class.extend({
                     }
                 }
             }
+            else{
+                // Smoke drift
+                bubble.x += 0.07 * paceFactor;
+            }
+
+
 
             // Expire
             if(bubble.y < this.FLASK_VAPOR_Y_MIN){
