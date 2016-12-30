@@ -16,10 +16,16 @@ Flynn.VALogo = Class.extend({
     FLASK_INNER_Y_MAX: 10,
     FLASK_INNER_Y_MIN: -9,
 
+    FLASK_VAPOR_Y_MIN: -30,
+
     BUBBLE_BOTTOM_PROBABILITY: 0.8,
     BUBBLE_RATE: 4,
     BUBBLE_ACCELERATION: 0.002,
-
+    BUBBLE_DECELERARION: 0.003,
+    BUBBLE_DIE_VELOCITY: -0.001,
+    BUBBLE_GROW_RATE: 0.007,
+    BUBBLE_DIE_RATE_MIN: -0.001,
+    BUBBLE_DIE_RATE_MAX: -0.05,
 
     init: function(x, y, scale){
         this.pos = {x: x, y:y};
@@ -49,8 +55,9 @@ Flynn.VALogo = Class.extend({
     },
 
     bubble_in_inner: function(bubble){
+        var check_offset = bubble.x > 0 ? 2 : -1;
         return this.inner_bounds.hasPoint(
-            bubble.x * this.scale + this.pos.x,
+            bubble.x * this.scale + this.pos.x + check_offset,
             bubble.y * this.scale + this.pos.y);
     },
 
@@ -61,17 +68,29 @@ Flynn.VALogo = Class.extend({
         this.bubble_time += paceFactor;
         if(this.bubble_time > this.BUBBLE_RATE){
             this.bubble_time -= this.BUBBLE_RATE;
-            var new_bubble = { velocity: 0 };
+            var new_bubble = { 
+                velocity: 0,
+                brightness: 0.0,
+                die_rate: Flynn.Util.randomFromInterval(
+                    this.BUBBLE_DIE_RATE_MIN,
+                    this.BUBBLE_DIE_RATE_MAX
+                    )
+                };
+            new_bubble.x = Flynn.Util.randomFromInterval(
+                    -this.FLASK_INNER_X_MAX,
+                    this.FLASK_INNER_X_MAX);
+            new_bubble.x = this.FLASK_INNER_X_MAX * Flynn.Util.logish(
+                    Math.random(),
+                    0,
+                    1,
+                    2.0);
+            if(Math.random()<0.5){
+                new_bubble.x = - new_bubble.x;
+            }
             if(Math.random() < this.BUBBLE_BOTTOM_PROBABILITY){
-                new_bubble.x = Flynn.Util.randomFromInterval(
-                        -this.FLASK_INNER_X_MAX,
-                        this.FLASK_INNER_X_MAX);
                 new_bubble.y = this.FLASK_INNER_Y_MAX - 1;
             }
             else{
-                new_bubble.x = Flynn.Util.randomFromInterval(
-                        -this.FLASK_INNER_X_MAX,
-                        this.FLASK_INNER_X_MAX);
                 new_bubble.y = Flynn.Util.randomFromInterval(
                         this.FLASK_INNER_Y_MIN,
                         this.FLASK_INNER_Y_MAX);
@@ -84,26 +103,49 @@ Flynn.VALogo = Class.extend({
         // Update bubbles
         var length = this.bubbles.length;
         var pacedAcceleration = Math.pow(this.BUBBLE_ACCELERATION, paceFactor);
+        var pacedDeceleration = Math.pow(this.BUBBLE_DECELERARION, paceFactor);
         for(var i=0; i<length; i++){
+            var bubble = this.bubbles[i];
+
+            // Brighten / Darken
+            if(bubble.y > this.FLASK_INNER_Y_MIN){
+                bubble.brightness += this.BUBBLE_GROW_RATE * paceFactor;
+            }
+            else{
+                bubble.brightness += bubble.die_rate * paceFactor;
+            }
+            bubble.brightness = Flynn.Util.minMaxBound(bubble.brightness, 0, 1);
+
             // Accelerate
-            this.bubbles[i].velocity -= pacedAcceleration;
-            this.bubbles[i].y += this.bubbles[i].velocity;
+            if(bubble.y > this.FLASK_INNER_Y_MIN){
+                bubble.velocity -= pacedAcceleration;
+            }
+            else{
+                bubble.velocity += pacedDeceleration;
+                if(bubble.velocity >= this.BUBBLE_DIE_VELOCITY){
+                    // Remove slow exit bubble (smoke)
+                    this.bubbles.splice(i, 1);
+                    i-=1;
+                    length-=1;
+                    continue;
+                }
+            }
+            bubble.y += bubble.velocity;
             
             // Wall drift
-            // if(!this.inner_bounds.hasPoint(
-            //     this.bubbles[i].x * this.scale + this.pos.x,
-            //     this.bubbles[i].y * this.scale + this.pos.y))
-            if(!this.bubble_in_inner(this.bubbles[i]))
-            {
-                if(this.bubbles[i].x > 0){
-                    this.bubbles[i].x-=0.2;
-                }else{
-                    this.bubbles[i].x+=0.2;
+            if(bubble.y > this.FLASK_INNER_Y_MIN){
+                if(!this.bubble_in_inner(bubble))
+                {
+                    if(bubble.x > 0){
+                        bubble.x-=0.2;
+                    }else{
+                        bubble.x+=0.2;
+                    }
                 }
             }
 
             // Expire
-            if(this.bubbles[i].y < this.FLASK_INNER_Y_MIN){
+            if(bubble.y < this.FLASK_VAPOR_Y_MIN){
                 this.bubbles.splice(i, 1);
                 i-=1;
                 length-=1;
@@ -116,6 +158,23 @@ Flynn.VALogo = Class.extend({
         var radius_scale = 35;
         var stretch = true;
         var text_color = "#C0E0C0";
+
+        // Draw bubbles
+        var length = this.bubbles.length;
+        for(var i=0; i<length; i++){
+            ctx.fillStyle=Flynn.Colors.ORANGE;
+            if(this.bubbles[i].y > this.FLASK_INNER_Y_MIN){
+                ctx.fillStyle=Flynn.Util.shadeBlend(-(1-this.bubbles[i].brightness), Flynn.Colors.ORANGE);
+            }
+            else{
+                ctx.fillStyle=Flynn.Util.shadeBlend(-(1-this.bubbles[i].brightness), Flynn.Colors.GRAY);
+            }
+            ctx.fillRect(
+                this.bubbles[i].x * this.scale + this.pos.x,
+                this.bubbles[i].y * this.scale + this.pos.y + 1,
+                2,
+                2);
+        }
 
         this.flask.render(ctx);
         ctx.vectorTextArc(
@@ -147,17 +206,6 @@ Flynn.VALogo = Class.extend({
             Flynn.Font.Block,
             stretch
             );
-
-        ctx.fillStyle=Flynn.Colors.ORANGE;
-        
-        var length = this.bubbles.length;
-        for(var i=0; i<length; i++){
-            ctx.fillRect(
-                this.bubbles[i].x * this.scale + this.pos.x,
-                this.bubbles[i].y * this.scale + this.pos.y + 1,
-                1,
-                1);
-        }
     }
 });
 
