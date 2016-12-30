@@ -58,6 +58,14 @@ Flynn.VALogo = Class.extend({
         this.angle=0;
         this.spin_rate = Math.PI/300;
         this.bubble_time = 0;
+
+        // Generate initial bubble state
+        for(var i = 0; i<180; i++){
+            this.update(1.0);
+            // Re-initialize text position
+            this.wiggle_angle = 0;
+            this.wiggle_rate = 0;
+        }
     },
 
     bubble_in_inner: function(bubble){
@@ -156,7 +164,7 @@ Flynn.VALogo = Class.extend({
             }
             else{
                 // Smoke drift
-                bubble.x += 0.2 * paceFactor * Math.sin(this.wiggle_angle - Math.PI/4);
+                bubble.x += 0.2 * paceFactor * Math.sin(this.wiggle_angle - Math.PI/4) * this.wiggle_rate/this.WIGGLE_RATE_MAX;
             }
 
             // Expire
