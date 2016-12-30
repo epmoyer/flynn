@@ -69,9 +69,9 @@ Flynn.VALogo = Class.extend({
 
     update: function(paceFactor){
         // this.angle += this.spin_rate * paceFactor;
-        this.wiggle_rate += this.WIGGLE_RATE_ACCELERATION;
+        this.wiggle_rate += this.WIGGLE_RATE_ACCELERATION * paceFactor;
         this.wiggle_rate = Math.min(this.wiggle_rate, this.WIGGLE_RATE_MAX);
-        this.wiggle_angle += this.wiggle_rate;
+        this.wiggle_angle += this.wiggle_rate * paceFactor;
         this.angle = Math.sin(this.wiggle_angle) * this.WIGGLE_DISPLACEMENT_ANGLE;
 
         // Create new bubbles

@@ -218,9 +218,9 @@ Game.StateHome = Flynn.State.extend({
             this.timers.set("Explode1", this.TIMER_EXPLODE1_TICKS);
             this.particles.explosion(
                 Flynn.Util.randomIntFromInterval(
-                    Flynn.mcp.canvasWidth-130, Flynn.mcp.canvasWidth-80), // x
+                    Flynn.mcp.canvasWidth - 130, Flynn.mcp.canvasWidth - 80), // x
                 Flynn.Util.randomIntFromInterval(350, 450),     // y
-                Flynn.Util.randomIntFromInterval(10,200),       // quantity
+                Flynn.Util.randomIntFromInterval(10, 200),       // quantity
                 2,                                              // max_velocity
                 Flynn.Util.randomChoice(this.colors)            // color
                 );
