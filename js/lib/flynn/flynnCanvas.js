@@ -19,10 +19,9 @@ Flynn.Config.VECTOR_DIM_FACTOR_THICK = 0.75; // Brightness dimming for vector li
 Flynn.Config.VECTOR_DIM_FACTOR_THIN  = 0.65;
 Flynn.Config.VECTOR_OVERDRIVE_FACTOR = 0.2;  // White overdrive for vertex point artifacts
 
-
 Flynn.Canvas = Class.extend({
 
-    init: function(width, height, canvas) {
+    init: function(width, height, canvas, background_color) {
         this.showMetrics = false;
         if(typeof(canvas)==='undefined'){
             this.canvas = document.getElementById("gameCanvas");
@@ -30,10 +29,15 @@ Flynn.Canvas = Class.extend({
         else{
             this.canvas = canvas;
         }
+        if(typeof(background_color)==='undefined'){
+            this.canvas.style.backgroundColor = '#000';
+        }
+        else{
+            this.canvas.style.backgroundColor = background_color;
+        }
         
         this.canvas.width = width;
         this.canvas.height = height;
-        this.canvas.style.backgroundColor = '#000';
         this.previousTimestamp = 0;
 
         this.DEBUGLOGGED = false;

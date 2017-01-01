@@ -55,6 +55,7 @@ Flynn.Mcp = Class.extend({
         this.custom={}; // Container for custom game data which needs to be exchanged globally.
 
         this.canvas = new Flynn.Canvas(canvasWidth, canvasHeight);
+        this.touch_control_canvas = this.canvas;
         this.input = new Flynn.InputHandler();
 
         if(this.iCadeModeEnabled){
@@ -90,7 +91,7 @@ Flynn.Mcp = Class.extend({
 
         // SUPPORT: Touch
         this.browserSupportsTouch = (
-            ('ontouchstart' in document.documentElement) ||
+            (Flynn.Util.is_mobile_browser() && ('ontouchstart' in document.documentElement)) ||
             this.mousetouchEnabled );
 
         if (this.developerModeEnabled){
@@ -170,6 +171,13 @@ Flynn.Mcp = Class.extend({
             self.input.updateVisibilityAllControls();
         };
         window.addEventListener("resize", this.resize);
+    },
+
+    setTouchControlCanvas: function(canvas){
+        // Allows use of an alternate canvas for touch control rendering.
+        // This allows (for instance) a 3D game to create a special 2D canvas onto which touch
+        // controls will be drawn.
+        this.touch_control_canvas = canvas;
     },
 
     setResizeFunc: function(resizeFunc){
@@ -326,8 +334,8 @@ Flynn.Mcp = Class.extend({
                     }
 
                     // Render any visible virtual controls
-                    self.input.renderTouchRegions(self.canvas.ctx);
-                    self.input.renderVirtualJoysticks(self.canvas.ctx);
+                    self.input.renderTouchRegions(self.touch_control_canvas.ctx);
+                    self.input.renderVirtualJoysticks(self.touch_control_canvas.ctx);
 
                     // Process halt
                     if(   self.developerModeEnabled 

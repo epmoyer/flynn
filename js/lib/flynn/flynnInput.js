@@ -91,7 +91,7 @@ Flynn.InputHandler = Class.extend({
             buttonCodes:  [],
         };
         //                    Name          Down Up
-        this.addiCadeMapping('icade_up',    'w', 'e'); // Joystick
+        this.addiCadeMapping('icade_up',    'w', 'e'); // Joytick
         this.addiCadeMapping('icade_down',  'x', 'z');
         this.addiCadeMapping('icade_left',  'a', 'q');
         this.addiCadeMapping('icade_right', 'd', 'c');
@@ -180,10 +180,12 @@ Flynn.InputHandler = Class.extend({
                             Flynn.mcp.devResume();
                         }
                         if(Flynn.mcp.mousetouchEnabled){
-                            var canvas = Flynn.mcp.canvas.canvas;
+                            var canvas = Flynn.mcp.touch_control_canvas.canvas;
                             var rect = canvas.getBoundingClientRect();
-                            var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
-                            var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                            // var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                            var x = (event.clientX - rect.left) * canvas.width / canvas.clientWidth;
+                            // var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                            var y = (event.clientY - rect.top) * canvas.height / canvas.clientHeight;
                             //console.log("DEV: mousedown ",x,y);
                             self.handleTouchStart(x, y, self.MOUSE_IDENTIFIER);
                         }
@@ -201,10 +203,12 @@ Flynn.InputHandler = Class.extend({
                 document.addEventListener(
                     'mouseup',
                     function(event){
-                        var canvas = Flynn.mcp.canvas.canvas;
+                        var canvas = Flynn.mcp.touch_control_canvas.canvas;
                         var rect = canvas.getBoundingClientRect();
-                        var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
-                        var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                        // var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                        var x = (event.clientX - rect.left) * canvas.width / canvas.clientWidth;
+                        // var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                        var y = (event.clientY - rect.top) * canvas.height / canvas.clientHeight;
                         //console.log("DEV: mouseup ",x,y);
                         self.handleTouchEnd(x, y, self.MOUSE_IDENTIFIER);
                     },
@@ -221,10 +225,12 @@ Flynn.InputHandler = Class.extend({
                     function(event){
                         // If a button is pressed
                         if(event.which){
-                            var canvas = Flynn.mcp.canvas.canvas;
+                            var canvas = Flynn.mcp.touch_control_canvas.canvas;
                             var rect = canvas.getBoundingClientRect();
-                            var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
-                            var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                            // var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                            var x = (event.clientX - rect.left) * canvas.width / canvas.clientWidth;
+                            // var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                            var y = (event.clientY - rect.top) * canvas.height / canvas.clientHeight;
                             //console.log("DEV: mousemove ",x,y);
                             self.handleTouchMove(x, y, self.MOUSE_IDENTIFIER);
                         }
@@ -246,10 +252,12 @@ Flynn.InputHandler = Class.extend({
                     // var x = touch.pageX * Flynn.mcp.canvasWidth / window.innerWidth;
                     // var y = touch.pageY * Flynn.mcp.canvasHeight / window.innerHeight;
 
-                    var canvas = Flynn.mcp.canvas.canvas;
+                    var canvas = Flynn.mcp.touch_control_canvas.canvas;
                     var rect = canvas.getBoundingClientRect();
-                    var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
-                    var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                    // var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                    var x = (touch.pageX - rect.left) * canvas.width / canvas.clientWidth;
+                    // var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                    var y = (touch.pageY - rect.top) * canvas.height / canvas.clientHeight;
 
 
                     console.log("DEV: touchstart ",x,y,touch.identifier);
@@ -271,10 +279,12 @@ Flynn.InputHandler = Class.extend({
                     // var x = touch.pageX;
                     // var y = touch.pageY;
                     
-                    var canvas = Flynn.mcp.canvas.canvas;
+                    var canvas = Flynn.mcp.touch_control_canvas.canvas;
                     var rect = canvas.getBoundingClientRect();
-                    var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
-                    var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                    // var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                    var x = (touch.pageX - rect.left) * canvas.width / canvas.clientWidth;
+                    // var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                    var y = (touch.pageY - rect.top) * canvas.height / canvas.clientHeight;
 
 
                     console.log("DEV: touchend ",x,y,touch.identifier);
@@ -296,10 +306,12 @@ Flynn.InputHandler = Class.extend({
                     // var x = touch.pageX;
                     // var y = touch.pageY;
 
-                    var canvas = Flynn.mcp.canvas.canvas;
+                    var canvas = Flynn.mcp.touch_control_canvas.canvas;
                     var rect = canvas.getBoundingClientRect();
-                    var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
-                    var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                    // var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
+                    var x = (touch.pageX - rect.left) * canvas.width / canvas.clientWidth;
+                    // var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
+                    var y = (touch.pageY - rect.top) * canvas.height / canvas.clientHeight;
 
                     console.log("DEV: touchmove ",x,y);
                     self.handleTouchMove(x, y, touch.identifier);
@@ -348,7 +360,7 @@ Flynn.InputHandler = Class.extend({
 
     handleTouchEnd: function(x,y,touch_identifier){
         //console.log("DEV: handleTouchEnd() ",x,y);
-        var name, region, joystick, direction;
+        var name, region, joystick, direction, i;
         for(name in this.touchRegions){
             region = this.touchRegions[name];
             // If the unique identifier associated with this touchend event matches
@@ -397,7 +409,7 @@ Flynn.InputHandler = Class.extend({
     },
 
     setButtonsFromJoystick: function(joystick){
-        var direction, name;
+        var direction, name, i;
         if(joystick.in_use){
             // Joystick in use. Assign state of all associated buttons to match joystick
             for(i=0; i<this.DIRECTIONS.length; i++){
@@ -518,7 +530,7 @@ Flynn.InputHandler = Class.extend({
         return names;
     },
 
-    getVirtualButtonBoundKeyName: function(name){
+     getVirtualButtonBoundKeyName: function(name){
         var boundKeyCode, boundKeyName;
 
         if(this.virtualButtons[name]){
@@ -531,7 +543,7 @@ Flynn.InputHandler = Class.extend({
             boundKeyName = this.keyCodeToKeyName(boundKeyCode);
             return(boundKeyName);
         }
-        else {
+        else{
             // Button does not exist
             console.log(
                 'Flynn: Warning: getVirtualButtonBoundKeyName() was called for virtual button  "' + name +
