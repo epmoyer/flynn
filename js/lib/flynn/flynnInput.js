@@ -205,9 +205,7 @@ Flynn.InputHandler = Class.extend({
                     function(event){
                         var canvas = Flynn.mcp.touch_control_canvas.canvas;
                         var rect = canvas.getBoundingClientRect();
-                        // var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                         var x = (event.clientX - rect.left) * canvas.width / canvas.clientWidth;
-                        // var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
                         var y = (event.clientY - rect.top) * canvas.height / canvas.clientHeight;
                         //console.log("DEV: mouseup ",x,y);
                         self.handleTouchEnd(x, y, self.MOUSE_IDENTIFIER);
@@ -227,9 +225,7 @@ Flynn.InputHandler = Class.extend({
                         if(event.which){
                             var canvas = Flynn.mcp.touch_control_canvas.canvas;
                             var rect = canvas.getBoundingClientRect();
-                            // var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                             var x = (event.clientX - rect.left) * canvas.width / canvas.clientWidth;
-                            // var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
                             var y = (event.clientY - rect.top) * canvas.height / canvas.clientHeight;
                             //console.log("DEV: mousemove ",x,y);
                             self.handleTouchMove(x, y, self.MOUSE_IDENTIFIER);
@@ -254,9 +250,7 @@ Flynn.InputHandler = Class.extend({
 
                     var canvas = Flynn.mcp.touch_control_canvas.canvas;
                     var rect = canvas.getBoundingClientRect();
-                    // var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                     var x = (touch.pageX - rect.left) * canvas.width / canvas.clientWidth;
-                    // var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
                     var y = (touch.pageY - rect.top) * canvas.height / canvas.clientHeight;
 
 
@@ -281,9 +275,7 @@ Flynn.InputHandler = Class.extend({
                     
                     var canvas = Flynn.mcp.touch_control_canvas.canvas;
                     var rect = canvas.getBoundingClientRect();
-                    // var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                     var x = (touch.pageX - rect.left) * canvas.width / canvas.clientWidth;
-                    // var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
                     var y = (touch.pageY - rect.top) * canvas.height / canvas.clientHeight;
 
 
@@ -308,9 +300,7 @@ Flynn.InputHandler = Class.extend({
 
                     var canvas = Flynn.mcp.touch_control_canvas.canvas;
                     var rect = canvas.getBoundingClientRect();
-                    // var x = (touch.pageX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                     var x = (touch.pageX - rect.left) * canvas.width / canvas.clientWidth;
-                    // var y = (touch.pageY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
                     var y = (touch.pageY - rect.top) * canvas.height / canvas.clientHeight;
 
                     console.log("DEV: touchmove ",x,y);
