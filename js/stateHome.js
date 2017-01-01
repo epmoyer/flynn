@@ -204,7 +204,7 @@ Game.StateHome = Flynn.State.extend({
             2);
         this.va_logo2 = new Flynn.VALogo(
             Flynn.mcp.canvasWidth/2 + 180,
-            Flynn.mcp.canvasHeight - 150,
+            Flynn.mcp.canvasHeight - 94,
             1,
             false
             );

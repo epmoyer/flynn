@@ -26,6 +26,8 @@ Game.Main = Class.extend({
     
     init: function() {
 
+        var self = this;
+        
         Flynn.init(
             Game.CANVAS_WIDTH,
             Game.CANVAS_HEIGHT, 
@@ -70,7 +72,7 @@ Game.Main = Class.extend({
         Flynn.mcp.changeState(Game.States.HOME);
 
         Game.config = {};
-        Game.config.score = 500001;
+        Game.config.score = 500004;
         Game.config.leaderboard = new Flynn.Leaderboard(
             ['name', 'score'],  // attributeList
             6,                  // maxItems
@@ -173,6 +175,9 @@ Game.Main = Class.extend({
             );
         Flynn.mcp.optionManager.addOption('musicEnabled', Flynn.OptionType.BOOLEAN, true, true, 'MUSIC', null,
             Game.updateMusic // Callback on option change
+            );
+        Flynn.mcp.optionManager.addOption('resetScores', Flynn.OptionType.COMMAND, true, true, 'RESET HIGH SCORES', null,
+            function(){self.resetScores();} // Callback on option command
             );
         // Restore user option settings from cookies
         Flynn.mcp.optionManager.loadFromCookies();

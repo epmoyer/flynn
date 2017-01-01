@@ -20,6 +20,8 @@ canvas{
     top: 0;
     left: 0;
 
+    z-index: 1000;
+
 	/*position: absolute;*/
 	/*margin: auto;*/
 	/*width: 100%;
