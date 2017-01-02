@@ -182,9 +182,7 @@ Flynn.InputHandler = Class.extend({
                         if(Flynn.mcp.mousetouchEnabled){
                             var canvas = Flynn.mcp.touch_control_canvas.canvas;
                             var rect = canvas.getBoundingClientRect();
-                            // var x = (event.clientX - rect.left) * Flynn.mcp.canvasWidth / canvas.clientWidth;
                             var x = (event.clientX - rect.left) * canvas.width / canvas.clientWidth;
-                            // var y = (event.clientY - rect.top) * Flynn.mcp.canvasHeight / canvas.clientHeight;
                             var y = (event.clientY - rect.top) * canvas.height / canvas.clientHeight;
                             //console.log("DEV: mousedown ",x,y);
                             self.handleTouchStart(x, y, self.MOUSE_IDENTIFIER);
