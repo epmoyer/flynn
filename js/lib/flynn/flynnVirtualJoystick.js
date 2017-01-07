@@ -77,6 +77,9 @@ Flynn.VirtualJoystick = Class.extend({
     // },
 
     handleTouchStart: function(x, y, touch_identifier){
+        // Returns true if this joystick caught the event
+        var event_caught = false;
+
         if(this.is_visible && Flynn.Util.distance(x, y, this.pos.x, this.pos.y) < this.capture_radius){
             this.touch_identifier = touch_identifier;
             this.in_use           = true;
@@ -88,7 +91,9 @@ Flynn.VirtualJoystick = Class.extend({
                 // D-Pad
                 this.handleTouchMove(x, y, touch_identifier);
             }
+            event_caught = true;
         }
+        return event_caught;
     },
 
     handleTouchEnd: function(x, y, touch_identifier){

@@ -183,32 +183,34 @@ Game.Main = Class.extend({
         Flynn.mcp.optionManager.loadFromCookies();
         
         // Setup touch controls
-        var button_size = 80;
+        var button_size = 130;
+        var joystick_radius = button_size/2;
+        var button_margin = 10;
+        var button_gap = 10;
         var x, y;
         if(Flynn.mcp.browserSupportsTouch){
 
-            x = Game.CANVAS_WIDTH - 1.4*button_size;
-            y = Game.CANVAS_HEIGHT - 1.4*button_size;
+            x = Game.CANVAS_WIDTH - button_size - button_margin;
+            y = Game.CANVAS_HEIGHT - button_size - button_margin;
             Flynn.mcp.input.addTouchRegion("UI_right",
                 x, y, x+button_size, y+button_size,
                 'round',
                 null // Visible in all states
                 );
-            x -= 1.5 * button_size; 
+            x -= button_size + button_gap; 
             Flynn.mcp.input.addTouchRegion("UI_left",
                 x, y, x+button_size, y+button_size,
                 'round',
                 null // Visible in all states
                 ); 
 
-            x = Game.CANVAS_WIDTH - 1.4*button_size;
-            y = Game.CANVAS_HEIGHT - 2.9*button_size;
+            x -= button_size + button_gap; 
             Flynn.mcp.input.addTouchRegion("fire_r",
                 x, y, x+button_size, y+button_size,
                 'rect',
                 [Game.States.DEMO3]  // visible_states
                 );
-            x -= 1.5 * button_size; 
+            x -= button_size + button_gap; 
             Flynn.mcp.input.addTouchRegion("fire_l",
                 x, y, x+button_size, y+button_size,
                 'rect',
@@ -221,11 +223,13 @@ Game.Main = Class.extend({
         // Set resize handler and force a resize
         Flynn.mcp.setResizeFunc( function(width, height){
 
-            var spacing = 140;
-            var x_start = 80;
+            // var spacing = 140;
+            // var x_start = 80;
+            x = button_margin + joystick_radius;
+            y = Game.CANVAS_HEIGHT - button_margin - joystick_radius;
 
             Flynn.mcp.input.addVirtualJoystick({
-                pos: {x: x_start, y: Game.CANVAS_HEIGHT-80},
+                pos: {x: x, y: y},
                 name: 'd_stick',
                 button_map: {
                     up:    'up',
@@ -233,18 +237,22 @@ Game.Main = Class.extend({
                     left:  'left',
                     right: 'right'
                 },
+                radius: joystick_radius,
                 visible_states: [Game.States.DEMO3],
             });
 
+            x += button_gap + 2 * joystick_radius;
             Flynn.mcp.input.addVirtualJoystick({
-                pos: {x: x_start + spacing, y: Game.CANVAS_HEIGHT-80},
+                pos: {x: x, y: y},
                 name: 'a_stick',
                 type: 'analog',
+                radius: joystick_radius,
                 visible_states: [Game.States.DEMO3],
             });
 
+            x += button_gap + 2 * joystick_radius;
             Flynn.mcp.input.addVirtualJoystick({
-                pos: {x: x_start + spacing * 2, y: Game.CANVAS_HEIGHT-80},
+                pos: {x: x, y: y},
                 name: 'dpad_stick',
                 type: 'dpad',
                 button_map: {
@@ -253,6 +261,7 @@ Game.Main = Class.extend({
                     left:  'left',
                     right: 'right'
                 },
+                radius: joystick_radius,
                 visible_states: [Game.States.DEMO3],
             });
         });
