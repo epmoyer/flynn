@@ -109,27 +109,32 @@ Game.StateDemo3 = Flynn.State.extend({
     handleInputs: function(input, paceFactor) {
         Game.handleInputs_common(input);
 
-        // Move crosshair
+        // Move cross-hair
         if (input.virtualButtonIsDown("left")){
-            this.crosshair_poly.position.x = Math.max(
-                this.crosshair_poly.position.x - this.CROSSHAIR_SPEED * paceFactor,
-                this.joystick_test_rect.left);
+            this.crosshair_poly.position.x -= this.CROSSHAIR_SPEED * paceFactor;
         }
         if (input.virtualButtonIsDown("right")){
-            this.crosshair_poly.position.x = Math.min(
-                this.crosshair_poly.position.x + this.CROSSHAIR_SPEED * paceFactor,
-                this.joystick_test_rect.right);
+            this.crosshair_poly.position.x += this.CROSSHAIR_SPEED * paceFactor;
         }
         if (input.virtualButtonIsDown("up")){
-            this.crosshair_poly.position.y = Math.max(
-                this.crosshair_poly.position.y - this.CROSSHAIR_SPEED * paceFactor,
-                this.joystick_test_rect.top);
+            this.crosshair_poly.position.y -= this.CROSSHAIR_SPEED * paceFactor;
         }
         if (input.virtualButtonIsDown("down")){
-            this.crosshair_poly.position.y = Math.min(
-                this.crosshair_poly.position.y + this.CROSSHAIR_SPEED * paceFactor,
-                this.joystick_test_rect.bottom);
+            this.crosshair_poly.position.y += this.CROSSHAIR_SPEED * paceFactor;
         }
+        var analog_pos = Flynn.mcp.input.getAnalogJoystickPosition("a_stick");
+        this.crosshair_poly.position.x += analog_pos.x * this.CROSSHAIR_SPEED * paceFactor;
+        this.crosshair_poly.position.y += analog_pos.y * this.CROSSHAIR_SPEED * paceFactor;
+        this.crosshair_poly.position.x = Flynn.Util.minMaxBound(
+            this.crosshair_poly.position.x,
+            this.joystick_test_rect.left,
+            this.joystick_test_rect.right
+            );
+        this.crosshair_poly.position.y = Flynn.Util.minMaxBound(
+            this.crosshair_poly.position.y,
+            this.joystick_test_rect.top,
+            this.joystick_test_rect.bottom
+            );
 
         // Fire
         if (input.virtualButtonWasPressed("fire_l")){

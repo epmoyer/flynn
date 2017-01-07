@@ -221,9 +221,12 @@ Game.Main = Class.extend({
         // Set resize handler and force a resize
         Flynn.mcp.setResizeFunc( function(width, height){
 
+            var spacing = 140;
+            var x_start = 80;
+
             Flynn.mcp.input.addVirtualJoystick({
-                pos: {x: 80, y: Game.CANVAS_HEIGHT-80},
-                name: 'stick',
+                pos: {x: x_start, y: Game.CANVAS_HEIGHT-80},
+                name: 'd_stick',
                 button_map: {
                     up:    'up',
                     down:  'down',
@@ -234,8 +237,15 @@ Game.Main = Class.extend({
             });
 
             Flynn.mcp.input.addVirtualJoystick({
-                pos: {x: 250, y: Game.CANVAS_HEIGHT-80},
-                name: 'stick2',
+                pos: {x: x_start + spacing, y: Game.CANVAS_HEIGHT-80},
+                name: 'a_stick',
+                type: 'analog',
+                visible_states: [Game.States.DEMO3],
+            });
+
+            Flynn.mcp.input.addVirtualJoystick({
+                pos: {x: x_start + spacing * 2, y: Game.CANVAS_HEIGHT-80},
+                name: 'dpad_stick',
                 type: 'dpad',
                 button_map: {
                     up:    'up',

@@ -744,6 +744,13 @@ Flynn.InputHandler = Class.extend({
         this.virtualJoysticks[joystick.name] = joystick;
     },
 
+    getAnalogJoystickPosition: function(name){
+        if (!this.virtualJoysticks[name]){
+            return null;
+        }
+        return this.virtualJoysticks[name].analog_pos;
+    },
+
     updateVisibilityAllControls: function() {
         var name;
         for(name in this.virtualJoysticks){
