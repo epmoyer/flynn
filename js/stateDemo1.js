@@ -34,7 +34,7 @@ Game.StateDemo1 = Flynn.State.extend({
             var i, j, x;
             var heading_color = Flynn.Colors.YELLOW;
             
-            Game.render_page_frame (ctx, Game.States.DEMO1);
+            Game.render_page_frame(ctx, Game.States.DEMO1);
 
             // Center guides
             var guide_inset = 10;

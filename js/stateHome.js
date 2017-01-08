@@ -9,7 +9,7 @@ Game.render_page_frame = function(ctx, page_id){
     var margin=3;
     var x=10;
     var scale=3;
-    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD", "FONT"];
+    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD", "FONT", "INFO"];
 
     // Render frame box
     ctx.vectorLine(margin, 37, ctx.width-margin-1, 37, Flynn.Colors.GREEN);
@@ -203,7 +203,7 @@ Game.StateHome = Flynn.State.extend({
             Flynn.mcp.canvasHeight - 150,
             2);
         this.va_logo2 = new Flynn.VALogo(
-            Flynn.mcp.canvasWidth/2 + 180,
+            Flynn.mcp.canvasWidth/2 + 170,
             Flynn.mcp.canvasHeight - 94,
             1,
             false

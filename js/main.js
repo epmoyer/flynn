@@ -15,8 +15,9 @@ Game.States = {
     DEMO3:     4,
     DEMO4:     5,
     DEMO5:     6,
+    DEMO6:     7,
 
-    LAST_PAGE: 6, // Match highest page above (used for navigation)
+    LAST_PAGE: 7, // Match highest page above (used for navigation)
 
     END:       90,
     CONFIG:    91,
@@ -47,6 +48,8 @@ Game.Main = Class.extend({
                         return new Game.StateDemo4();
                     case Game.States.DEMO5:
                         return new Game.StateDemo5();
+                    case Game.States.DEMO6:
+                        return new Game.StateDemo6();
                     case Game.States.END:
                         return new Flynn.StateEnd(
                             Game.config.score,
