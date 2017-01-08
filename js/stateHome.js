@@ -354,6 +354,8 @@ Game.StateHome = Flynn.State.extend({
         var indent_chars = 9;
         var scale = 1.5;
         var options=[
+            ['LEFT', 'PREVIOUS PAGE'],
+            ['RIGHT', 'NEXT PAGE'],
             ['ESCAPE', 'CONFIGURATION MENU'],
             ['ENTER', 'HIGH SCORE SCREEN'],
         ];
