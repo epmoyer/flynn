@@ -6,7 +6,7 @@ var Flynn = Flynn || {}; // Create namespace
 
 (function () { "use strict"; 
 
-Flynn.VERSION = "2.4.1";
+Flynn.VERSION = "2.5.0";
  
 Flynn.init = function(
     canvasWidth,
@@ -128,17 +128,18 @@ Flynn.KeyboardMap = {
     'y':        89,
     'z':        90,
 
-    'single_quote':  222, // '
+    'semicolon':     186, // ;
+    'equals':        187, // =
     'comma':         188, // ,
     'dash':          189, // -
     'period':        190, // .
     'forward_slash': 191, // /
-    'semicolon':     186, // ;
-    'equals':        187, // =
+    'grave_accent':  192, // `
+    
     'left_bracket':  219, // [
     'backslash':     220, // \
     'right_bracket': 221, // ]
-    'grave_accent':  192, // `
+    'single_quote':  222, // '
 
     'delete':    8,
     'tab':       9,

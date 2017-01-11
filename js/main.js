@@ -98,7 +98,7 @@ Game.Main = Class.extend({
         if(!Flynn.mcp.iCadeModeEnabled){
             input.addVirtualButton('fire_l', Flynn.KeyboardMap.z, Flynn.BUTTON_CONFIGURABLE);
             input.addVirtualButton('fire_r', Flynn.KeyboardMap.spacebar, Flynn.BUTTON_CONFIGURABLE);
-            // Apologies to the world.  The defalt WASD is WARS because all my keyboards are Colemak :) 
+            // Apologies to the world.  The default WASD is WARS because all my keyboards are Colemak :) 
             input.addVirtualButton('up', Flynn.KeyboardMap.w, Flynn.BUTTON_CONFIGURABLE);
             input.addVirtualButton('left', Flynn.KeyboardMap.a, Flynn.BUTTON_CONFIGURABLE);
             input.addVirtualButton('down', Flynn.KeyboardMap.r, Flynn.BUTTON_CONFIGURABLE);

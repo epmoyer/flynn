@@ -57,7 +57,7 @@ Flynn.VirtualButton = Class.extend({
 
         this.isDown = false;
         this.pressWasReported = false;
-        this.boundKeyCode = null; // The ascii code of the bound key.  Can be null if no key bound.
+        this.boundKeyCode = null; // The ASCII code of the bound key.  Can be null if no key bound.
     }
 });
 
@@ -79,6 +79,9 @@ Flynn.InputHandler = Class.extend({
 
         this.virtualJoysticks = {};
 
+        this.text_capture_enabled = false;
+        this.captured_text = '';
+
         // Key Code capture support for user configuration of key assignments
         this.keyCodeCaptureArmed = false;
         this.capturedKeyCode = null;
@@ -91,7 +94,7 @@ Flynn.InputHandler = Class.extend({
             buttonCodes:  [],
         };
         //                    Name          Down Up
-        this.addiCadeMapping('icade_up',    'w', 'e'); // Joytick
+        this.addiCadeMapping('icade_up',    'w', 'e'); // Joystick
         this.addiCadeMapping('icade_down',  'x', 'z');
         this.addiCadeMapping('icade_left',  'a', 'q');
         this.addiCadeMapping('icade_right', 'd', 'c');
@@ -142,6 +145,10 @@ Flynn.InputHandler = Class.extend({
                 return;
             }
 
+            if(self.text_capture_enabled){
+                return;
+            }
+
             var name;
             if (self.keyCodeToVirtualButtonName[evt.keyCode]){
                 name = self.keyCodeToVirtualButtonName[evt.keyCode];
@@ -172,6 +179,14 @@ Flynn.InputHandler = Class.extend({
             }
         };
         document.addEventListener("keyup", this.keyUpHandler);
+
+        this.keyPressHandler = function(evt){
+            console.log("keyPressHandler: Code:" + evt.keyCode);
+            if(self.text_capture_enabled){
+                self.processTextCapture(evt.keyCode);
+            }
+        };
+        document.addEventListener("keypress", this.keyPressHandler);
 
         if(Flynn.mcp.mousetouchEnabled || Flynn.mcp.developerModeEnabled){
             try{
@@ -346,6 +361,39 @@ Flynn.InputHandler = Class.extend({
         catch(err){
             console.log('Warning: Could not register "touchend" event.');
         }
+    },
+
+    startTextCapture: function(){
+        this.text_capture_enabled = true;
+        this.captured_text = '';
+    },
+
+    getTextCapture: function(){
+        return this.captured_text;
+    },
+
+    setTextCapture: function(text){
+        this.captured_text = text;
+    },
+
+    isTextCaptureDone: function(){
+        return !this.text_capture_enabled;
+    },
+
+    processTextCapture: function(key_code){
+        if(key_code == 13){
+            // Enter
+            this.text_capture_enabled = false;
+        }
+        else if(key_code == Flynn.KeyboardMap['delete'] && this.captured_text.length > 0){
+            this.captured_text = this.captured_text.substring(0, this.captured_text.length-1);
+        }
+        else if( 
+                (key_code >= 32 && key_code <= 122)  // Renderable ASCII
+            ){
+            this.captured_text += String.fromCharCode(key_code);
+        }
+        console.log('processTextCapture():Key Code:'+key_code+' String:'+this.captured_text);
     },
 
     addTouchableElement: function(element){
@@ -576,7 +624,7 @@ Flynn.InputHandler = Class.extend({
         return names;
     },
 
-     getVirtualButtonBoundKeyName: function(name){
+    getVirtualButtonBoundKeyName: function(name){
         var boundKeyCode, boundKeyName;
 
         if(this.virtualButtons[name]){

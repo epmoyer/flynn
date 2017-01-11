@@ -8,6 +8,7 @@
 Flynn.StateEnd = Flynn.State.extend({
 
     CURSOR_BLINK_RATE: 2,
+    MAX_NICKNAME_LENGTH: 12,
 
     init: function(score, leaderboard, color, title, prompt, parentState) {
         this._super();
@@ -23,26 +24,32 @@ Flynn.StateEnd = Flynn.State.extend({
         }
 
         this.parentState = parentState;
-        this.nick = "";
+        this.nickname = "";
         var worstEntry = this.leaderboard.getWorstEntry();
         if (    (!this.leaderboard.sortDescending && this.score < worstEntry['score']) ||
                 ( this.leaderboard.sortDescending && this.score > worstEntry['score']) ) {
             this.hasEnteredName = false;
+            Flynn.mcp.input.startTextCapture();
         } else {
             this.hasEnteredName = true;
         }
-
-        // get and init input field from DOM
-        this.namefield = document.getElementById("namefield");
-        this.namefield.value = this.nick;
-        this.namefield.focus();
-        this.namefield.select();
         this.cursorBlinkTimer = 0;
     },
 
     // Override this method to format scores as times etc.
     scoreToString: function(score){
         return score.toString();
+    },
+
+    getAndCleanNickname: function(){
+        var text = Flynn.mcp.input.getTextCapture();
+        if(text != this.nickname){
+            this.nickname = Flynn.mcp.input.getTextCapture();
+            // this.nickname = this.nickname.replace(/[^a-zA-Z0-9\s]/g, "");
+            // this.nickname = this.nickname.trim();
+            this.nickname = this.nickname.substring(0,this.MAX_NICKNAME_LENGTH+1); // Limit name length
+            Flynn.mcp.input.setTextCapture(this.nickname);
+        }
     },
 
     handleInputs: function(input, paceFactor) {
@@ -53,17 +60,15 @@ Flynn.StateEnd = Flynn.State.extend({
                 Flynn.sounds.ui_move.play();
             }
         } else {
-            if (input.virtualButtonWasPressed("UI_enter")) {
+            if (input.isTextCaptureDone()) {
+            // if (input.virtualButtonWasPressed("UI_enter")) {
                 // take sate to next stage
                 this.hasEnteredName = true;
-                this.namefield.blur();
 
                 // cleanup and append score to hiscore array
-                this.nick = this.nick.replace(/[^a-zA-Z0-9\s]/g, "");
-                this.nick = this.nick.trim();
-                this.nick = this.nick.substring(0,13); // Limit name length
+                this.getAndCleanNickname();
 
-                this.leaderboard.add({'name':this.nick, 'score':this.score});
+                this.leaderboard.add({'name':this.nickname, 'score':this.score});
                 Flynn.sounds.ui_success.play();
             }
         }
@@ -72,19 +77,7 @@ Flynn.StateEnd = Flynn.State.extend({
     update: function(paceFactor) {
         this.cursorBlinkTimer += ((this.CURSOR_BLINK_RATE*2)/60) * paceFactor;
         if (!this.hasEnteredName) {
-            this.namefield.focus(); // focus so player input is read
-            // exit if same namefield not updated
-            if (this.nick === this.namefield.value) {
-                return;
-            }
-
-            // Remove leading spaces
-            this.namefield.value = this.namefield.value.replace(/^\s+/, "");
-
-            // clean namefield value and set to nick variable
-            this.namefield.value = this.namefield.value.replace(/[^a-zA-Z0-9\s]/g, "");
-            this.namefield.value = this.namefield.value.substring(0,13); // Limit name length
-            this.nick = this.namefield.value;
+            this.getAndCleanNickname();
         }
     },
 
@@ -99,15 +92,13 @@ Flynn.StateEnd = Flynn.State.extend({
                 ctx.vectorText(this.scoreToString(leader['score']), 2, 660, 200+25*i,'right', this.color);
             }
             ctx.vectorText("PRESS <ENTER> TO CONTINUE", 2, null, 450, null, this.color);
-
         } else {
-
             ctx.vectorText(this.prompt, 4, null, 100, null, this.color);
             ctx.vectorText("TYPE YOUR NAME AND PRESS ENTER", 2, null, 180, null, this.color);
             if(this.cursorBlinkTimer%2 > 1){
-                ctx.vectorText(" " + this.nick + "_", 3, null, 220, null, this.color);
+                ctx.vectorText(" " + this.nickname + "_", 3, null, 220, null, this.color);
             } else{
-                ctx.vectorText(this.nick, 3, null, 220, null, this.color);
+                ctx.vectorText(this.nickname, 3, null, 220, null, this.color);
             }
             ctx.vectorText(this.scoreToString(this.score), 3, null, 300, null, this.color);
         }
