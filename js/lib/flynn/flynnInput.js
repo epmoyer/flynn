@@ -389,7 +389,10 @@ Flynn.InputHandler = Class.extend({
             this.captured_text = this.captured_text.substring(0, this.captured_text.length-1);
         }
         else if( 
-                (key_code >= 32 && key_code <= 122)  // Renderable ASCII
+                (key_code == 32) ||                   // Space          
+                (key_code >= 48 && key_code <= 57) || // 0-9
+                (key_code >= 65 && key_code <= 90) || // A-Z
+                (key_code >= 97 && key_code <= 122)   // a-z
             ){
             this.captured_text += String.fromCharCode(key_code);
         }
