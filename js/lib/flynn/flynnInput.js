@@ -181,7 +181,7 @@ Flynn.InputHandler = Class.extend({
         document.addEventListener("keyup", this.keyUpHandler);
 
         this.keyPressHandler = function(evt){
-            console.log("keyPressHandler: Code:" + evt.keyCode);
+            //console.log("keyPressHandler: Code:" + evt.keyCode);
             if(self.text_capture_enabled){
                 self.processTextCapture(evt.keyCode);
             }
@@ -497,7 +497,7 @@ Flynn.InputHandler = Class.extend({
 
     handleTouchMove: function(x,y,touch_identifier){
         //console.log("DEV: handleTouchMove() ",x,y);
-        var name, direction, joystick, i;
+        var name, joystick;
         for(name in this.virtualJoysticks){
             joystick = this.virtualJoysticks[name];
             joystick.handleTouchMove(x,y,touch_identifier);

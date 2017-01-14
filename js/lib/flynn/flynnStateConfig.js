@@ -204,8 +204,6 @@ Flynn.StateConfig = Flynn.State.extend({
         ctx.vectorText("PRESS <ENTER> TO EDIT THE SELECTED CONTROL", 1.5, null, line_y, null, this.mainTextColor);
         line_y += line_spacing;
         ctx.vectorText("PRESS <ESCAPE> TO EXIT/CANCEL", 1.5, null, line_y, null, this.mainTextColor);
-
-        var names = this.configurableVirtualButtonNames;
         
         var menu_top_y = 250;
         var menu_center_x = Flynn.mcp.canvasWidth/2;

@@ -264,7 +264,7 @@ Flynn.Canvas = Class.extend({
                 //    number: The y location to display the text
                 //    null: Center text vertically on screen
                 // justify: String.  'left', 'right', or 'center'
-                //    If x is null, then lustify can be null (it is ignored)
+                //    If x is null, then justify can be null (it is ignored)
                 // color: String.  Text color.
                 // is_world: Boolean
                 //    true: Use world coordinates
@@ -368,8 +368,6 @@ Flynn.Canvas = Class.extend({
                 if(typeof(stretch)==='undefined'){
                     stretch = null;
                 }
-
-                var step = scale*font.CharacterSpacing;
 
                 var render_angle = angle;
                 var render_angle_step = Math.asin(font.CharacterSpacing*scale/radius);

@@ -35,7 +35,7 @@ Flynn.Leaderboard = Class.extend({
                     done = true;
                 }
                 if(attributeIndex === this.maxItems-1){
-                    // Don't attempt to load more than the max leaderbaord item limit.
+                    // Don't attempt to load more than the max leaderboard item limit.
                     done = true;
                 }
             }
@@ -85,7 +85,6 @@ Flynn.Leaderboard = Class.extend({
 
     sortAndTruncate: function(){
         // sort hiscore in ascending order
-        var self = this;
         if (this.sortDescending){
             this.leaderList.sort(function(a, b) {
                 return b['score'] - a['score'];

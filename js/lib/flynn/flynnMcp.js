@@ -80,7 +80,8 @@ Flynn.Mcp = Class.extend({
         // SUPPORT: performance.now()
         this.browserSupportsPerformance = true;
         try{
-            var time = performance.now();
+            // Call to test whether an exception is thrown (return value ignored).
+            performance.now(); 
         }
         catch(err){
             this.browserSupportsPerformance = false;
@@ -184,11 +185,11 @@ Flynn.Mcp = Class.extend({
         this.resizeFunc = resizeFunc;
     },
 
-    changeState(next_state_id){
+    changeState: function(next_state_id){
         this.next_state_id = next_state_id;
     },
 
-    muteAudio(mute_enable){
+    muteAudio: function(mute_enable){
         this.audio_mute_enabled = mute_enable;
         Howler.mute(mute_enable);
     },
@@ -251,7 +252,7 @@ Flynn.Mcp = Class.extend({
         }
     },
 
-    renderLogo(ctx, position){
+    renderLogo: function(ctx, position){
         if(typeof position !== 'undefined'){
             this.flynn_logo.position = position;
         }
