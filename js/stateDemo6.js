@@ -29,9 +29,7 @@ Game.StateDemo6 = Flynn.State.extend({
         credit_text = [
             'THIS TEST APP & THE "FLYNN" ENGINE CREATED BY ERIC MOYER',
             '',
-            'MUSIC "DST-HORIZON515" BY MORTEN BARFOD S0EGAARD',
-            'LITTLE ROBOT SOUND FACTORY',
-            'WWW.LITTLEROBOTSOUNDFACTORY.COM',
+            'MUSIC "HORIZON 515" BY DST (NOSOAPRADIO.US)',
             '',
             'FIND MY VECTOR GAMES AT VECTORALCHEMY.COM',
             '',

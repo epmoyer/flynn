@@ -92,7 +92,7 @@ Flynn.Mcp = Class.extend({
 
         // SUPPORT: Touch
         this.browserSupportsTouch = (
-            (Flynn.Util.is_mobile_browser() && ('ontouchstart' in document.documentElement)) ||
+            (Flynn.Util.is_mobile_or_tablet_browser() && ('ontouchstart' in document.documentElement)) ||
             this.mousetouchEnabled );
 
         if (this.developerModeEnabled){

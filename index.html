@@ -12,10 +12,10 @@
     <script src="js/lib/howlerbeta/howler.min.js"></script>
     <script src="js/lib/victor/victor.js"></script>
     <script src="js/lib/cookies/cookies.js"></script>
-    <script src="js/lib/box2d/Box2dWeb-2.1.a.3.js"></script>
+    <script src="js/lib/box2d/Box2dWeb-2.1.a.3.min.js"></script>
 
     <!-- Flynn vector game framework -->
-<!--     <script src="js/lib/flynn/flynnMain.js"></script>
+    <script src="js/lib/flynn/flynnMain.js"></script>
     <script src="js/lib/flynn/flynnUtil.js"></script>
     <script src="js/lib/flynn/flynnTimers.js"></script>
     <script src="js/lib/flynn/flynnCanvas.js"></script> 
@@ -31,8 +31,8 @@
     <script src="js/lib/flynn/flynnParticles.js"></script>
     <script src="js/lib/flynn/flynnPhysics.js"></script>
     <script src="js/lib/flynn/flynnVirtualJoystick.js"></script>
-    <script src="js/lib/flynn/flynnVaLogo.js"></script> -->
-    <script src="js/lib/flynn/flynn.min.js"></script>
+    <script src="js/lib/flynn/flynnVaLogo.js"></script>
+    <!-- <script src="js/lib/flynn/flynn.min.js"></script> -->
 
 
     <!-- Before states -->
@@ -53,6 +53,15 @@
 <body bgcolor="#080808">
     <canvas class="canvas" id="gameCanvas"></canvas>
     <script>
+        // Analytics ----------------
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-92642028-1', 'auto');
+        ga('send', 'pageview');
+        // --------------------------
+
         Game.main = new Game.Main();  // entry point in main.js
         Game.main.run();
     </script>

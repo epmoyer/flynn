@@ -1,5 +1,5 @@
 :author: `Eric Moyer`_
-:copyright: Copyright © 2015-17 Eric Moyer <eric@lemoncrab.com>
+:copyright: Copyright © 2015-2017 Eric Moyer <eric@lemoncrab.com>
 :license: MIT
 
 #########
