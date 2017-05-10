@@ -407,7 +407,7 @@ Game.StateHome = Flynn.State.extend({
                 y:65
             });
 
-        this.particles.draw(ctx);
+        this.particles.render(ctx);
         this.va_logo.render(ctx);
         this.va_logo2.render(ctx);
 

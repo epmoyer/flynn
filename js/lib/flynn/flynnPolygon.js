@@ -2,12 +2,15 @@
     
 Flynn.Polygon = Class.extend({
 
-    init: function(p, color, scale, position){
+    init: function(p, color, scale, position, constrained){
         if(typeof(position)==='undefined'){
             position={x:100, y:100, is_world:false};
         }
         if(typeof(scale)==='undefined'){
             scale=3;
+        }
+        if(typeof(constrained)==='undefined'){
+            constrained=false;
         }
         this.color = color || Flynn.Colors.WHITE;
         this.position = position;
@@ -15,7 +18,7 @@ Flynn.Polygon = Class.extend({
         this.points = p.slice(0);
         this.pointsMaster = p.slice(0);
         
-        // Allow a boudary region polygon to be substituted for collision detection.
+        // Allow a boundary region polygon to be substituted for collision detection.
         this.bounding_enabled = false;
         this.bounding_visible = false;
         this.points_bounding = null;
@@ -26,6 +29,8 @@ Flynn.Polygon = Class.extend({
         this.scale = scale;
         this.visible = true;
         this.setAngle(this.angle);
+
+        this.constrained = constrained;
     },
 
     setBoundingPoly: function(points){
@@ -192,7 +197,12 @@ Flynn.Polygon = Class.extend({
                     ctx.vectorEnd();
                     ctx.vectorStart(vector_color);
                     if(i>0){
-                        ctx.vectorMoveTo(points_x+draw_x, points_y+draw_y);
+                        if(this.constrained){
+                            ctx.vectorMoveTo(points_x+draw_x, points_y+draw_y);
+                        }
+                        else{
+                            ctx.vectorMoveToUnconstrained(points_x+draw_x, points_y+draw_y);
+                        }
                     }
                 }
             }
@@ -200,17 +210,28 @@ Flynn.Polygon = Class.extend({
                 points_x = this.points[i];
                 points_y = this.points[i+1];
                 if(i===0 || pen_up){
-                    ctx.vectorMoveTo(points_x+draw_x, points_y+draw_y);
+                    if(this.constrained){
+                        ctx.vectorMoveTo(points_x+draw_x, points_y+draw_y);
+                    }
+                    else{
+                        ctx.vectorMoveToUnconstrained(points_x+draw_x, points_y+draw_y);
+                    }
                     pen_up = false;
                 }
                 else {
-                    ctx.vectorLineTo(points_x+draw_x, points_y+draw_y);
+                    if(this.constrained)
+                    {
+                        ctx.vectorLineTo(points_x+draw_x, points_y+draw_y);
+                    }
+                    else{
+                        ctx.vectorLineToUnconstrained(points_x+draw_x, points_y+draw_y);
+                    }
                 }
             }
         }
         ctx.vectorEnd();
 
-        // Draw bounding polygon (if enabled for devlopment debug)
+        // Draw bounding polygon (if enabled for development debug)
         if(this.bounding_visible){
             this.updateBoundingPoly();
             vector_color=(Flynn.Colors.GRAY);
@@ -220,11 +241,21 @@ Flynn.Polygon = Class.extend({
                 points_x = this.points_bounding[i];
                 points_y = this.points_bounding[i+1];
                 if(i===0 || pen_up){
-                    ctx.vectorMoveTo(points_x+draw_x, points_y+draw_y);
+                    if(this.constrained){
+                        ctx.vectorMoveTo(points_x+draw_x, points_y+draw_y);
+                    }
+                    else{
+                        ctx.vectorMoveToUnconstrained(points_x+draw_x, points_y+draw_y);
+                    }
                     pen_up = false;
                 }
                 else {
-                    ctx.vectorLineTo(points_x+draw_x, points_y+draw_y);
+                    if(this.constrained){
+                        ctx.vectorLineTo(points_x+draw_x, points_y+draw_y);
+                    }
+                    else{
+                        ctx.vectorLineToUnconstrained(points_x+draw_x, points_y+draw_y);
+                    }
                 }
             }
             ctx.vectorEnd();

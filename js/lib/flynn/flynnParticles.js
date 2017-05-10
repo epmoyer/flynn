@@ -37,9 +37,21 @@ Flynn.Particle = Class.extend({
         return isAlive;
     },
 
-    draw: function(ctx) {
-        ctx.fillStyle=this.color;
-        ctx.fillRect(this.x,this.y,2,2);
+    render: function(ctx){
+        if(this.particles.is_world){
+            // Render as world coordinates
+            ctx.fillStyle=this.color;
+            ctx.fillRect(
+                this.x - Flynn.mcp.viewport.x,
+                this.y - Flynn.mcp.viewport.y,
+                2,
+                2);
+        }
+        else{
+            // Render in screen coordinates
+            ctx.fillStyle=this.color;
+            ctx.fillRect(this.x, this.y, 2, 2);
+        }
     }
 
 });
@@ -48,8 +60,13 @@ Flynn.Particles = Class.extend({
 
     VELOCITY_VARIATION: 1.0,
 
-    init: function(){
-        this.particles=[];
+    init: function(is_world){
+        if(typeof(is_world)==='undefined'){
+            is_world = false;
+        }
+        this.particles = [];
+        this.is_world = is_world;
+        this.draw_warning_issued = false;
     },
 
     explosion: function(x, y, quantity, max_velocity, color, dx, dy) {
@@ -87,8 +104,16 @@ Flynn.Particles = Class.extend({
     },
 
     draw: function(ctx) {
+        if(!this.draw_warning_issued){
+            this.draw_warning_issued = true;
+            console.error("Flynn.Particles.Draw() had been deprecated.  Use render()");
+        }
+        this.render(ctx);
+    },
+
+    render: function(ctx) {
         for(var i=0, len=this.particles.length; i<len; i+=1){
-            this.particles[i].draw(ctx);
+            this.particles[i].render(ctx);
         }
     }
 });

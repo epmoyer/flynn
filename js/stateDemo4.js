@@ -63,6 +63,7 @@ Game.StarField = Flynn.State.extend({
 Game.StateDemo4 = Flynn.State.extend({
 
     VIEWPORT_SWEEP_ANGLE_SPEED: 0.008,
+    TIMER_EXPLODE_TICKS: 0.3 * Flynn.TICKS_PER_SECOND,
 
     init: function() {
         var i, x, len;
@@ -117,6 +118,21 @@ Game.StateDemo4 = Flynn.State.extend({
             );
         this.extra_lives_poly.setAngle(-Math.PI/2);
 
+        this.particles = new Flynn.Particles(
+                true // is_world
+            ); 
+
+        this.timers = new Flynn.Timers();
+        this.timers.add("Explode", this.TIMER_EXPLODE_TICKS, null);
+
+        this.colors=[
+            Flynn.Colors.DODGERBLUE,
+            Flynn.Colors.RED,
+            Flynn.Colors.GREEN,
+            Flynn.Colors.ORANGE,
+            Flynn.Colors.MAGENTA,
+            Flynn.Colors.CYAN ];
+
     },
 
     handleInputs: function(input, paceFactor) {
@@ -126,6 +142,8 @@ Game.StateDemo4 = Flynn.State.extend({
     update: function(paceFactor) {
         var i, len;
 
+        this.particles.update(paceFactor);
+        
         // Swirl the viewport around the world center
         this.viewport_sweep_angle += this.VIEWPORT_SWEEP_ANGLE_SPEED * paceFactor;
         Flynn.mcp.viewport.x = (
@@ -142,6 +160,19 @@ Game.StateDemo4 = Flynn.State.extend({
         // Rotate polydons
         for (i=0,len=this.polygons.length; i<len; i++){
             this.polygons[i].setAngle(this.polygons[i].angle - Math.PI/60.0 * paceFactor * (1 + 0.2*i));
+        }
+
+        this.timers.update(paceFactor);
+
+        if(this.timers.hasExpired("Explode")){
+            this.timers.set("Explode", this.TIMER_EXPLODE_TICKS);
+            this.particles.explosion(
+                this.world_rect.center_x, // x
+                this.world_rect.center_y, // y
+                Flynn.Util.randomIntFromInterval(10, 200),      // quantity
+                2,                                              // max_velocity
+                Flynn.Util.randomChoice(this.colors)            // color
+                );
         }
 
     },
@@ -205,6 +236,8 @@ Game.StateDemo4 = Flynn.State.extend({
             this.extra_lives_poly.position.x = Flynn.mcp.canvasWidth - 30 - i*30;
             this.extra_lives_poly.render(ctx);
         }
+
+        this.particles.render(ctx);
     },
 });
     
