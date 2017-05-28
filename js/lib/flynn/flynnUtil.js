@@ -268,6 +268,112 @@ Flynn.Util = {
 
     },
 
+    make_regular_polygon_points: function(num_sides, radius){
+        // Returns an array of points [x0, y0, x1, y1, ... xn, yn] representing a regular polygon
+        // (suitable for passing to Flynn.Polygon to create a Polygon object)
+        // Args:
+        //     num_sides: The number of sides (must be 3 or greater)
+        //     radius: The radius of the polygon vertices
+        //
+        if(num_sides < 3){
+            throw "make_regular_polygon_points(): num_sides must be 3 or greater";
+        }
+
+        var points, angle;
+
+        points = [];
+        for(angle = 0; angle <= Math.PI * 2; angle += Math.PI*2/num_sides){
+            points.push(Math.cos(angle) * radius);
+            points.push(Math.sin(angle) * radius);
+        }
+        return points;
+    },
+    
+    is_colliding: function(object_1, object_2){
+        // Returns True if the two objects are colling.
+        //
+        // Args:
+        //    object_1: An object
+        //    object_2: An object
+        //
+        // Both objects must have the following properties:
+        //    .position.x
+        //    .position.y
+        //    .radius
+        //
+        // TODO: Refactor all objects to use Victor()
+        var distance = Flynn.Util.distance(
+            object_1.position.x, object_1.position.y,
+            object_2.position.x, object_2.position.y
+        );
+        return distance < object_1.radius + object_2.radius;
+    },
+
+    resolve_collision: function(object_1, object_2){
+        // Update the velocity and position of two colliding objects
+        //
+        // Args:
+        //    object_1: An object
+        //    object_2: An object
+        //
+        // Both objects must have the following properties:
+        //    .position.x
+        //    .position.y
+        //    .velocity.x
+        //    .velocity.y
+        //    .radius
+        //
+        // TODO: Refactor all objects to use Victor()
+        var RESTITUTION = 1.0;
+
+        // Algorithm from:
+        // https://stackoverflow.com/questions/345838/ball-to-ball-collision-detection-and-handling
+        var pos1 = new Victor(object_1.position.x, object_1.position.y);
+        var pos2 = new Victor(object_2.position.x, object_2.position.y);
+        var vel1 = new Victor(object_1.velocity.x, object_1.velocity.y);
+        var vel2 = new Victor(object_2.velocity.x, object_2.velocity.y);
+        
+        // Get the mtd (minimum translation distance to bush the objects
+        // apart after intersecting)
+        var delta = pos1.clone().subtract(pos2);
+        var distance = delta.length();
+        var mtd = delta.clone().multiplyScalar((object_1.radius + object_2.radius - distance) / distance);
+
+        // resolve intersection --
+        // inverse mass quantities
+        var im1 = 1 / object_1.mass;
+        var im2 = 1 / object_2.mass;
+
+        // push-pull them apart based off their mass
+        pos1.add(mtd.clone().multiplyScalar(im1 / (im1 + im2)));
+        pos2.subtract(mtd.clone().multiplyScalar(im2 / (im1 + im2)));
+
+        // impact speed
+        var velocity = (vel1.clone().subtract(vel2));
+        var velocity_normal = velocity.dot(mtd.clone().normalize());
+
+        // If the objects are moving toward each other
+        if (velocity_normal < 0){
+            // Collision impulse
+            var impulse = (-(1 + RESTITUTION) * velocity_normal) / (im1 + im2);
+            var impulse_v = mtd.clone().normalize().multiplyScalar(impulse);
+
+            vel1.add(impulse_v.clone().multiplyScalar(im1));
+            vel2.subtract(impulse_v.clone().multiplyScalar(im2));
+        }
+
+        // Update original objects
+        object_1.position.x = pos1.x;
+        object_1.position.y = pos1.y;
+        object_1.velocity.x = vel1.x;
+        object_1.velocity.y = vel1.y;
+
+        object_2.position.x = pos2.x;
+        object_2.position.y = pos2.y;
+        object_2.velocity.x = vel2.x;
+        object_2.velocity.y = vel2.y;
+
+    },
 
 };
 

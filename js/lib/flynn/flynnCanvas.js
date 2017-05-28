@@ -255,6 +255,22 @@ Flynn.Canvas = Class.extend({
                 return p;
             };
 
+            ctx.vectorCircle = function(x, y, radius, num_sides, color, is_world){
+                // Draw a circle using vectors
+
+                var angle;
+                this.vectorStart(color, is_world);
+                for(angle = 0; angle <= Math.PI * 2; angle += Math.PI*2/num_sides){
+                    if(angle === 0){
+                        this.vectorMoveTo(x + radius, y);
+                    }
+                    else{
+                        this.vectorLineTo(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius);
+                    }
+                }
+                this.vectorEnd();
+            },
+
             ctx.vectorText = function(text, scale, x, y, justify, color, is_world, font){
                 // text: String (the text to display)
                 // x: number or null

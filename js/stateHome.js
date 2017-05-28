@@ -2,22 +2,24 @@ var Game = Game || {}; // Create namespace
 
 (function () { "use strict";
 
+Game.MARGIN = 3;
+Game.BANNER_HEIGHT = 37;
+
 Game.render_page_frame = function(ctx, page_id){
     // Render the frame for the current page
 
     var i, text, color;
-    var margin=3;
     var x=10;
     var scale=3;
-    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD", "FONT", "INFO"];
+    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD", "FONT", "UTIL", "INFO"];
 
     // Render frame box
-    ctx.vectorLine(margin, 37, ctx.width-margin-1, 37, Flynn.Colors.GREEN);
+    ctx.vectorLine(Game.MARGIN, Game.BANNER_HEIGHT, ctx.width-Game.MARGIN-1, Game.BANNER_HEIGHT, Flynn.Colors.GREEN);
     ctx.vectorRect(
-        margin, 
-        margin, 
-        ctx.width-2*margin,
-        ctx.height-2*margin,
+        Game.MARGIN, 
+        Game.MARGIN, 
+        ctx.width-2*Game.MARGIN,
+        ctx.height-2*Game.MARGIN,
         Flynn.Colors.GREEN);
 
     // Render page names

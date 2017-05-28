@@ -181,6 +181,64 @@ Victor.prototype.add = function (vec) {
 };
 
 /**
+ * Adds the given scalar to both vector axis
+ *
+ * ### Examples:
+ *     var vec = new Victor(1, 2);
+ *
+ *     vec.addScalar(2);
+ *     vec.toString();
+ *     // => x: 3, y: 4
+ *
+ * @param {Number} scalar The scalar to add
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.addScalar = function (scalar) {
+	this.x += scalar;
+	this.y += scalar;
+	return this;
+};
+
+/**
+ * Adds the given scalar to the X axis
+ *
+ * ### Examples:
+ *     var vec = new Victor(1, 2);
+ *
+ *     vec.addScalarX(2);
+ *     vec.toString();
+ *     // => x: 3, y: 2
+ *
+ * @param {Number} scalar The scalar to add
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.addScalarX = function (scalar) {
+	this.x += scalar;
+	return this;
+};
+
+/**
+ * Adds the given scalar to the Y axis
+ *
+ * ### Examples:
+ *     var vec = new Victor(1, 2);
+ *
+ *     vec.addScalarY(2);
+ *     vec.toString();
+ *     // => x: 1, y: 4
+ *
+ * @param {Number} scalar The scalar to add
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.addScalarY = function (scalar) {
+	this.y += scalar;
+	return this;
+};
+
+/**
  * Subtracts the X axis of another vector from this one
  *
  * ### Examples:
@@ -242,6 +300,64 @@ Victor.prototype.subtract = function (vec) {
 };
 
 /**
+ * Subtracts the given scalar from both axis
+ *
+ * ### Examples:
+ *     var vec = new Victor(100, 200);
+ *
+ *     vec.subtractScalar(20);
+ *     vec.toString();
+ *     // => x: 80, y: 180
+ *
+ * @param {Number} scalar The scalar to subtract
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.subtractScalar = function (scalar) {
+	this.x -= scalar;
+	this.y -= scalar;
+	return this;
+};
+
+/**
+ * Subtracts the given scalar from the X axis
+ *
+ * ### Examples:
+ *     var vec = new Victor(100, 200);
+ *
+ *     vec.subtractScalarX(20);
+ *     vec.toString();
+ *     // => x: 80, y: 200
+ *
+ * @param {Number} scalar The scalar to subtract
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.subtractScalarX = function (scalar) {
+	this.x -= scalar;
+	return this;
+};
+
+/**
+ * Subtracts the given scalar from the Y axis
+ *
+ * ### Examples:
+ *     var vec = new Victor(100, 200);
+ *
+ *     vec.subtractScalarY(20);
+ *     vec.toString();
+ *     // => x: 100, y: 180
+ *
+ * @param {Number} scalar The scalar to subtract
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.subtractScalarY = function (scalar) {
+	this.y -= scalar;
+	return this;
+};
+
+/**
  * Divides the X axis by the x component of given vector
  *
  * ### Examples:
@@ -299,6 +415,78 @@ Victor.prototype.divideY = function (vector) {
 Victor.prototype.divide = function (vector) {
 	this.x /= vector.x;
 	this.y /= vector.y;
+	return this;
+};
+
+/**
+ * Divides both vector axis by the given scalar value
+ *
+ * ### Examples:
+ *     var vec = new Victor(100, 50);
+ *
+ *     vec.divideScalar(2);
+ *     vec.toString();
+ *     // => x:50, y:25
+ *
+ * @param {Number} The scalar to divide by
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.divideScalar = function (scalar) {
+	if (scalar !== 0) {
+		this.x /= scalar;
+		this.y /= scalar;
+	} else {
+		this.x = 0;
+		this.y = 0;
+	}
+
+	return this;
+};
+
+/**
+ * Divides the X axis by the given scalar value
+ *
+ * ### Examples:
+ *     var vec = new Victor(100, 50);
+ *
+ *     vec.divideScalarX(2);
+ *     vec.toString();
+ *     // => x:50, y:50
+ *
+ * @param {Number} The scalar to divide by
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.divideScalarX = function (scalar) {
+	if (scalar !== 0) {
+		this.x /= scalar;
+	} else {
+		this.x = 0;
+	}
+	return this;
+};
+
+/**
+ * Divides the Y axis by the given scalar value
+ *
+ * ### Examples:
+ *     var vec = new Victor(100, 50);
+ *
+ *     vec.divideScalarY(2);
+ *     vec.toString();
+ *     // => x:100, y:25
+ *
+ * @param {Number} The scalar to divide by
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.divideScalarY = function (scalar) {
+	if (scalar !== 0) {
+		this.y /= scalar;
+	} else {
+		this.y = 0;
+	}
 	return this;
 };
 
@@ -415,6 +603,64 @@ Victor.prototype.multiplyY = function (vector) {
 Victor.prototype.multiply = function (vector) {
 	this.x *= vector.x;
 	this.y *= vector.y;
+	return this;
+};
+
+/**
+ * Multiplies both vector axis by the given scalar value
+ *
+ * ### Examples:
+ *     var vec = new Victor(100, 50);
+ *
+ *     vec.multiplyScalar(2);
+ *     vec.toString();
+ *     // => x:200, y:100
+ *
+ * @param {Number} The scalar to multiply by
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.multiplyScalar = function (scalar) {
+	this.x *= scalar;
+	this.y *= scalar;
+	return this;
+};
+
+/**
+ * Multiplies the X axis by the given scalar
+ *
+ * ### Examples:
+ *     var vec = new Victor(100, 50);
+ *
+ *     vec.multiplyScalarX(2);
+ *     vec.toString();
+ *     // => x:200, y:50
+ *
+ * @param {Number} The scalar to multiply the axis with
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.multiplyScalarX = function (scalar) {
+	this.x *= scalar;
+	return this;
+};
+
+/**
+ * Multiplies the Y axis by the given scalar
+ *
+ * ### Examples:
+ *     var vec = new Victor(100, 50);
+ *
+ *     vec.multiplyScalarY(2);
+ *     vec.toString();
+ *     // => x:100, y:100
+ *
+ * @param {Number} The scalar to multiply the axis with
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.multiplyScalarY = function (scalar) {
+	this.y *= scalar;
 	return this;
 };
 
@@ -565,6 +811,27 @@ Victor.prototype.randomizeAny = function (topLeft, bottomRight) {
 Victor.prototype.unfloat = function () {
 	this.x = Math.round(this.x);
 	this.y = Math.round(this.y);
+	return this;
+};
+
+/**
+ * Rounds both axis to a certain precision
+ *
+ * ### Examples:
+ *     var vec = new Victor(100.2, 50.9);
+ *
+ *     vec.unfloat();
+ *     vec.toString();
+ *     // => x:100, y:51
+ *
+ * @param {Number} Precision (default: 8)
+ * @return {Victor} `this` for chaining capabilities
+ * @api public
+ */
+Victor.prototype.toFixed = function (precision) {
+	if (typeof precision === 'undefined') { precision = 8; }
+	this.x = this.x.toFixed(precision);
+	this.y = this.y.toFixed(precision);
 	return this;
 };
 
@@ -814,6 +1081,15 @@ Victor.prototype.rotate = function (angle) {
 Victor.prototype.rotateDeg = function (angle) {
 	angle = degrees2radian(angle);
 	return this.rotate(angle);
+};
+
+Victor.prototype.rotateTo = function(rotation) {
+	return this.rotate(rotation-this.angle());
+};
+
+Victor.prototype.rotateToDeg = function(rotation) {
+	rotation = degrees2radian(rotation);
+	return this.rotateTo(rotation);
 };
 
 Victor.prototype.rotateBy = function (rotation) {
