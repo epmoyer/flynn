@@ -185,6 +185,10 @@ Game.Main = Class.extend({
         Flynn.mcp.optionManager.addOption('resetScores', Flynn.OptionType.COMMAND, true, true, 'RESET HIGH SCORES', null,
             function(){self.resetScores();} // Callback on option command
             );
+
+        // Default to thick vector display
+        Flynn.mcp.optionManager.setDefault('vectorMode', Flynn.VectorMode.V_THICK);
+
         // Restore user option settings from cookies
         Flynn.mcp.optionManager.loadFromCookies();
         

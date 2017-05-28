@@ -88,6 +88,17 @@ Flynn.OptionManager = Class.extend({
         }
     },
 
+    setDefault: function(keyName, value){
+        if(keyName in this.optionDescriptors){
+            var optionDescriptor = this.optionDescriptors[keyName];
+            optionDescriptor.defaultValue = value;
+        }
+        else{
+            console.print('DEV: Warning: FlynnOptionManager.setOption() called for key "' +
+                keyName + '", which does not match an existing option.  Doing nothing.');
+        }
+    },
+
     getOption: function(keyName){
         if(keyName in this.optionDescriptors){
             return(this.optionDescriptors[keyName].currentValue);
