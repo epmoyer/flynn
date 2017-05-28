@@ -27,53 +27,46 @@ Game.StateDemo3 = Flynn.State.extend({
 
         this.polygons = [];
         var poly_info = [
-            {   points: Game.Points.COLLISION1, 
-                scale: 10.5, 
-                position:{
-                    x: this.collision_rects[0].center_x,
-                    y: this.collision_rects[0].center_y,
-                    is_world: false
+                {   points: Game.Points.COLLISION1, 
+                    scale: 10.5, 
+                    position: new Victor(
+                        this.collision_rects[0].center_x,
+                        this.collision_rects[0].center_y)
+                    
+                },
+                {   points: Game.Points.COLLISION1, 
+                    scale: 10.5,
+                    position: new Victor(
+                        this.collision_rects[1].center_x,
+                        this.collision_rects[1].bottom + 100)
+                },
+                {   points:Game.Points.COLLISION2, 
+                    scale:7.0,
+                    position: new Victor(
+                        this.collision_rects[1].center_x + 110, 
+                        this.collision_rects[1].bottom + 100)
+                },
+                {   points:Game.Points.TRI4_MAIN, 
+                    scale: 15.0, 
+                    position: new Victor(
+                        this.collision_rects[1].center_x,
+                        this.collision_rects[1].center_y)
+                },
+                {   points:Game.Points.TRI4_MAIN, 
+                    scale: 15.0, 
+                    position: new Victor(
+                        this.collision_rects[2].center_x,
+                        this.collision_rects[2].center_y)
                 }
-            },
-            {   points: Game.Points.COLLISION1, 
-                scale: 10.5,
-                position: {
-                    x: this.collision_rects[1].center_x,
-                    y: this.collision_rects[1].bottom + 100,
-                    is_world: false
-                }
-            },
-            {   points:Game.Points.COLLISION2, 
-                scale:7.0,
-                position:{
-                    x:this.collision_rects[1].center_x + 110, 
-                    y: this.collision_rects[1].bottom + 100,
-                    is_world: false
-                }
-            },
-            {   points:Game.Points.TRI4_MAIN, 
-                scale: 15.0, 
-                position:{
-                    x: this.collision_rects[1].center_x,
-                    y: this.collision_rects[1].center_y,
-                    is_world: false
-                }
-            },
-            {   points:Game.Points.TRI4_MAIN, 
-                scale: 15.0, 
-                position:{
-                    x: this.collision_rects[2].center_x,
-                    y: this.collision_rects[2].center_y,
-                    is_world: false
-                }
-            }
             ];
         for (i=0; i<poly_info.length; i++){
             this.polygons.push(new Flynn.Polygon(
                 poly_info[i].points, 
                 Flynn.Colors.GRAY,
                 poly_info[i].scale,
-                poly_info[i].position
+                poly_info[i].position,
+                false, // constrained
+                false  // is_world
                 ));
         }
 
@@ -86,11 +79,12 @@ Game.StateDemo3 = Flynn.State.extend({
             Game.Points.CROSSHAIR, 
             Flynn.Colors.WHITE,
             3,
-            {
-                x: this.joystick_test_rect.center_x,
-                y: this.joystick_test_rect.center_y,
-                is_world: false
-            });
+            new Victor(
+                this.joystick_test_rect.center_x,
+                this.joystick_test_rect.center_y),
+            false, // constrained
+            false  // is_world
+            );
 
         this.projectiles = new Flynn.Projectiles(
             this.joystick_test_rect, // bounds_rect
@@ -98,10 +92,10 @@ Game.StateDemo3 = Flynn.State.extend({
             );
 
         this.bullet = {
-            x:this.collision_rects[0].center_x, 
-            y:this.collision_rects[0].center_y,
-            dx: 1,
-            dy: 0.35,
+            position: new Victor(
+                this.collision_rects[0].center_x, 
+                this.collision_rects[0].center_y),
+            velocity: new Victor(1, 0.35),
             size:3,
         };
     },
@@ -169,22 +163,21 @@ Game.StateDemo3 = Flynn.State.extend({
             Math.PI/280.0 * Math.pow(1.2, Math.min(i,3)) * paceFactor);
         }
 
-        this.bullet.x += this.bullet.dx * paceFactor;
-        if(   (this.bullet.dx > 0 && this.bullet.x > this.collision_rects[0].right)
-           || (this.bullet.dx < 0 && this.bullet.x < this.collision_rects[0].left)){
-            this.bullet.dx = -this.bullet.dx;
-            this.bullet.x += this.bullet.dx * paceFactor;
+        this.bullet.position.add(this.bullet.velocity.clone().multiplyScalar(paceFactor));
+        // this.bullet.x += this.bullet.dx * paceFactor;
+        if(   (this.bullet.velocity.x > 0 && this.bullet.position.x > this.collision_rects[0].right)
+           || (this.bullet.velocity.x < 0 && this.bullet.position.x < this.collision_rects[0].left)){
+            this.bullet.velocity.x = -this.bullet.velocity.x;
+            this.bullet.position.x += this.bullet.velocity.x * paceFactor;
         }
-        this.bullet.y += this.bullet.dy * paceFactor;
-        if(   (this.bullet.dy > 0 && this.bullet.y > this.collision_rects[0].bottom)
-           || (this.bullet.dy < 0 && this.bullet.y < this.collision_rects[0].top)){
-            this.bullet.dy = -this.bullet.dy;
-            this.bullet.y += this.bullet.dy * paceFactor;
+        // this.bullet.y += this.bullet.dy * paceFactor;
+        if(   (this.bullet.velocity.y > 0 && this.bullet.position.y > this.collision_rects[0].bottom)
+           || (this.bullet.velocity.y < 0 && this.bullet.position.y < this.collision_rects[0].top)){
+            this.bullet.velocity.y = -this.bullet.velocity.y;
+            this.bullet.position.y += this.bullet.velocity.y * paceFactor;
         }
 
-        if(this.polygons[0].hasPoint(
-            this.bullet.x,
-            this.bullet.y)){
+        if(this.polygons[0].hasPoint(this.bullet.position.x, this.bullet.position.y)){
             // Collided
             this.polygons[0].color = Flynn.Colors.RED;
         }
@@ -194,8 +187,8 @@ Game.StateDemo3 = Flynn.State.extend({
         }
 
         this.bounding_collision = this.polygons[3].hasPoint(
-            this.bullet.x-this.collision_rects[0].center_x+this.collision_rects[1].center_x,
-            this.bullet.y-this.collision_rects[0].center_y+this.collision_rects[1].center_y
+                this.bullet.position.x-this.collision_rects[0].center_x+this.collision_rects[1].center_x,
+                this.bullet.position.y-this.collision_rects[0].center_y+this.collision_rects[1].center_y
             );
 
         if(this.polygons[2].is_colliding(this.polygons[1])){
@@ -251,8 +244,8 @@ Game.StateDemo3 = Flynn.State.extend({
 
         ctx.fillStyle=Flynn.Colors.YELLOW;
         ctx.fillRect(
-            this.bullet.x - this.bullet.size/2,
-            this.bullet.y - this.bullet.size/2,
+            this.bullet.position.x - this.bullet.size/2,
+            this.bullet.position.y - this.bullet.size/2,
             this.bullet.size,
             this.bullet.size);
 
@@ -264,14 +257,14 @@ Game.StateDemo3 = Flynn.State.extend({
         }
         var y_offset = this.collision_rects[1].top - this.collision_rects[0].top;
         ctx.fillRect(
-            this.bullet.x - this.bullet.size/2,
-            this.bullet.y - this.bullet.size/2 + y_offset,
+            this.bullet.position.x - this.bullet.size/2,
+            this.bullet.position.y - this.bullet.size/2 + y_offset,
             this.bullet.size,
             this.bullet.size);
         var x_offset = this.collision_rects[2].left - this.collision_rects[1].left;
         ctx.fillRect(
-            this.bullet.x - this.bullet.size/2 + x_offset,
-            this.bullet.y - this.bullet.size/2 + y_offset,
+            this.bullet.position.x - this.bullet.size/2 + x_offset,
+            this.bullet.position.y - this.bullet.size/2 + y_offset,
             this.bullet.size,
             this.bullet.size);
 

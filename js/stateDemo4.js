@@ -102,9 +102,11 @@ Game.StateDemo4 = Flynn.State.extend({
                 poly_init[i].points,
                 poly_init[i].color,
                 poly_init[i].scale, 
-                {   x:this.world_rect.center_x + Math.cos(i*angle_step) * poly_radius, 
-                    y:this.world_rect.center_y + Math.sin(i*angle_step) * poly_radius, 
-                    is_world:true}
+                new Victor(
+                    this.world_rect.center_x + Math.cos(i*angle_step) * poly_radius, 
+                    this.world_rect.center_y + Math.sin(i*angle_step) * poly_radius),
+                false, // constrained
+                true   // is_world
                 ));
         }
 
@@ -112,9 +114,9 @@ Game.StateDemo4 = Flynn.State.extend({
             Game.Points.SHIP,
             Flynn.Colors.DODGERBLUE,
             3.0, // scale
-            {   x:0, // Will be set when rendering instances
-                y:70, 
-                is_world:false}
+            new Victor(0, 70), // Will be set when rendering instances
+            false, // constrained
+            false  // is_world
             );
         this.extra_lives_poly.setAngle(-Math.PI/2);
 

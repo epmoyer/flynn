@@ -69,9 +69,11 @@ Flynn.Mcp = Class.extend({
             Flynn.Points.FLYNN_LOGO,
             Flynn.Colors.DODGERBLUE,
             2, // scale
-            {   x:Flynn.mcp.canvasWidth-55, 
-                y:Flynn.mcp.canvasHeight-41, 
-                is_world:false}
+            new Victor(
+                Flynn.mcp.canvasWidth-55, 
+                Flynn.mcp.canvasHeight-41),
+            false, // constrained
+            false  // is_world
             );
 
         //--------------------------

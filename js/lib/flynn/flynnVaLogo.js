@@ -35,16 +35,23 @@ Flynn.VALogo = Class.extend({
     WIGGLE_RATE_MAX: 0.03,
     WIGGLE_DISPLACEMENT_ANGLE: Math.PI/6,
 
-    init: function(x, y, scale, color){
-        this.pos = {x: x, y:y};
+    init: function(position, scale, enable_color){
+        if(arguments.length > 3){
+            throw "VALogo(): init API has changed.";
+        }
+        if(!(position instanceof Victor)){
+            throw "VALogo(): Position must be a Victor object";
+        }
+
+        this.position = position;
         this.scale = scale;
         this.bubbles = [];
         this.wiggle_angle = 0;
         this.wiggle_rate = 0;
-        if(typeof(color)==='undefined'){
-            color = true;
+        if(typeof(enable_color)==='undefined'){
+            enable_color = true;
         }
-        if(color){
+        if(enable_color){
             this.text_color = "#C0E0C0";
         }
         else{
@@ -55,17 +62,17 @@ Flynn.VALogo = Class.extend({
             this.POINTS.FLASK,
             Flynn.Colors.WHITE,
             scale, // scale
-            {   x: x, 
-                y: y, 
-                is_world:false}
+            position,
+            false, // is_world
+            false  // is_constrained
             );
         this.inner_bounds = new Flynn.Polygon(
             this.POINTS.INNER_BOUNDS,
             Flynn.Colors.WHITE,
             scale, // scale
-            {   x: x, 
-                y: y, 
-                is_world:false}
+            position,
+            false, // is_world
+            false  // is_constrained
             );
 
         this.angle=0;
@@ -84,8 +91,8 @@ Flynn.VALogo = Class.extend({
     bubble_in_inner: function(bubble){
         var check_offset = bubble.x > 0 ? 2 : -1;
         return this.inner_bounds.hasPoint(
-            bubble.x * this.scale + this.pos.x + check_offset,
-            bubble.y * this.scale + this.pos.y);
+            bubble.x * this.scale + this.position.x + check_offset,
+            bubble.y * this.scale + this.position.y);
     },
 
     update: function(paceFactor){
@@ -205,8 +212,8 @@ Flynn.VALogo = Class.extend({
                 ctx.fillStyle=Flynn.Util.shadeBlend(-(1-this.bubbles[i].brightness), Flynn.Colors.GRAY);
             }
             ctx.fillRect(
-                this.bubbles[i].x * this.scale + this.pos.x,
-                this.bubbles[i].y * this.scale + this.pos.y + 1,
+                this.bubbles[i].x * this.scale + this.position.x,
+                this.bubbles[i].y * this.scale + this.position.y + 1,
                 2,
                 2);
         }
@@ -215,8 +222,8 @@ Flynn.VALogo = Class.extend({
         ctx.vectorTextArc(
             "VECTOR", 
             this.scale * text_scale,
-            this.pos.x,
-            this.pos.y, 
+            this.position.x,
+            this.position.y, 
             -Math.PI/2 + this.angle, 
             this.scale * radius_scale, 
             this.text_color, 
@@ -230,8 +237,8 @@ Flynn.VALogo = Class.extend({
         ctx.vectorTextArc(
             "ALCHEMY", 
             this.scale * text_scale,
-            this.pos.x,
-            this.pos.y, 
+            this.position.x,
+            this.position.y, 
             Math.PI/2 + this.angle, 
             this.scale * radius_scale, 
             this.text_color, 

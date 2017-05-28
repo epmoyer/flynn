@@ -297,16 +297,10 @@ Flynn.Util = {
         //    object_2: An object
         //
         // Both objects must have the following properties:
-        //    .position.x
-        //    .position.y
+        //    .position instance of Victor
         //    .radius
         //
-        // TODO: Refactor all objects to use Victor()
-        var distance = Flynn.Util.distance(
-            object_1.position.x, object_1.position.y,
-            object_2.position.x, object_2.position.y
-        );
-        return distance < object_1.radius + object_2.radius;
+        return object_1.position.distance(object_2.position) < object_1.radius + object_2.radius;
     },
 
     resolve_collision: function(object_1, object_2){
@@ -317,25 +311,18 @@ Flynn.Util = {
         //    object_2: An object
         //
         // Both objects must have the following properties:
-        //    .position.x
-        //    .position.y
-        //    .velocity.x
-        //    .velocity.y
+        //    .position instance of Victor
+        //    .velocity instance of Victor
         //    .radius
         //
-        // TODO: Refactor all objects to use Victor()
         var RESTITUTION = 1.0;
 
         // Algorithm from:
         // https://stackoverflow.com/questions/345838/ball-to-ball-collision-detection-and-handling
-        var pos1 = new Victor(object_1.position.x, object_1.position.y);
-        var pos2 = new Victor(object_2.position.x, object_2.position.y);
-        var vel1 = new Victor(object_1.velocity.x, object_1.velocity.y);
-        var vel2 = new Victor(object_2.velocity.x, object_2.velocity.y);
         
         // Get the mtd (minimum translation distance to bush the objects
         // apart after intersecting)
-        var delta = pos1.clone().subtract(pos2);
+        var delta = object_1.position.clone().subtract(object_2.position);
         var distance = delta.length();
         var mtd = delta.clone().multiplyScalar((object_1.radius + object_2.radius - distance) / distance);
 
@@ -345,11 +332,11 @@ Flynn.Util = {
         var im2 = 1 / object_2.mass;
 
         // push-pull them apart based off their mass
-        pos1.add(mtd.clone().multiplyScalar(im1 / (im1 + im2)));
-        pos2.subtract(mtd.clone().multiplyScalar(im2 / (im1 + im2)));
+        object_1.position.add(mtd.clone().multiplyScalar(im1 / (im1 + im2)));
+        object_2.position.subtract(mtd.clone().multiplyScalar(im2 / (im1 + im2)));
 
         // impact speed
-        var velocity = (vel1.clone().subtract(vel2));
+        var velocity = (object_1.velocity.clone().subtract(object_2.velocity));
         var velocity_normal = velocity.dot(mtd.clone().normalize());
 
         // If the objects are moving toward each other
@@ -358,21 +345,9 @@ Flynn.Util = {
             var impulse = (-(1 + RESTITUTION) * velocity_normal) / (im1 + im2);
             var impulse_v = mtd.clone().normalize().multiplyScalar(impulse);
 
-            vel1.add(impulse_v.clone().multiplyScalar(im1));
-            vel2.subtract(impulse_v.clone().multiplyScalar(im2));
+            object_1.velocity.add(impulse_v.clone().multiplyScalar(im1));
+            object_2.velocity.subtract(impulse_v.clone().multiplyScalar(im2));
         }
-
-        // Update original objects
-        object_1.position.x = pos1.x;
-        object_1.position.y = pos1.y;
-        object_1.velocity.x = vel1.x;
-        object_1.velocity.y = vel1.y;
-
-        object_2.position.x = pos2.x;
-        object_2.position.y = pos2.y;
-        object_2.velocity.x = vel2.x;
-        object_2.velocity.y = vel2.y;
-
     },
 
 };

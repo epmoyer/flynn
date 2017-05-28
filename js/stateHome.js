@@ -126,11 +126,12 @@ Game.StateHome = Flynn.State.extend({
                 points[i],
                 this.colors[i],
                 3, // scale
-                {
-                    x: 40 + i*50,
-                    y: 207,
-                    is_world: false
-                }));
+                new Victor(
+                    40 + i*50,
+                    207),
+                false, // constrained
+                false  // is_world
+                ));
         }
 
         this.penup_polygons = [];
@@ -147,11 +148,12 @@ Game.StateHome = Flynn.State.extend({
                 penup_info[i].points,
                 this.colors[i],
                 penup_info[i].scale,
-                {
-                    x: 40 + i*50,
-                    y: 207 + 65,
-                    is_world: false
-                }));
+                new Victor(
+                    40 + i*50,
+                    207 + 65),
+                false, // constrained
+                false  // is_world
+                ));
         }
 
         this.multicolor_polygons = [];
@@ -168,11 +170,12 @@ Game.StateHome = Flynn.State.extend({
                 multicolor_info[i].points,
                 this.colors[i],
                 multicolor_info[i].scale,
-                {
-                    x: 40 + i*50,
-                    y: 207 + 65 + 65,
-                    is_world: false
-                }));
+                new Victor(
+                    40 + i*50,
+                    207 + 65 + 65),
+                false, // constrained
+                false  // is_world
+                ));
         }
 
         this.particles = new Flynn.Particles();
@@ -201,14 +204,17 @@ Game.StateHome = Flynn.State.extend({
         };
 
         this.va_logo = new Flynn.VALogo(
-            Flynn.mcp.canvasWidth/2,
-            Flynn.mcp.canvasHeight - 150,
-            2);
+            new Victor(
+                Flynn.mcp.canvasWidth/2,
+                Flynn.mcp.canvasHeight - 150),
+            2 // scale
+            );
         this.va_logo2 = new Flynn.VALogo(
-            Flynn.mcp.canvasWidth/2 + 170,
-            Flynn.mcp.canvasHeight - 94,
-            1,
-            false
+            new Victor(
+                Flynn.mcp.canvasWidth/2 + 170,
+                Flynn.mcp.canvasHeight - 94),
+            1, // scale
+            false // enable_color
             );
     },
 

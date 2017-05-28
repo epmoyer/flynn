@@ -32,18 +32,19 @@ Game.StateDemo6 = Flynn.State.extend({
         for(i=0; i<this.NUM_BALLS; ++i){
             var radius = Flynn.Util.randomFromInterval(this.MIN_RADIUS, this.MAX_RADIUS);
             this.balls.push(new Game.Ball(
-                {
-                    x: Flynn.Util.randomFromInterval(
+                // position
+                new Victor(
+                    Flynn.Util.randomFromInterval(
                         this.bounds.left + radius,
                         this.bounds.right - radius),
-                    y: Flynn.Util.randomFromInterval(
+                    Flynn.Util.randomFromInterval(
                         this.bounds.top + radius,
-                        this.bounds.bottom - radius)
-                }, // position
-                {
-                    x: Flynn.Util.randomFromInterval(-this.MAX_VELOCITY, this.MAX_VELOCITY),
-                    y: Flynn.Util.randomFromInterval(-this.MAX_VELOCITY, this.MAX_VELOCITY),
-                }, // velocity
+                        this.bounds.bottom - radius)),  
+
+                // velocity
+                new Victor(
+                    Flynn.Util.randomFromInterval(-this.MAX_VELOCITY, this.MAX_VELOCITY),
+                    Flynn.Util.randomFromInterval(-this.MAX_VELOCITY, this.MAX_VELOCITY)),
                 this.bounds,
                 radius,
                 Flynn.Colors.ORANGE, // color
@@ -95,7 +96,10 @@ Game.Ball = Flynn.Polygon.extend({
             points,
             color,
             1, // Scale
-            position);
+            position,
+            false, // constrained
+            false  // is_world
+            );
 
         this.radius = radius;
         this.velocity = velocity;
@@ -104,12 +108,10 @@ Game.Ball = Flynn.Polygon.extend({
     },
 
     update: function(pace_factor){
-        this.velocity.x *= Math.pow((1-this.FRICTION), pace_factor);
-        this.velocity.y *= Math.pow((1-this.FRICTION), pace_factor);
-        this.position.x += this.velocity.x * pace_factor;
-        this.position.y += this.velocity.y * pace_factor;
+        this.velocity.multiplyScalar(Math.pow((1-this.FRICTION), pace_factor));
+        this.position.add(this.velocity.clone().multiplyScalar(pace_factor));
 
-        // Bounce position at world edges
+        // Bounce position at bounds edges
         if(this.position.x < this.bounds.left + this.radius){
             this.position.x = this.bounds.left + this.radius + (this.bounds.left + this.radius - this.position.x);
             this.velocity.x = -this.velocity.x * this.WALL_REBOUND;
