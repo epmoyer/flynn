@@ -2,7 +2,7 @@
     
 Flynn.Polygon = Class.extend({
 
-    init: function(p, color, scale, position, constrained, is_world){
+    init: function(points, color, scale, position, constrained, is_world){
         if(arguments.length != 6){
             throw "Polygon(): init API has changed.";
         }
@@ -11,11 +11,11 @@ Flynn.Polygon = Class.extend({
         }
 
         this.color = color || Flynn.Colors.WHITE;
-        this.position = position;
+        this.position = position.clone();
         this.is_world = is_world;
 
-        this.points = p.slice(0);
-        this.pointsMaster = p.slice(0);
+        this.points = points.slice(0);
+        this.pointsMaster = points.slice(0);
         
         // Allow a boundary region polygon to be substituted for collision detection.
         this.bounding_enabled = false;
@@ -189,7 +189,7 @@ Flynn.Polygon = Class.extend({
                 else{
                     vector_color = Flynn.ColorsOrdered[this.points[i+1] - Flynn.PEN_COLOR0];
                     ctx.vectorEnd();
-                    ctx.vectorStart(vector_color);
+                    ctx.vectorStart(vector_color, this.is_world, this.constrained);
                     if(i > 0){
                         ctx.vectorMoveTo(points_x+draw_x, points_y+draw_y);
                     }
@@ -214,7 +214,7 @@ Flynn.Polygon = Class.extend({
             this.updateBoundingPoly();
             vector_color=(Flynn.Colors.GRAY);
             pen_up = true;
-            ctx.vectorStart(vector_color);
+            ctx.vectorStart(vector_color, this.is_world, this.constrained);
             for (i=0, len=this.points_bounding.length; i<len; i+=2){
                 points_x = this.points_bounding[i];
                 points_y = this.points_bounding[i+1];

@@ -23,6 +23,9 @@ Flynn.init = function(
     if(typeof(hideVectorModeOption)==='undefined'){
         hideVectorModeOption= false;
     }
+
+    // Extend victor.js functionality
+    Flynn.monkeyPatchVictor();
     
     // The mcp will register itself as Flynn.mcp when created
     new Flynn.Mcp(
@@ -380,6 +383,7 @@ Flynn.Rect= Class.extend({
         this.height = height;
         this.center_x = this.left + this.width/2;
         this.center_y = this.top + this.height/2;
+        this.center_position = new Victor(this.center_x, this.center_y);
         this.right = this.left + this.width;
         this.bottom = this.top + this.height;
     },
@@ -391,6 +395,14 @@ Flynn.Rect= Class.extend({
             this.width,
             this.height
             );
+    },
+
+    hasPoint: function(x, y){
+        return (
+            (x > this.left) &&
+            (y > this.top) &&
+            (x < this.right) &&
+            (y < this.bottom));
     }
 });
 

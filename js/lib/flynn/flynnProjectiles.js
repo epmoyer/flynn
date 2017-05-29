@@ -3,10 +3,11 @@
 Flynn.Projectile= Class.extend({
     init: function(position, velocity, lifetime, size, color, projectiles){
 
-        this.position = {x:position.x, y:position.y};
-        this.velocity = {x:velocity.x, y:velocity.y};
+        this.position = position;
+        this.velocity = velocity;
         this.lifetime = lifetime;
         this.size = size;
+        this.radius = size/2;
         this.color = color;
         this.projectiles = projectiles; // The projectiles object which owns this projectile
     },
@@ -27,13 +28,9 @@ Flynn.Projectile= Class.extend({
         }
         else{
             // Add impulse
-            this.position.x += this.velocity.x * paceFactor;
-            this.position.y += this.velocity.y * paceFactor;
+            this.position.add(this.velocity.clone().multiplyScalar(paceFactor));
         }
-        if ((this.position.x < this.projectiles.bounds_rect.left) ||
-            (this.position.y < this.projectiles.bounds_rect.top) ||
-            (this.position.x > this.projectiles.bounds_rect.right) ||
-            (this.position.y > this.projectiles.bounds_rect.bottom)){
+        if(!this.projectiles.bounds_rect.hasPoint(this.position.x, this.position.y)){
             isAlive = false;
         }
         return isAlive;
@@ -81,8 +78,11 @@ Flynn.Projectiles = Class.extend({
     },
 
     add: function(position, velocity, lifetime, size, color) {
+        if(!((position instanceof Victor) && (velocity instanceof Victor))){
+            throw("API has changed. Expected position and velocity to be instance of Victor."); 
+        }
         this.projectiles.push(new Flynn.Projectile(
-            position, velocity, lifetime, size, color, this));
+            position.clone(), velocity.clone(), lifetime, size, color, this));
     },
 
     advanceFrame: function() {

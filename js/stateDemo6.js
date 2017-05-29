@@ -87,7 +87,7 @@ Game.StateDemo6 = Flynn.State.extend({
 
 Game.Ball = Flynn.Polygon.extend({
     NUM_SIDES: 10,
-    WALL_REBOUND: 1.0,
+    RESTITUTION: 1.0,
     FRICTION: 0.004,
 
     init: function(position, velocity, bounds, radius, color, mass){
@@ -112,23 +112,7 @@ Game.Ball = Flynn.Polygon.extend({
         this.position.add(this.velocity.clone().multiplyScalar(pace_factor));
 
         // Bounce position at bounds edges
-        if(this.position.x < this.bounds.left + this.radius){
-            this.position.x = this.bounds.left + this.radius + (this.bounds.left + this.radius - this.position.x);
-            this.velocity.x = -this.velocity.x * this.WALL_REBOUND;
-        }
-        else if (this.position.x > this.bounds.right - this.radius){
-            this.position.x = this.bounds.right - this.radius - (this.position.x - (this.bounds.right - this.radius));
-            this.velocity.x = -this.velocity.x * this.WALL_REBOUND;
-        }
-
-        if(this.position.y < this.bounds.top + this.radius){
-            this.position.y = this.bounds.top + this.radius + (this.bounds.top + this.radius - this.position.y);
-            this.velocity.y = -this.velocity.y * this.WALL_REBOUND;
-        }
-        else if (this.position.y > this.bounds.bottom - this.radius){
-            this.position.y = this.bounds.bottom - this.radius - (this.position.y - (this.bounds.bottom - this.radius));
-            this.velocity.y = -this.velocity.y * this.WALL_REBOUND;
-        }  
+        Flynn.Util.doBoundsBounce(this, this.bounds, this.RESTITUTION); 
     },
 
     render: function(ctx){

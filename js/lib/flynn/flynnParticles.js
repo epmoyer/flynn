@@ -6,12 +6,10 @@ Flynn.Particle = Class.extend({
     PARTICLE_LIFE: 50,
     PARTICLE_FRICTION: 0.99,
 
-    init: function(particles, x, y, dx, dy, color){
+    init: function(particles, position, velocity, color){
         this.particles = particles;
-        this.x = x;
-        this.y = y;
-        this.dx = dx;
-        this.dy = dy;
+        this.position = position;
+        this.velocity = velocity;
         this.color = color;
 
         this.life = this.PARTICLE_LIFE + (Math.random()-0.5) * this.PARTICLE_LIFE_VARIATION;
@@ -27,12 +25,9 @@ Flynn.Particle = Class.extend({
         }
         else{
             // Add impulse
-            this.x += this.dx * paceFactor;
-            this.y += this.dy * paceFactor;
+            this.position.add(this.velocity.clone().multiplyScalar(paceFactor));
             // Decay impulse
-            var pacedFriction = Math.pow(this.PARTICLE_FRICTION, paceFactor);
-            this.dx *= pacedFriction;
-            this.dy *= pacedFriction;
+            this.velocity.multiplyScalar(Math.pow(this.PARTICLE_FRICTION, paceFactor));
         }
         return isAlive;
     },
@@ -42,15 +37,15 @@ Flynn.Particle = Class.extend({
             // Render as world coordinates
             ctx.fillStyle=this.color;
             ctx.fillRect(
-                this.x - Flynn.mcp.viewport.x,
-                this.y - Flynn.mcp.viewport.y,
+                this.position.x - Flynn.mcp.viewport.x,
+                this.position.y - Flynn.mcp.viewport.y,
                 2,
                 2);
         }
         else{
             // Render in screen coordinates
             ctx.fillStyle=this.color;
-            ctx.fillRect(this.x, this.y, 2, 2);
+            ctx.fillRect(this.position.x, this.position.y, 2, 2);
         }
     }
 
@@ -69,13 +64,9 @@ Flynn.Particles = Class.extend({
         this.draw_warning_issued = false;
     },
 
-    explosion: function(x, y, quantity, max_velocity, color, dx, dy) {
-
-        if(typeof(dx)==='undefined'){
-            dx = 0;
-        }
-        if(typeof(dy)==='undefined'){
-            dy = 0;
+    explosion: function(position, quantity, max_velocity, color, velocity) {
+        if(!((arguments.length == 5 && position instanceof Victor) && (velocity instanceof Victor))){
+            throw("API has changed. 5 args. Position and velocity must be instance of Victor."); 
         }
 
         for(var i=0; i<quantity; i++){
@@ -83,10 +74,11 @@ Flynn.Particles = Class.extend({
             var particle_velocity = max_velocity * (1.0 - this.VELOCITY_VARIATION + Math.random() * this.VELOCITY_VARIATION);
             this.particles.push(new Flynn.Particle(
                 this,
-                x,
-                y,
-                Math.cos(theta) * particle_velocity + dx,
-                Math.sin(theta) * particle_velocity + dy,
+                position.clone(),
+                velocity.clone().add(
+                    new Victor(
+                        Math.cos(theta) * particle_velocity,
+                        Math.sin(theta) * particle_velocity)),
                 color
             ));
         }

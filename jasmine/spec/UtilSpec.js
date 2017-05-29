@@ -88,3 +88,68 @@ describe("Util.zeroPad()", function() {
 
 
 });
+
+describe("Victor.fromPolar()", function() {
+    // Extend victor
+    Flynn.monkeyPatchVictor();
+
+    var i;
+    var result_v;
+    var data = [
+        [ 0, 0,  new Victor(0,0)],
+        [ 0, 1,  new Victor(1,0)],
+        [ 0, 2,  new Victor(2,0)],
+        [ -Math.PI, 2,  new Victor(-2,0)],
+    ];
+    it("returns a Victor object from polar coordinates", function() {
+        for(i=0; i<data.length; i++){
+            result_v = Victor.fromPolar(data[i][0], data[i][1]);
+            expect(result_v.x).toBeCloseTo(data[i][2].x);
+            expect(result_v.y).toBeCloseTo(data[i][2].y);
+        }
+    });
+
+});
+
+describe("Victor.randomDirection()", function() {
+    // Extend victor
+    Flynn.monkeyPatchVictor();
+
+    var magnitude;
+
+    it("returns a unit vector when called with no args", function() {
+        result_v = Victor.randomDirection();
+        expect(result_v.magnitude()).toBeCloseTo(1.0);
+    });
+    it("returns a vector of the requested magnitude", function() {
+        for(magnitude=0; magnitude<3; magnitude += 0.5){
+            result_v = Victor.randomDirection(magnitude);
+            expect(result_v.magnitude()).toBeCloseTo(magnitude);
+        }
+    });
+
+});
+
+describe("Victor.boundMagnitude()", function() {
+    // Extend victor
+    Flynn.monkeyPatchVictor();
+
+    var i;
+    var result_v;
+    var data = [
+        [new Victor(0, 10), 0, new Victor(0, 0)],
+        [new Victor(0, 10), 4, new Victor(0, 4)],
+        [new Victor(7, 0), 2, new Victor(2, 0)],
+        [new Victor(5, 5), 1, new Victor(Math.cos(Math.PI/4), Math.sin(Math.PI/4))],
+
+    ];
+    it("returns a Victor object with no greater than the requested max magnitude", function() {
+        for(i=0; i<data.length; i++){
+            var result_v = data[i][0].boundMagnitude(data[i][1]);
+            expect(result_v.magnitude()).toBeCloseTo(data[i][1]);
+            expect(result_v.x).toBeCloseTo(data[i][2].x);
+            expect(result_v.y).toBeCloseTo(data[i][2].y);
+        }
+    });
+
+});

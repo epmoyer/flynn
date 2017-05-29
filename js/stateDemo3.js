@@ -135,7 +135,7 @@ Game.StateDemo3 = Flynn.State.extend({
             console.log("fire left");
             this.projectiles.add(
                 this.crosshair_poly.position,
-                {x:-this.BULLET_SPEED, y:0},
+                new Victor(-this.BULLET_SPEED, 0),
                 this.BULLET_LIFETIME,
                 3,
                 Flynn.Colors.YELLOW
@@ -145,7 +145,7 @@ Game.StateDemo3 = Flynn.State.extend({
             console.log("fire right");
             this.projectiles.add(
                 this.crosshair_poly.position,
-                {x:this.BULLET_SPEED, y:0},
+                new Victor(this.BULLET_SPEED, 0),
                 this.BULLET_LIFETIME,
                 3,
                 Flynn.Colors.YELLOW

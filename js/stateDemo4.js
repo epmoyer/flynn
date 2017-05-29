@@ -159,7 +159,7 @@ Game.StateDemo4 = Flynn.State.extend({
             - Flynn.mcp.canvasHeight / 2 
             );
 
-        // Rotate polydons
+        // Rotate polygons
         for (i=0,len=this.polygons.length; i<len; i++){
             this.polygons[i].setAngle(this.polygons[i].angle - Math.PI/60.0 * paceFactor * (1 + 0.2*i));
         }
@@ -169,11 +169,11 @@ Game.StateDemo4 = Flynn.State.extend({
         if(this.timers.hasExpired("Explode")){
             this.timers.set("Explode", this.TIMER_EXPLODE_TICKS);
             this.particles.explosion(
-                this.world_rect.center_x, // x
-                this.world_rect.center_y, // y
+                this.world_rect.center_position, 
                 Flynn.Util.randomIntFromInterval(10, 200),      // quantity
                 2,                                              // max_velocity
-                Flynn.Util.randomChoice(this.colors)            // color
+                Flynn.Util.randomChoice(this.colors),           // color
+                new Victor(0,0)                                 // velocity
                 );
         }
 

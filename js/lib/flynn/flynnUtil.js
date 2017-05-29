@@ -149,8 +149,11 @@ Flynn.Util = {
             );
     },
 
-    randomIntFromInterval: function(min,max)
-    {
+    randomAngle: function(){
+        return Math.random() * Math.PI * 2;
+    },
+
+    randomIntFromInterval: function(min,max){
         return Math.floor(Math.random()*(max-min+1)+min);
     },
 
@@ -348,6 +351,58 @@ Flynn.Util = {
             object_1.velocity.add(impulse_v.clone().multiplyScalar(im1));
             object_2.velocity.subtract(impulse_v.clone().multiplyScalar(im2));
         }
+    },
+
+    doBoundsBounce: function(object, bounds, restitution){
+        // Bounce object at bounds edges
+        //
+        // Args:
+        //    object: object to bounce
+        //       Must have .position and .velocity (type: Victor)
+        //    bounds:
+        //       Rectangle bounds (type: Flynn.Rect)
+        //    restitution:
+        //       bounce restitution (0 to 1)
+        //
+        if(object.position.x < bounds.left + object.radius){
+            object.position.x = bounds.left + object.radius + (bounds.left + object.radius - object.position.x);
+            object.velocity.x = -object.velocity.x * restitution;
+        }
+        else if (object.position.x > bounds.right - object.radius){
+            object.position.x = bounds.right - object.radius - (object.position.x - (bounds.right - object.radius));
+            object.velocity.x = -object.velocity.x * restitution;
+        }
+        if(object.position.y < bounds.top + object.radius){
+            object.position.y = bounds.top + object.radius + (bounds.top + object.radius - object.position.y);
+            object.velocity.y = -object.velocity.y * restitution;
+        }
+        else if (object.position.y > bounds.bottom - object.radius){
+            object.position.y = bounds.bottom - object.radius - (object.position.y - (bounds.bottom - object.radius));
+            object.velocity.y = -object.velocity.y * restitution;
+        }  
+    },
+
+    doBoundsWrap: function(object, bounds){
+        // Wrap object at bounds edges
+        //
+        // Args:
+        //    object: object to bounce
+        //       Must have .position and .velocity (type: Victor)
+        //    bounds:
+        //       Rectangle bounds (type: Flynn.Rect)
+        //
+        if(object.position.x < bounds.left){
+            object.position.x += bounds.width;
+        }
+        else if (object.position.x > bounds.right){
+            object.position.x -= bounds.width;
+        }
+        if(object.position.y < bounds.top){
+            object.position.y += bounds.width;
+        }
+        else if (object.position.y > bounds.bottom){
+            object.position.y -= bounds.width;
+        }  
     },
 
 };
