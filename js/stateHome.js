@@ -14,7 +14,12 @@ Game.render_page_frame = function(ctx, page_id){
     var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD", "FONT", "UTIL", "INFO"];
 
     // Render frame box
-    ctx.vectorLine(Game.MARGIN, Game.BANNER_HEIGHT, ctx.width-Game.MARGIN-1, Game.BANNER_HEIGHT, Flynn.Colors.GREEN);
+    ctx.vectorLine(
+        Game.MARGIN, 
+        Game.BANNER_HEIGHT + Game.MARGIN, 
+        ctx.width-Game.MARGIN-1, 
+        Game.BANNER_HEIGHT + Game.MARGIN,
+        Flynn.Colors.GREEN);
     ctx.vectorRect(
         Game.MARGIN, 
         Game.MARGIN, 

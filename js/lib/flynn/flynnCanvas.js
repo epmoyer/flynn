@@ -225,6 +225,12 @@ Flynn.Canvas = Class.extend({
                 }
             };
 
+            ctx.vectorRectR = function(rect, color, fill_color, is_world){
+                this.vectorRect(
+                    rect.left, rect.top, rect.width, rect.height, 
+                    color, fill_color, is_world);
+            };
+
             ctx.vectorRect = function(x, y, width, height, color, fill_color, is_world){
                 
                 if(typeof(fill_color)!=='undefined' && fill_color){

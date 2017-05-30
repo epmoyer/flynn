@@ -14,9 +14,9 @@ Game.StateDemo6 = Flynn.State.extend({
     WALL_MARGIN: 20,
 
     NUM_BALLS: 40,
-    MAX_VELOCITY: 8,
-    MIN_RADIUS: 5,
-    MAX_RADIUS: 35,
+    MAX_VELOCITY: 2.5,
+    MIN_RADIUS: 3,
+    MAX_RADIUS: 15,
 
     init: function() {
         var i, x;
@@ -28,28 +28,42 @@ Game.StateDemo6 = Flynn.State.extend({
             Game.CANVAS_WIDTH - 2 * Game.MARGIN,
             Game.CANVAS_HEIGHT - 2 * Game.MARGIN - Game.BANNER_HEIGHT
             );
-        this.balls = [];
-        for(i=0; i<this.NUM_BALLS; ++i){
-            var radius = Flynn.Util.randomFromInterval(this.MIN_RADIUS, this.MAX_RADIUS);
-            this.balls.push(new Game.Ball(
-                // position
-                new Victor(
-                    Flynn.Util.randomFromInterval(
-                        this.bounds.left + radius,
-                        this.bounds.right - radius),
-                    Flynn.Util.randomFromInterval(
-                        this.bounds.top + radius,
-                        this.bounds.bottom - radius)),  
+        this.regions = [
+            new Flynn.Rect(
+            this.bounds.left, this.bounds.top, this.bounds.width/2, this.bounds.height/2),
+            new Flynn.Rect(
+                this.bounds.center_x, this.bounds.top, this.bounds.width/2, this.bounds.height/2)
+            ];
 
-                // velocity
-                new Victor(
-                    Flynn.Util.randomFromInterval(-this.MAX_VELOCITY, this.MAX_VELOCITY),
-                    Flynn.Util.randomFromInterval(-this.MAX_VELOCITY, this.MAX_VELOCITY)),
-                this.bounds,
-                radius,
-                Flynn.Colors.ORANGE, // color
-                radius // mass
-            ));
+        this.ball_sets = [[], []];
+        for(var set = 0; set < this.ball_sets.length; set++){
+            var balls = this.ball_sets[set];
+            for(i=0; i<this.NUM_BALLS; ++i){
+                var radius = Flynn.Util.randomFromInterval(this.MIN_RADIUS, this.MAX_RADIUS);
+                balls.push(new Game.Ball(
+                    // position
+                    new Victor(
+                        Flynn.Util.randomFromInterval(
+                            this.bounds.left + radius,
+                            this.bounds.right - radius),
+                        Flynn.Util.randomFromInterval(
+                            this.bounds.top + radius,
+                            this.bounds.bottom - radius)),  
+
+                    // velocity
+                    new Victor(
+                        Flynn.Util.randomFromInterval(-this.MAX_VELOCITY, this.MAX_VELOCITY),
+                        Flynn.Util.randomFromInterval(-this.MAX_VELOCITY, this.MAX_VELOCITY)),
+                    this.regions[set],
+                    radius,
+                    // Flynn.Colors.ORANGE, // color
+                    set === 0 ? Flynn.Colors.DODGERBLUE : Flynn.Colors.ORANGE, // color
+                    radius, // mass
+                    set === 0 ? true : false, //do_bounce
+                    set === 0 ? true : false, //do_friction
+                    set === 0 ? true : false  //do_collide
+                ));
+            }
         }
     },
 
@@ -59,15 +73,18 @@ Game.StateDemo6 = Flynn.State.extend({
 
     update: function(paceFactor) {
         var i, j, len;
-        for(i=0, len=this.balls.length; i<len; i++){
-            this.balls[i].update(paceFactor);
-        }
+        for(var set = 0; set < this.ball_sets.length; set++){
+            var balls = this.ball_sets[set];
+            for(i=0, len=balls.length; i<len; i++){
+                balls[i].update(paceFactor);
+            }
 
-        len=this.balls.length;
-        for(i=0; i<len; i++){
-            for(j = i + 1; j<len; j++){
-                if(Flynn.Util.is_colliding(this.balls[i], this.balls[j])){
-                    Flynn.Util.resolve_collision(this.balls[i], this.balls[j]);
+            len=balls.length;
+            for(i=0; i<len; i++){
+                for(j = i + 1; j<len; j++){
+                    if(balls[i].do_collide && Flynn.Util.is_colliding(balls[i], balls[j])){
+                        Flynn.Util.resolve_collision(balls[i], balls[j]);
+                    }
                 }
             }
         }
@@ -75,12 +92,42 @@ Game.StateDemo6 = Flynn.State.extend({
 
     render: function(ctx){
         var i, len;
+        var left_margin = 8, top_margin = 10, scale = 1.5, heading_color=Flynn.Colors.YELLOW;
+        var line_step_y = 18;
+        var left_x, curret_y;
         ctx.clearAll();
 
         Game.render_page_frame (ctx, Game.States.DEMO6);
 
-        for(i=0, len=this.balls.length; i<len; i++){
-            this.balls[i].render(ctx);
+        for(var set = 0; set < this.ball_sets.length; set++){
+            var balls = this.ball_sets[set];
+            for(i=0, len=balls.length; i<len; i++){
+                balls[i].render(ctx);
+            }
+            var bounds = this.regions[set];
+            ctx.vectorRectR(bounds, Flynn.Colors.GREEN);
+
+            left_x = bounds.left + left_margin;
+            curret_y = bounds.top + top_margin;
+            switch(set){
+                case 0:
+                    ctx.vectorText("is_colliding()", scale, left_x, curret_y, 'left', heading_color);
+                    curret_y += line_step_y;
+                    ctx.vectorText("resolve_collision()", scale, left_x, curret_y, 'left', heading_color);
+                    curret_y += line_step_y;
+                    ctx.vectorText("doBoundsBounce()", scale, left_x, curret_y, 'left', heading_color);
+                    curret_y += line_step_y;
+                    ctx.vectorText("FRICTION", scale, left_x, curret_y, 'left', heading_color);
+                    break;
+
+                case 1:
+                    ctx.vectorText("doBoundsWrap()", scale, left_x, curret_y, 'left', heading_color);
+                    curret_y += line_step_y;
+                    ctx.vectorText("NO COLLISION", scale, left_x, curret_y, 'left', heading_color);
+                    curret_y += line_step_y;
+                    ctx.vectorText("NO FRICTION", scale, left_x, curret_y, 'left', heading_color);
+                    break;
+            }
         }
     },
 });
@@ -90,7 +137,7 @@ Game.Ball = Flynn.Polygon.extend({
     RESTITUTION: 1.0,
     FRICTION: 0.004,
 
-    init: function(position, velocity, bounds, radius, color, mass){
+    init: function(position, velocity, bounds, radius, color, mass, do_bounce, do_friction, do_collide){
         var points = Flynn.Util.make_regular_polygon_points(this.NUM_SIDES, radius);
         this._super(
             points,
@@ -105,14 +152,24 @@ Game.Ball = Flynn.Polygon.extend({
         this.velocity = velocity;
         this.bounds = bounds;
         this.mass = mass;
+        this.do_bounce = do_bounce;
+        this.do_friction = do_friction;
+        this.do_collide = do_collide;
     },
 
     update: function(pace_factor){
-        this.velocity.multiplyScalar(Math.pow((1-this.FRICTION), pace_factor));
+        if(this.do_friction){
+            this.velocity.multiplyScalar(Math.pow((1-this.FRICTION), pace_factor));
+        }
         this.position.add(this.velocity.clone().multiplyScalar(pace_factor));
 
         // Bounce position at bounds edges
-        Flynn.Util.doBoundsBounce(this, this.bounds, this.RESTITUTION); 
+        if(this.do_bounce){
+            Flynn.Util.doBoundsBounce(this, this.bounds, this.RESTITUTION);
+        }
+        else{
+            Flynn.Util.doBoundsWrap(this, this.bounds);
+        } 
     },
 
     render: function(ctx){

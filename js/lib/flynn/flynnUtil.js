@@ -398,10 +398,10 @@ Flynn.Util = {
             object.position.x -= bounds.width;
         }
         if(object.position.y < bounds.top){
-            object.position.y += bounds.width;
+            object.position.y += bounds.height;
         }
         else if (object.position.y > bounds.bottom){
-            object.position.y -= bounds.width;
+            object.position.y -= bounds.height;
         }  
     },
 
