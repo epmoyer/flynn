@@ -18,6 +18,8 @@ Game.StateDemo6 = Flynn.State.extend({
     MIN_RADIUS: 3,
     MAX_RADIUS: 15,
 
+    ANGLE_STEP: Math.PI / 60,
+
     init: function() {
         var i, x;
         this._super();
@@ -65,6 +67,28 @@ Game.StateDemo6 = Flynn.State.extend({
                 ));
             }
         }
+
+        this.angle = 0;
+        this.ship_polygon = [
+            new Flynn.Polygon(
+                Game.Points.SHIP,
+                Flynn.Colors.RED,
+                2.0, // scale
+                new Victor(0,0),
+                true, // constrained
+                false  // is_world
+                ),
+            new Flynn.Polygon(
+                Game.Points.SHIP,
+                Flynn.Colors.RED,
+                2.0, // scale
+                new Victor(0,0),
+                false, // constrained
+                false  // is_world
+                ),
+        ];
+
+
     },
 
     handleInputs: function(input, paceFactor) {
@@ -88,6 +112,8 @@ Game.StateDemo6 = Flynn.State.extend({
                 }
             }
         }
+
+        this.angle += this.ANGLE_STEP * paceFactor;
     },
 
     render: function(ctx){
@@ -99,6 +125,9 @@ Game.StateDemo6 = Flynn.State.extend({
 
         Game.render_page_frame (ctx, Game.States.DEMO6);
 
+        //--------------------
+        // Balls
+        //--------------------
         for(var set = 0; set < this.ball_sets.length; set++){
             var balls = this.ball_sets[set];
             for(i=0, len=balls.length; i<len; i++){
@@ -129,6 +158,26 @@ Game.StateDemo6 = Flynn.State.extend({
                     break;
             }
         }
+
+        //--------------------
+        // Constraint testing
+        //--------------------
+        curret_y = this.bounds.center_y + top_margin;
+        left_x = this.bounds.left + left_margin;
+         ctx.vectorText("CONSTRAINED VS. UNCONSTRAINED", scale, left_x, curret_y, 'left', heading_color);
+
+        var draw_position = new Victor(
+            this.bounds.left + 20,
+            this.bounds.center_y + 40)
+            .add(new Victor.fromPolar(
+                this.angle,
+                5));
+        this.ship_polygon[0].position = draw_position;
+        this.ship_polygon[0].render(ctx);
+        draw_position.x += 30;
+        this.ship_polygon[1].position = draw_position;
+        this.ship_polygon[1].render(ctx);
+
     },
 });
 
