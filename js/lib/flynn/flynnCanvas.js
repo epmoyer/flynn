@@ -283,7 +283,7 @@ Flynn.Canvas = Class.extend({
 
                 var angle;
                 this.vectorStart(color, is_world);
-                for(angle = 0; angle <= Math.PI * 2; angle += Math.PI*2/num_sides){
+                for(angle = 0; angle <= Math.PI * 2 + 0.001; angle += Math.PI*2/num_sides){
                     if(angle === 0){
                         this.vectorMoveTo(x + radius, y);
                     }

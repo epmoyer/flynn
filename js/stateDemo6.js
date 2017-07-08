@@ -20,6 +20,11 @@ Game.StateDemo6 = Flynn.State.extend({
 
     ANGLE_STEP: Math.PI / 60,
 
+    SHATTER_POLYGON_LIFETIME: 60,
+    SHATTER_POLYGON_VELOCITY: 1.1,
+    SHATTER_PARTICLE_VELOCITY_MAX: 0.5,
+    SHATTER_SPAWN_INTERVAL: 30,
+
     init: function() {
         var i, x;
         this._super();
@@ -88,7 +93,21 @@ Game.StateDemo6 = Flynn.State.extend({
                 ),
         ];
 
-
+        this.shatter_polygons = [];
+        this.shatter_center = new Victor(
+            this.bounds.left + 150,
+            this.bounds.bottom - 150
+            );
+        this.shatter_spawn_counter = this.SHATTER_SPAWN_INTERVAL;
+        this.particles = new Flynn.Particles(true);
+        this.shatter_polygon_catalog = [
+            {points:Game.Points.MUTICOLOR1, scale:3},
+            {points:Game.Points.MUTICOLOR2, scale:3},
+            {points:Game.Points.MUTICOLOR3, scale:3},
+            {points:Game.Points.MUTICOLOR4, scale:4.2},
+            {points:Game.Points.MUTICOLOR5, scale:2.3},
+            {points:Game.Points.MUTICOLOR6, scale:3.2},
+        ];
     },
 
     handleInputs: function(input, paceFactor) {
@@ -96,7 +115,7 @@ Game.StateDemo6 = Flynn.State.extend({
     },
 
     update: function(paceFactor) {
-        var i, j, len;
+        var i, j, len, polygon;
         for(var set = 0; set < this.ball_sets.length; set++){
             var balls = this.ball_sets[set];
             for(i=0, len=balls.length; i<len; i++){
@@ -114,10 +133,52 @@ Game.StateDemo6 = Flynn.State.extend({
         }
 
         this.angle += this.ANGLE_STEP * paceFactor;
+
+        //------------------------
+        // Spawn shatter polygons
+        //------------------------
+        this.shatter_spawn_counter -= paceFactor;
+        if (this.shatter_spawn_counter <= 0){
+            this.shatter_spawn_counter = this.SHATTER_SPAWN_INTERVAL;
+            var shatter_item = Flynn.Util.randomChoice(this.shatter_polygon_catalog);
+            polygon = new Flynn.Polygon(
+                    shatter_item.points,
+                    Flynn.Colors.WHITE,
+                    shatter_item.scale,
+                    this.shatter_center,
+                    false, // constrained
+                    true  // is_world
+                );
+            polygon.lifetime = this.SHATTER_POLYGON_LIFETIME;
+            polygon.velocity = Victor.randomDirection(this.SHATTER_POLYGON_VELOCITY);
+            polygon.setAngle(polygon.velocity.angle() + Math.PI/2);
+
+            this.shatter_polygons.push(polygon);
+        }
+
+        //--------------------
+        // Move shatter polygons
+        //--------------------
+        for(i = 0; i < this.shatter_polygons.length; i++){
+            polygon = this.shatter_polygons[i];
+            polygon.lifetime -= paceFactor;
+            if(polygon.lifetime <= 0){
+                // Shatter
+                this.particles.shatter(polygon, this.SHATTER_PARTICLE_VELOCITY_MAX);
+
+                // Remove polygon
+                this.shatter_polygons.splice(i, 1);
+                i--;
+            }
+            else{
+                polygon.position.add(polygon.velocity.clone().multiplyScalar(paceFactor));
+            }
+        }
+        this.particles.update(paceFactor);
     },
 
     render: function(ctx){
-        var i, len;
+        var i, len, polygon;
         var left_margin = 8, top_margin = 10, scale = 1.5, heading_color=Flynn.Colors.YELLOW;
         var line_step_y = 18;
         var left_x, curret_y;
@@ -164,7 +225,7 @@ Game.StateDemo6 = Flynn.State.extend({
         //--------------------
         curret_y = this.bounds.center_y + top_margin;
         left_x = this.bounds.left + left_margin;
-         ctx.vectorText("CONSTRAINED VS. UNCONSTRAINED", scale, left_x, curret_y, 'left', heading_color);
+        ctx.vectorText("CONSTRAINED VS. UNCONSTRAINED", scale, left_x, curret_y, 'left', heading_color);
 
         var draw_position = new Victor(
             this.bounds.left + 20,
@@ -177,6 +238,23 @@ Game.StateDemo6 = Flynn.State.extend({
         draw_position.x += 30;
         this.ship_polygon[1].position = draw_position;
         this.ship_polygon[1].render(ctx);
+
+        //--------------------
+        // Polygon shatter (particles)
+        //--------------------
+        ctx.vectorCircle(
+            this.shatter_center.x, this.shatter_center.y,
+            20, // radius
+            12, // num_sides
+            Flynn.Colors.GRAY,
+            true // is_world
+            );
+        curret_y = this.bounds.center_y + top_margin + 55;
+        ctx.vectorText("POYGON SHATTER (PARTICLES)", scale, left_x, curret_y, 'left', heading_color);
+        for(i = 0; i < this.shatter_polygons.length; i++){
+            this.shatter_polygons[i].render(ctx);
+        }
+        this.particles.render(ctx);
 
     },
 });
