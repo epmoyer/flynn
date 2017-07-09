@@ -21,7 +21,6 @@ Game.BOUNDS = new Flynn.Rect(
 // The primary page font scale
 Game.FONT_SCALE = 1.5;
 Game.FONT_MARGIN_LEFT = 9;
-Game.FONT_MARGIN_TOP = Flynn.Font.Normal.CharacterHeight * Game.FONT_SCALE + Game.FONT_MARGIN_LEFT;
 Game.FONT_MARGIN_TOP = Game.FONT_MARGIN_LEFT;
 
 Game.States = {

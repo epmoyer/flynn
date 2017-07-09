@@ -275,7 +275,7 @@ Game.Ball = Flynn.Polygon.extend({
 
         this.radius = radius;
         this.velocity = velocity;
-        Game.BOUNDS = bounds;
+        this.bounds = bounds;
         this.mass = mass;
         this.do_bounce = do_bounce;
         this.do_friction = do_friction;
@@ -290,10 +290,10 @@ Game.Ball = Flynn.Polygon.extend({
 
         // Bounce position at bounds edges
         if(this.do_bounce){
-            Flynn.Util.doBoundsBounce(this, Game.BOUNDS, this.RESTITUTION);
+            Flynn.Util.doBoundsBounce(this, this.bounds, this.RESTITUTION);
         }
         else{
-            Flynn.Util.doBoundsWrap(this, Game.BOUNDS);
+            Flynn.Util.doBoundsWrap(this, this.bounds);
         } 
     },
 
