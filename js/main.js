@@ -6,19 +6,38 @@ Game.CANVAS_HEIGHT = 768;
 Game.CANVAS_WIDTH = 1024;
 Game.SPEED_FACTOR = 1.0;
 
+Game.BORDER_MARGIN = 3;
+Game.BANNER_FONT_SCALE = 2;
+Game.BANNER_HEIGHT = 28;
+
+// The primary page display bounds (excludes the banner)
+Game.BOUNDS = new Flynn.Rect(
+    Game.BORDER_MARGIN,
+    Game.BORDER_MARGIN + Game.BANNER_HEIGHT,
+    Game.CANVAS_WIDTH - 2 * Game.BORDER_MARGIN,
+    Game.CANVAS_HEIGHT - 2 * Game.BORDER_MARGIN - Game.BANNER_HEIGHT
+    );
+
+// The primary page font scale
+Game.FONT_SCALE = 1.5;
+Game.FONT_MARGIN_LEFT = 9;
+Game.FONT_MARGIN_TOP = Flynn.Font.Normal.CharacterHeight * Game.FONT_SCALE + Game.FONT_MARGIN_LEFT;
+Game.FONT_MARGIN_TOP = Game.FONT_MARGIN_LEFT;
+
 Game.States = {
     NO_CHANGE: 0,
     
-    HOME:      1,
-    TEXT:      2,
-    BOX2D:     3,
-    COLLISION: 4,
-    WORLD:     5,
-    FONT:      6,
-    UTIL:      7,
-    INFO:      8,
+    HOME:        1,
+    TEXT:        2,
+    BOX2D:       3,
+    COLLISION:   4,
+    WORLD:       5,
+    FONT:        6,
+    UTIL:        7,
+    PERFORMANCE: 8,
+    INFO:        9,
 
-    LAST_PAGE: 8, // Match highest page above (used for navigation)
+    LAST_PAGE: 9, // Match highest page above (used for navigation)
 
     END:       90,
     CONFIG:    91,
@@ -51,6 +70,8 @@ Game.Main = Class.extend({
                         return new Game.StateFont();
                     case Game.States.UTIL:
                         return new Game.StateUtil();
+                    case Game.States.PERFORMANCE:
+                        return new Game.StatePerformance();
                     case Game.States.INFO:
                         return new Game.StateInfo();
                     case Game.States.END:

@@ -2,30 +2,26 @@ var Game = Game || {}; // Create namespace
 
 (function () { "use strict";
 
-Game.MARGIN = 3;
-Game.BANNER_FONT_SCALE = 2;
-Game.BANNER_HEIGHT = 28;
-
 Game.render_page_frame = function(ctx){
     // Render the frame for the current page
 
     var i, text, color;
     var x=10;
-    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD", "FONT", "UTIL", "INFO"];
+    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD", "FONT", "UTIL", "PERFORMANCE", "INFO"];
     var page_id = Flynn.mcp.current_state_id;
 
     // Render frame box
     ctx.vectorLine(
-        Game.MARGIN, 
-        Game.BANNER_HEIGHT + Game.MARGIN, 
-        ctx.width-Game.MARGIN-1, 
-        Game.BANNER_HEIGHT + Game.MARGIN,
+        Game.BORDER_MARGIN, 
+        Game.BANNER_HEIGHT + Game.BORDER_MARGIN, 
+        ctx.width-Game.BORDER_MARGIN-1, 
+        Game.BANNER_HEIGHT + Game.BORDER_MARGIN,
         Flynn.Colors.GREEN);
     ctx.vectorRect(
-        Game.MARGIN, 
-        Game.MARGIN, 
-        ctx.width-2*Game.MARGIN,
-        ctx.height-2*Game.MARGIN,
+        Game.BORDER_MARGIN, 
+        Game.BORDER_MARGIN, 
+        ctx.width-2*Game.BORDER_MARGIN,
+        ctx.height-2*Game.BORDER_MARGIN,
         Flynn.Colors.GREEN);
 
     // Render page names

@@ -33,17 +33,11 @@ Game.StateUtil = Flynn.State.extend({
         Flynn.mcp.viewport.x = 0;
         Flynn.mcp.viewport.y = 0;
    
-        this.bounds = new Flynn.Rect(
-            Game.MARGIN,
-            Game.MARGIN + Game.BANNER_HEIGHT,
-            Game.CANVAS_WIDTH - 2 * Game.MARGIN,
-            Game.CANVAS_HEIGHT - 2 * Game.MARGIN - Game.BANNER_HEIGHT
-            );
         this.regions = [
             new Flynn.Rect(
-            this.bounds.left, this.bounds.top, this.bounds.width/2, this.bounds.height/2),
+            Game.BOUNDS.left, Game.BOUNDS.top, Game.BOUNDS.width/2, Game.BOUNDS.height/2),
             new Flynn.Rect(
-                this.bounds.center_x, this.bounds.top, this.bounds.width/2, this.bounds.height/2)
+                Game.BOUNDS.center_x, Game.BOUNDS.top, Game.BOUNDS.width/2, Game.BOUNDS.height/2)
             ];
 
         this.ball_sets = [[], []];
@@ -55,11 +49,11 @@ Game.StateUtil = Flynn.State.extend({
                     // position
                     new Victor(
                         Flynn.Util.randomFromInterval(
-                            this.bounds.left + radius,
-                            this.bounds.right - radius),
+                            Game.BOUNDS.left + radius,
+                            Game.BOUNDS.right - radius),
                         Flynn.Util.randomFromInterval(
-                            this.bounds.top + radius,
-                            this.bounds.bottom - radius)),  
+                            Game.BOUNDS.top + radius,
+                            Game.BOUNDS.bottom - radius)),  
 
                     // velocity
                     new Victor(
@@ -99,8 +93,8 @@ Game.StateUtil = Flynn.State.extend({
 
         this.shatter_polygons = [];
         this.shatter_center = new Victor(
-            this.bounds.left + 150,
-            this.bounds.bottom - 150
+            Game.BOUNDS.left + 150,
+            Game.BOUNDS.bottom - 150
             );
         this.shatter_spawn_counter = this.SHATTER_SPAWN_INTERVAL;
         this.particles = new Flynn.Particles(true);
@@ -227,13 +221,13 @@ Game.StateUtil = Flynn.State.extend({
         //--------------------
         // Constraint testing
         //--------------------
-        curret_y = this.bounds.center_y + top_margin;
-        left_x = this.bounds.left + left_margin;
+        curret_y = Game.BOUNDS.center_y + top_margin;
+        left_x = Game.BOUNDS.left + left_margin;
         ctx.vectorText("CONSTRAINED VS. UNCONSTRAINED", scale, left_x, curret_y, 'left', heading_color);
 
         var draw_position = new Victor(
-            this.bounds.left + 20,
-            this.bounds.center_y + 40)
+            Game.BOUNDS.left + 20,
+            Game.BOUNDS.center_y + 40)
             .add(new Victor.fromPolar(
                 this.angle,
                 5));
@@ -253,7 +247,7 @@ Game.StateUtil = Flynn.State.extend({
             Flynn.Colors.GRAY,
             true // is_world
             );
-        curret_y = this.bounds.center_y + top_margin + 55;
+        curret_y = Game.BOUNDS.center_y + top_margin + 55;
         ctx.vectorText("POYGON SHATTER (PARTICLES)", scale, left_x, curret_y, 'left', heading_color);
         for(i = 0; i < this.shatter_polygons.length; i++){
             this.shatter_polygons[i].render(ctx);
@@ -281,7 +275,7 @@ Game.Ball = Flynn.Polygon.extend({
 
         this.radius = radius;
         this.velocity = velocity;
-        this.bounds = bounds;
+        Game.BOUNDS = bounds;
         this.mass = mass;
         this.do_bounce = do_bounce;
         this.do_friction = do_friction;
@@ -296,10 +290,10 @@ Game.Ball = Flynn.Polygon.extend({
 
         // Bounce position at bounds edges
         if(this.do_bounce){
-            Flynn.Util.doBoundsBounce(this, this.bounds, this.RESTITUTION);
+            Flynn.Util.doBoundsBounce(this, Game.BOUNDS, this.RESTITUTION);
         }
         else{
-            Flynn.Util.doBoundsWrap(this, this.bounds);
+            Flynn.Util.doBoundsWrap(this, Game.BOUNDS);
         } 
     },
 
