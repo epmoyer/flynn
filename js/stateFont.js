@@ -2,7 +2,7 @@ var Game = Game || {}; // Create namespace
 
 (function () { "use strict";
 
-Game.StateDemo5 = Flynn.State.extend({
+Game.StateFont = Flynn.State.extend({
 
     init: function() {
         this._super();
@@ -27,7 +27,7 @@ Game.StateDemo5 = Flynn.State.extend({
         var i, j, x;
         var heading_color = Flynn.Colors.YELLOW;
         
-        Game.render_page_frame (ctx, Game.States.DEMO5);
+        Game.render_page_frame (ctx);
 
         var curret_y = 42;
         var indent = 20;

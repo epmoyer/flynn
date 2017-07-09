@@ -2,7 +2,7 @@ var Game = Game || {}; // Create namespace
 
 (function () { "use strict";
 
-Game.StateDemo6 = Flynn.State.extend({
+Game.StateUtil = Flynn.State.extend({
 
     GRAVITY_X: 0,
     GRAVITY_Y: 9.86,     
@@ -188,7 +188,7 @@ Game.StateDemo6 = Flynn.State.extend({
         var left_x, curret_y;
         ctx.clearAll();
 
-        Game.render_page_frame (ctx, Game.States.DEMO6);
+        Game.render_page_frame (ctx);
 
         //--------------------
         // Balls

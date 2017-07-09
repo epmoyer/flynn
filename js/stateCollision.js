@@ -2,7 +2,7 @@ var Game = Game || {}; // Create namespace
 
 (function () { "use strict";
     
-Game.StateDemo3 = Flynn.State.extend({
+Game.StateCollision = Flynn.State.extend({
 
     CROSSHAIR_SPEED: 3,
     BULLET_SPEED: 4,
@@ -216,7 +216,7 @@ Game.StateDemo3 = Flynn.State.extend({
         var button_list=['up', 'left', 'right', 'down', 'fire_l', 'fire_r'];
         var curret_y = 42;
         
-        Game.render_page_frame (ctx, Game.States.DEMO3);
+        Game.render_page_frame (ctx);
 
         ctx.vectorText("POINT COLLISION", 1.5, left_x, curret_y, 'left', heading_color);
         curret_y += 175;

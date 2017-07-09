@@ -2,7 +2,7 @@ var Game = Game || {}; // Create namespace
 
 (function () { "use strict";
     
-Game.StateDemo1 = Flynn.State.extend({
+Game.StateText = Flynn.State.extend({
 
     init: function() {
         this._super();
@@ -34,7 +34,7 @@ Game.StateDemo1 = Flynn.State.extend({
             var i, j, x;
             var heading_color = Flynn.Colors.YELLOW;
             
-            Game.render_page_frame(ctx, Game.States.DEMO1);
+            Game.render_page_frame(ctx);
 
             // Center guides
             var guide_inset = 10;

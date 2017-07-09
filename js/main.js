@@ -10,13 +10,13 @@ Game.States = {
     NO_CHANGE: 0,
     
     HOME:      1,
-    DEMO1:     2,
-    DEMO2:     3,
-    DEMO3:     4,
-    DEMO4:     5,
-    DEMO5:     6,
-    DEMO6:     7,
-    DEMO7:     8,
+    TEXT:      2,
+    BOX2D:     3,
+    COLLISION: 4,
+    WORLD:     5,
+    FONT:      6,
+    UTIL:      7,
+    INFO:      8,
 
     LAST_PAGE: 8, // Match highest page above (used for navigation)
 
@@ -39,20 +39,20 @@ Game.Main = Class.extend({
                 switch(state){
                     case Game.States.HOME:
                         return new Game.StateHome();
-                    case Game.States.DEMO1:
-                        return new Game.StateDemo1();
-                    case Game.States.DEMO2:
-                        return new Game.StateDemo2();
-                    case Game.States.DEMO3:
-                        return new Game.StateDemo3();
-                    case Game.States.DEMO4:
-                        return new Game.StateDemo4();
-                    case Game.States.DEMO5:
-                        return new Game.StateDemo5();
-                    case Game.States.DEMO6:
-                        return new Game.StateDemo6();
-                    case Game.States.DEMO7:
-                        return new Game.StateDemo7();
+                    case Game.States.TEXT:
+                        return new Game.StateText();
+                    case Game.States.BOX2D:
+                        return new Game.StateBox2d();
+                    case Game.States.COLLISION:
+                        return new Game.StateCollision();
+                    case Game.States.WORLD:
+                        return new Game.StateWorld();
+                    case Game.States.FONT:
+                        return new Game.StateFont();
+                    case Game.States.UTIL:
+                        return new Game.StateUtil();
+                    case Game.States.INFO:
+                        return new Game.StateInfo();
                     case Game.States.END:
                         return new Flynn.StateEnd(
                             Game.config.score,

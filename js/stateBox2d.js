@@ -2,7 +2,7 @@ var Game = Game || {}; // Create namespace
 
 (function () { "use strict";
 
-Game.StateDemo2 = Flynn.State.extend({
+Game.StateBox2d = Flynn.State.extend({
 
     GRAVITY_X: 0,
     GRAVITY_Y: 9.86,     
@@ -118,7 +118,7 @@ Game.StateDemo2 = Flynn.State.extend({
         var i, j, x;
         var heading_color = Flynn.Colors.YELLOW;
         
-        Game.render_page_frame (ctx, Game.States.DEMO2);
+        Game.render_page_frame (ctx);
 
         this.physics.render(ctx);
     },

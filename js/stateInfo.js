@@ -2,7 +2,7 @@ var Game = Game || {}; // Create namespace
 
 (function () { "use strict";
     
-Game.StateDemo7 = Flynn.State.extend({
+Game.StateInfo = Flynn.State.extend({
 
     init: function() {
         this._super();
@@ -24,7 +24,7 @@ Game.StateDemo7 = Flynn.State.extend({
 
         ctx.clearAll();
 
-        Game.render_page_frame(ctx, Game.States.DEMO7);
+        Game.render_page_frame(ctx);
 
         credit_text = [
             'THIS TEST APP & THE "FLYNN" ENGINE CREATED BY ERIC MOYER',

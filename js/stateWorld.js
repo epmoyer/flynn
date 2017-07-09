@@ -60,7 +60,7 @@ Game.StarField = Flynn.State.extend({
     }
 });
 
-Game.StateDemo4 = Flynn.State.extend({
+Game.StateWorld = Flynn.State.extend({
 
     VIEWPORT_SWEEP_ANGLE_SPEED: 0.008,
     TIMER_EXPLODE_TICKS: 0.3 * Flynn.TICKS_PER_SECOND,
@@ -231,7 +231,7 @@ Game.StateDemo4 = Flynn.State.extend({
             );
 
 
-        Game.render_page_frame (ctx, Game.States.DEMO4);
+        Game.render_page_frame (ctx);
 
         // Extra lives
         for(i=0;i<3;i++){

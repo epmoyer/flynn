@@ -3,15 +3,16 @@ var Game = Game || {}; // Create namespace
 (function () { "use strict";
 
 Game.MARGIN = 3;
-Game.BANNER_HEIGHT = 37;
+Game.BANNER_FONT_SCALE = 2;
+Game.BANNER_HEIGHT = 28;
 
-Game.render_page_frame = function(ctx, page_id){
+Game.render_page_frame = function(ctx){
     // Render the frame for the current page
 
     var i, text, color;
     var x=10;
-    var scale=3;
     var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD", "FONT", "UTIL", "INFO"];
+    var page_id = Flynn.mcp.current_state_id;
 
     // Render frame box
     ctx.vectorLine(
@@ -36,8 +37,8 @@ Game.render_page_frame = function(ctx, page_id){
         else{
             color = Flynn.Colors.GRAY_DK;
         }
-        ctx.vectorText(text, scale, x, 11, 'left', color);
-        x += Flynn.Font.Normal.CharacterSpacing * scale * (text.length + 2);
+        ctx.vectorText(text, Game.BANNER_FONT_SCALE, x, 11, 'left', color);
+        x += Flynn.Font.Normal.CharacterSpacing * Game.BANNER_FONT_SCALE * (text.length + 2);
     }
 };
 
@@ -297,7 +298,7 @@ Game.StateHome = Flynn.State.extend({
         var i, x;
         var heading_color = Flynn.Colors.YELLOW;
 
-        Game.render_page_frame (ctx, Game.States.HOME);
+        Game.render_page_frame (ctx);
 
         var curret_y = 42;
         ctx.vectorText("LINES", 1.5, left_x, curret_y, 'left', heading_color);
