@@ -28,6 +28,10 @@ Game.StateDemo6 = Flynn.State.extend({
     init: function() {
         var i, x;
         this._super();
+
+        // Set world viewport
+        Flynn.mcp.viewport.x = 0;
+        Flynn.mcp.viewport.y = 0;
    
         this.bounds = new Flynn.Rect(
             Game.MARGIN,
