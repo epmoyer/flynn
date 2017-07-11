@@ -26,13 +26,17 @@ Game.StatePerformance = Flynn.State.extend({
             );
 
         this.angle = 0;
-        this.num_spirals = 400;
+        this.num_spirals = 300;
         var offset = Game.BOUNDS.top + Game.FONT_MARGIN_TOP * 2 + Game.FONT_SCALE * Flynn.Font.Normal.CharacterHeight;
         this.spiral_bounds = new Flynn.Rect(
             Game.BOUNDS.left,
             offset,
             Game.BOUNDS.width,
             Game.BOUNDS.height - offset);
+        this.fps_update_ticks = Flynn.mcp.canvas.ctx.fpsFrameAverage * 2;
+        this.fps_update_counter = this.fps_update_ticks;
+        this.pace_samples = [];
+        this.pace_window = 10;
 
     },
 
@@ -43,6 +47,44 @@ Game.StatePerformance = Flynn.State.extend({
     update: function(paceFactor) {
         this.angle += this.ANGLE_STEP * paceFactor;
         this.polygon_spiral.setAngle(this.angle);
+
+        this.pace_samples.push(paceFactor);
+        if(this.pace_samples.length > this.pace_window){
+            this.pace_samples.splice(0,1);
+            var avg_pace_factor = 0, i;
+            for(i=0; i<this.pace_window; i++){
+                avg_pace_factor += this.pace_samples[i];
+            }
+            avg_pace_factor /= this.pace_window;
+            if(avg_pace_factor > 1.05){
+                this.num_spirals -= 0.1;
+            }
+            else{
+                this.num_spirals += 0.1;
+            }
+        }
+
+        // this.fps_update_counter--;
+        // if(this.fps_update_counter <= 0){
+        //     this.fps_update_counter = this.fps_update_ticks;
+
+        //     var fps = Flynn.mcp.canvas.ctx.fps;
+        //     if(fps<60){
+        //         this.num_spirals -= 1;
+        //     }
+        //     else{
+        //         this.num_spirals += 1;
+        //     }
+        // }
+
+        // if(paceFactor<1.0){
+        //     this.num_spirals += 1;
+        // }
+        // else{
+        //     if(this.num_spirals >= 2){
+        //         this.num_spirals -= 1;
+        //     }
+        // }
     },
 
     render: function(ctx){
@@ -56,7 +98,8 @@ Game.StatePerformance = Flynn.State.extend({
         Game.render_page_frame(ctx);
 
         ctx.vectorText(
-            "PERFORMANCE", Game.FONT_SCALE, 
+            "POLYGONS: " + Math.floor(this.num_spirals) + " FPS: " + ctx.fps,
+            Game.FONT_SCALE, 
             Game.BOUNDS.left + Game.FONT_MARGIN_LEFT,
             Game.BOUNDS.top + Game.FONT_MARGIN_TOP, 
             'left', Flynn.Colors.YELLOW);
