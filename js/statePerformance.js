@@ -40,6 +40,17 @@ Game.StatePerformance = Flynn.State.extend({
 
     },
 
+    median: function(values) {
+        var values_copy = values.slice();
+        values_copy.sort( function(a,b) {return a - b;} );
+        var half = Math.floor(values_copy.length/2);
+        if (values_copy.length % 2) {
+            return values_copy[half];
+        } else {
+            return (values_copy[half-1] + values_copy[half]) / 2.0;
+        }
+    },
+
     handleInputs: function(input, paceFactor) {
         Game.handleInputs_common(input);
     },
@@ -93,18 +104,23 @@ Game.StatePerformance = Flynn.State.extend({
         var spiral_x_reset = this.spiral_bounds.left + spiral_step/2 + this.SPIRAL_GAP * this.SPIRAL_SCALE;
         var spiral_x = spiral_x_reset;
         var spiral_y = this.spiral_bounds.top + spiral_step/2;
+        var start_milliseconds, stop_milliseconds;
+        
+
+        var num_spirals = 800;
+        //-----------------------
+        //  BEGIN TIMED SECTION
+        //-----------------------
+        start_milliseconds = window.performance.now();
         ctx.clearAll();
+        ctx.clearRect(
+            this.spiral_bounds.left,
+            this.spiral_bounds.top,
+            this.spiral_bounds.width,
+            this.spiral_bounds.height
+            );
 
-        Game.render_page_frame(ctx);
-
-        ctx.vectorText(
-            "POLYGONS: " + Math.floor(this.num_spirals) + " FPS: " + ctx.fps,
-            Game.FONT_SCALE, 
-            Game.BOUNDS.left + Game.FONT_MARGIN_LEFT,
-            Game.BOUNDS.top + Game.FONT_MARGIN_TOP, 
-            'left', Flynn.Colors.YELLOW);
-
-        for(i=0; i<this.num_spirals; i++){
+        for(i=0; i<num_spirals; i++){
             this.polygon_spiral.position.x = spiral_x;
             this.polygon_spiral.position.y = spiral_y;
             this.polygon_spiral.render(ctx);
@@ -114,6 +130,27 @@ Game.StatePerformance = Flynn.State.extend({
                 spiral_y += spiral_step;
             }   
         }
+        stop_milliseconds = window.performance.now();
+        //-----------------------
+        //  END TIMED SECTION
+        //-----------------------
+
+        var polygons_per_second = num_spirals / ((stop_milliseconds - start_milliseconds) / 1000);
+        var polygons_per_frame = polygons_per_second / 60;
+
+        this.pace_samples.push(polygons_per_frame);
+        if(this.pace_samples.length > this.pace_window){
+            this.pace_samples.splice(0,1);
+        }
+        var median_polygons_per_frame = this.median(this.pace_samples);
+
+        Game.render_page_frame(ctx);
+        ctx.vectorText(
+            "POLYGONS PER FRAME: " + Math.floor(median_polygons_per_frame),
+            Game.FONT_SCALE, 
+            Game.BOUNDS.left + Game.FONT_MARGIN_LEFT,
+            Game.BOUNDS.top + Game.FONT_MARGIN_TOP, 
+            'left', Flynn.Colors.YELLOW);
     }
 });
 
