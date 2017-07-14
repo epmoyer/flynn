@@ -724,43 +724,34 @@ Flynn.InputHandler = Class.extend({
             if(region.show){
                 if(region.shape == 'round'){
                     // Draw circular touch region
-                    ctx.beginPath();
-                    ctx.arc(
-                        (region.left + region.right) / 2,
-                        (region.top + region.bottom) / 2,
-                        (region.right - region.left) / 2,
-                        0, 2*Math.PI,
-                        false
-                        );
+                    ctx.graphics.lineStyle(2, 0xFFFFFF, 0.2);
                     if(this.virtualButtonIsDown(name)){
-                        ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+                        ctx.graphics.beginFill(0xffffff, 0.3);
                     }
                     else{
-                        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+                        ctx.graphics.beginFill(0xffffff, 0.1);
                     }
-                    ctx.fill();
-                    ctx.lineWidth = 2;
-                    ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-                    ctx.stroke();
+                    ctx.graphics.drawCircle(
+                        (region.left + region.right) / 2, 
+                        (region.top + region.bottom) / 2,
+                        (region.right - region.left) / 2);
+                    ctx.graphics.endFill();
                 }
                 else{
                     // Draw rectangular touch region
-                    ctx.beginPath();
-                    ctx.rect(
+                    ctx.graphics.lineStyle(2, 0xFFFFFF, 0.2);
+                    if(this.virtualButtonIsDown(name)){
+                        ctx.graphics.beginFill(0xffffff, 0.3);
+                    }
+                    else{
+                        ctx.graphics.beginFill(0xffffff, 0.1);
+                    }
+                    ctx.graphics.drawRect(
                         region.left,
                         region.top,
                         (region.right - region.left),
                         (region.bottom - region.top));
-                    if(this.virtualButtonIsDown(name)){
-                        ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-                    }
-                    else{
-                        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
-                    }
-                    ctx.fill();
-                    ctx.lineWidth = 2;
-                    ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-                    ctx.stroke();
+                    ctx.graphics.endFill();
                 }
             }
         }

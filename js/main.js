@@ -238,13 +238,13 @@ Game.Main = Class.extend({
             Flynn.mcp.input.addTouchRegion("fire_r",
                 x, y, x+button_size, y+button_size,
                 'rect',
-                [Game.States.DEMO3]  // visible_states
+                [Game.States.COLLISION]  // visible_states
                 );
             x -= button_size + button_gap; 
             Flynn.mcp.input.addTouchRegion("fire_l",
                 x, y, x+button_size, y+button_size,
                 'rect',
-                [Game.States.DEMO3]  // visible_states
+                [Game.States.COLLISION]  // visible_states
                 ); 
             //self.input.addTouchRegion("enter",0,0,width,height); // Whole screen
 
@@ -268,7 +268,7 @@ Game.Main = Class.extend({
                     right: 'right'
                 },
                 radius: joystick_radius,
-                visible_states: [Game.States.DEMO3],
+                visible_states: [Game.States.COLLISION],
             });
 
             x += button_gap + 2 * joystick_radius;
@@ -277,7 +277,7 @@ Game.Main = Class.extend({
                 name: 'a_stick',
                 type: 'analog',
                 radius: joystick_radius,
-                visible_states: [Game.States.DEMO3],
+                visible_states: [Game.States.COLLISION],
             });
 
             x += button_gap + 2 * joystick_radius;
@@ -292,7 +292,7 @@ Game.Main = Class.extend({
                     right: 'right'
                 },
                 radius: joystick_radius,
-                visible_states: [Game.States.DEMO3],
+                visible_states: [Game.States.COLLISION],
             });
         });
         Flynn.mcp.resize();

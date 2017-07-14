@@ -10,7 +10,8 @@ Flynn.VirtualJoystick = Class.extend({
     init: function(opts) {
         opts                  = opts                    || {};
         opts.button_map       = opts.button_map         || {};
-        this.strokeStyle      = opts.strokeStyle        || 'rgba(255,255,255,0.3)';
+        this.color            = opts.color              || 0xFFFFFF;
+        this.alpha            = opts.alpha              || 0.3;
         this.pos              = opts.pos                || {x:100, y:100};
         this.radius           = opts.radius             || 60;
         this.deadzone_radius  = opts.deadzone_radius    || 8;
@@ -155,7 +156,6 @@ Flynn.VirtualJoystick = Class.extend({
                 
                 if(  (offset_length > this.deadzone_radius)
                    && (offset_length < this.limit_radius)){
-                //if (true){
                     this.buttons.down.pressed  = (normalized_v.y >  this.theshold);
                     this.buttons.up.pressed    = (normalized_v.y < -this.theshold);
                     this.buttons.right.pressed = (normalized_v.x >  this.theshold);
@@ -174,78 +174,67 @@ Flynn.VirtualJoystick = Class.extend({
 
     render: function(ctx){
         if(this.is_visible){
+            var graphics = ctx.graphics;
+
             if(this.type == 'dpad'){
                 // Draw d-pad cross
                 var hw = this.radius*this.D_WITDH/2;  // Half-width
                 var l = this.radius*this.D_LENGH;
                 var x = this.pos.x;
                 var y = this.pos.y;
-
-                ctx.beginPath(); 
-                ctx.strokeStyle = this.strokeStyle; 
-                ctx.lineWidth = 6; 
-                ctx.lineCap = "square";
-                ctx.moveTo(x+hw, y-l);
-                ctx.lineTo(x+hw, y-hw);
-                ctx.lineTo(x+l, y-hw);
-                ctx.lineTo(x+l, y+hw);
-                ctx.lineTo(x+hw, y+hw);
-                ctx.lineTo(x+hw, y+l);
-                ctx.lineTo(x-hw, y+l);
-                ctx.lineTo(x-hw, y+hw);
-                ctx.lineTo(x-l, y+hw);
-                ctx.lineTo(x-l, y-hw);
-                ctx.lineTo(x-hw, y-hw);
-                ctx.lineTo(x-hw, y-l);
-                ctx.lineTo(x+hw, y-l);
-                ctx.stroke(); 
+                
+                graphics.lineStyle(6, this.color, this.alpha);
+                graphics.moveTo(x+hw, y-l);
+                graphics.lineTo(x+hw, y-hw);
+                graphics.lineTo(x+l, y-hw);
+                graphics.lineTo(x+l, y+hw);
+                graphics.lineTo(x+hw, y+hw);
+                graphics.lineTo(x+hw, y+l);
+                graphics.lineTo(x-hw, y+l);
+                graphics.lineTo(x-hw, y+hw);
+                graphics.lineTo(x-l, y+hw);
+                graphics.lineTo(x-l, y-hw);
+                graphics.lineTo(x-hw, y-hw);
+                graphics.lineTo(x-hw, y-l);
+                graphics.lineTo(x+hw, y-l);
             }
             else{
                 // Draw thick stick head home position circle
-                ctx.beginPath(); 
-                ctx.strokeStyle = this.strokeStyle; 
-                ctx.lineWidth = 6; 
-                ctx.arc(this.pos.x, this.pos.y, this.radius * this.INNER_RADIUS_RATIO, 0, Math.PI*2); 
-                ctx.stroke();   
+                graphics.lineStyle(6, this.color, this.alpha);
+                graphics.drawCircle(
+                    this.pos.x,
+                    this.pos.y,
+                    this.radius * this.INNER_RADIUS_RATIO);
             }
             if(this.type == 'stick'){
                 // Draw 8 pos region lines
                 var i, angle, cos, sin;
 
-                ctx.beginPath();
-                ctx.strokeStyle = this.strokeStyle;
-                ctx.lineWidth = 1;
+                graphics.lineStyle(1, this.color, this.alpha);
                 for(i=0; i<8; i++){
                     angle = Math.PI/4 * i + Math.PI/8;
                     cos = Math.cos(angle);
                     sin = Math.sin(angle);
-                    ctx.moveTo(
+                    graphics.moveTo(
                         cos * (this.radius * this.INNER_RADIUS_RATIO + 3) + this.pos.x,
                         sin * (this.radius * this.INNER_RADIUS_RATIO + 3) + this.pos.y);
-                    ctx.lineTo(
+                    graphics.lineTo(
                         cos * (this.radius - 1) + this.pos.x,
                         sin * (this.radius - 1) + this.pos.y);
                 }
-                ctx.stroke();
             }
 
             // Draw thin outer bound circle
-            ctx.beginPath(); 
-            ctx.strokeStyle = this.strokeStyle; 
-            ctx.lineWidth = 2; 
-            ctx.arc(this.pos.x, this.pos.y, this.radius, 0, Math.PI*2); 
-            ctx.stroke();
-        
+            graphics.lineStyle(2, this.color, this.alpha);
+            ctx.graphics.drawCircle(this.pos.x, this.pos.y, this.radius);
+
             if(this.in_use && (this.type=='stick' || this.type=='analog')){
                 // Draw thick stick head current position circle
-                ctx.beginPath(); 
-                ctx.strokeStyle = this.strokeStyle; 
-                ctx.lineWidth = 6; 
-                ctx.arc(
+                graphics.lineStyle(6, this.color, this.alpha);
+                ctx.graphics.drawCircle(
                     this.pos.x + this.stick_offset.x,
                     this.pos.y + this.stick_offset.y, 
-                    this.radius * this.INNER_RADIUS_RATIO, 0, Math.PI*2); 
-                ctx.stroke();   
+                    this.radius * this.INNER_RADIUS_RATIO); 
             }
         }
     },
