@@ -181,6 +181,7 @@ Flynn.Polygon = Class.extend({
 
         ctx.vectorStart(vector_color, this.is_world, this.constrained);
         var pen_up = false;
+        var first_point = true;
         for (var i=0, len=this.points.length; i<len; i+=2){
             if(this.points[i] == Flynn.PEN_COMMAND){
                 if(this.points[i+1] == Flynn.PEN_UP){
@@ -198,9 +199,10 @@ Flynn.Polygon = Class.extend({
             else{
                 points_x = this.points[i];
                 points_y = this.points[i+1];
-                if(i===0 || pen_up){
+                if(first_point || pen_up){
                     ctx.vectorMoveTo(points_x+draw_x, points_y+draw_y);
                     pen_up = false;
+                    first_point = false;
                 }
                 else {
                     ctx.vectorLineTo(points_x+draw_x, points_y+draw_y);
@@ -210,6 +212,7 @@ Flynn.Polygon = Class.extend({
         ctx.vectorEnd();
 
         // Draw bounding polygon (if enabled for development debug)
+        first_point = true;
         if(this.bounding_visible){
             this.updateBoundingPoly();
             vector_color=(Flynn.Colors.GRAY);
@@ -218,9 +221,10 @@ Flynn.Polygon = Class.extend({
             for (i=0, len=this.points_bounding.length; i<len; i+=2){
                 points_x = this.points_bounding[i];
                 points_y = this.points_bounding[i+1];
-                if(i===0 || pen_up){
+                if(first_point || pen_up){
                     ctx.vectorMoveTo(points_x+draw_x, points_y+draw_y);
                     pen_up = false;
+                    first_point = false;
                 }
                 else {
                     ctx.vectorLineTo(points_x+draw_x, points_y+draw_y);

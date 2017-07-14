@@ -113,12 +113,12 @@ Game.StatePerformance = Flynn.State.extend({
         //-----------------------
         start_milliseconds = window.performance.now();
         ctx.clearAll();
-        ctx.clearRect(
-            this.spiral_bounds.left,
-            this.spiral_bounds.top,
-            this.spiral_bounds.width,
-            this.spiral_bounds.height
-            );
+        // ctx.clearRect(
+        //     this.spiral_bounds.left,
+        //     this.spiral_bounds.top,
+        //     this.spiral_bounds.width,
+        //     this.spiral_bounds.height
+        //     );
 
         for(i=0; i<num_spirals; i++){
             this.polygon_spiral.position.x = spiral_x;

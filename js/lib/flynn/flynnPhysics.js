@@ -75,8 +75,7 @@ Flynn.Physics= Class.extend({
 
         var obj = this.world.GetBodyList();
  
-        this.context.save();
-        //this.context.scale(this.scale, this.scale);
+        // this.context.save();
         while (obj) {
             var body = obj.GetUserData();
             if (body) {
@@ -85,7 +84,7 @@ Flynn.Physics= Class.extend({
      
             obj = obj.GetNext();
         }
-        this.context.restore();
+        // this.context.restore();
     },
 
     collision: function(){
@@ -184,16 +183,9 @@ Flynn.Body= Class.extend({
     },
 
     draw: function(context, scale){
+        var points, i;
         var pos = this.body.GetPosition();
         var angle = this.body.GetAngle();
-     
-        // Save the context
-        context.save();
-     
-        // Translate and rotate
-        context.translate(pos.x * scale, pos.y * scale);
-        context.rotate(angle);
-     
      
         // Draw the shape outline if the shape has a color
         if (this.details.color) {
@@ -209,41 +201,62 @@ Flynn.Body= Class.extend({
                     var first = true;
                     for(var a=0, stop=Math.PI*2.01, step = Math.PI*2/num_sides; a<=stop; a += step ){
                         if(first){
-                            context.vectorMoveTo(Math.cos(a)*this.details.radius*scale, Math.sin(a)*this.details.radius*scale);
+                            context.vectorMoveTo(
+                                (pos.x + Math.cos(a + angle) * this.details.radius) * scale, 
+                                (pos.y + Math.sin(a + angle) * this.details.radius) * scale);
                             first = false;
                         } else {
-                            context.vectorLineTo(Math.cos(a)*this.details.radius*scale, Math.sin(a)*this.details.radius*scale);
+                            context.vectorLineTo(
+                                (pos.x + Math.cos(a + angle) * this.details.radius) * scale,
+                                (pos.y + Math.sin(a + angle) * this.details.radius) * scale);
                         }
                     }
                     context.vectorEnd();
                     break;
                 case "polygon":
-                    var points = this.details.points;
-                    //context.beginPath();
-                    context.vectorStart(this.details.color);
-                    //context.moveTo(points[0].x, points[0].y);
-                    context.vectorMoveTo(points[0].x*scale, points[0].y*scale);
-                    for (var i = 1; i < points.length; i++) {
-                        //context.lineTo(points[i].x, points[i].y);
-                        context.vectorLineTo(points[i].x*scale, points[i].y*scale);
-                    }
-                    context.vectorLineTo(points[0].x*scale, points[0].y*scale);
-                    //context.fill();
-                    context.vectorEnd();
+                    this.draw_points(context, this.details.points, angle, pos, scale);
                     break;
                 case "block":
-                    context.vectorRect(-this.details.width / 2 * scale, -this.details.height / 2 * scale,
-                    this.details.width * scale,
-                    this.details.height * scale,
-                    this.details.color
-                    );
+                    points = [
+                        {x:-this.details.width/2, y: this.details.height/2},
+                        {x: this.details.width/2, y: this.details.height/2},
+                        {x: this.details.width/2, y:-this.details.height/2},
+                        {x:-this.details.width/2, y:-this.details.height/2},
+                    ];
+                    this.draw_points(context, points, angle, pos, scale);
                     break;
                 default:
                     break;
             }
         }
-        context.restore();
     },
+
+    draw_points: function(context, points, angle, pos, scale){
+        var i;
+        var angle_cos = Math.cos(angle);
+        var angle_sin = Math.sin(angle);
+        var ctx_points = [];
+
+        for(i=0; i<points.length; i++){
+            ctx_points.push({
+                x: ((points[i].x * angle_cos - points[i].y * angle_sin) + pos.x) * scale,
+                y: ((points[i].x * angle_sin + points[i].y * angle_cos) + pos.y) * scale
+            });
+        }
+        context.vectorStart(this.details.color);
+
+        for (i = 0; i < ctx_points.length; i++) {
+            if(i===0){
+                context.vectorMoveTo(ctx_points[i].x, ctx_points[i].y);
+            }
+            else{
+                context.vectorLineTo(ctx_points[i].x, ctx_points[i].y);
+            }
+        }
+        context.vectorLineTo(ctx_points[0].x, ctx_points[0].y);
+        context.vectorEnd();
+    }
+
 });
 
 }()); // "use strict" wrapper
