@@ -26,7 +26,7 @@ Game.StatePerformance = Flynn.State.extend({
             );
 
         this.angle = 0;
-        this.num_spirals = 800;
+        this.num_spirals = 500;
         var offset = Game.BOUNDS.top + Game.FONT_MARGIN_TOP * 2 + Game.FONT_SCALE * Flynn.Font.Normal.CharacterHeight;
         this.spiral_bounds = new Flynn.Rect(
             Game.BOUNDS.left,
@@ -36,24 +36,8 @@ Game.StatePerformance = Flynn.State.extend({
         this.fps_update_ticks = Flynn.mcp.canvas.ctx.fpsFrameAverage * 2;
         this.fps_update_counter = this.fps_update_ticks;
         this.pace_samples = [];
+        this.polygons_per_frame_samples = [];
         this.pace_window = 10;
-
-
-        //################
-        // this.texture = new PIXI.Texture.fromImage("spiral.png");
-        // this.container = new PIXI.Container();
-        // Flynn.mcp.canvas.ctx.stage.addChild(this.container);
-        // this.sprites = [];
-        // for(var i=0; i<10; i++){
-        //     var sprite = new PIXI.Sprite(this.texture);
-        //     // this.container = new PIXI.particles.ParticleContainer(100, [false, true, false, false, false]);
-        //     sprite.scale = new PIXI.Point(0.5, 0.5);
-        //     sprite.position = new PIXI.Point(i * 24, 10);
-        //     // Flynn.mcp.canvas.ctx.stage.addChild(this.sprite);
-        //     this.container.addChild(sprite);
-        //     this.sprites.push(sprite);
-        // }
-
     },
 
     median: function(values) {
@@ -75,25 +59,34 @@ Game.StatePerformance = Flynn.State.extend({
         var avg_pace_factor, i;
         this.angle += this.ANGLE_STEP * paceFactor;
         this.polygon_spiral.setAngle(this.angle);
+        // console.log(paceFactor);
 
-        this.pace_samples.push(paceFactor);
-        if(this.pace_samples.length > this.pace_window){
-            this.pace_samples.splice(0,1);
-            avg_pace_factor = 0;
-            for(i=0; i<this.pace_window; i++){
-                avg_pace_factor += this.pace_samples[i];
-            }
-            avg_pace_factor /= this.pace_window;
-            if(avg_pace_factor > 1.05){
-                this.num_spirals -= 0.1;
-            }
-            else{
-                this.num_spirals += 0.1;
-            }
+        if(paceFactor > 1.06){
+            this.num_spirals -= 1;
+        }
+        else{
+            this.num_spirals += 0.05;
         }
 
-        // for(i=0; i<this.sprites.length; i++){
-        //     this.sprites[i].rotation = this.angle;
+
+        // this.pace_samples.push(paceFactor);
+        // if(this.pace_samples.length == this.pace_window){
+        //     avg_pace_factor = 0;
+        //     for(i=0; i<this.pace_window; i++){
+        //         avg_pace_factor += this.pace_samples[i];
+        //     }
+        //     avg_pace_factor = avg_pace_factor/this.pace_window;
+        //     // console.log(avg_pace_factor, this.pace_window, this.pace_samples.length, this.pace_samples);
+        //     if(avg_pace_factor > 1.1){
+        //         this.num_spirals -= 10;
+        //     }
+        //     else if(avg_pace_factor > 1.05){
+        //         this.num_spirals -= 0.5;
+        //     }
+        //     else{
+        //         this.num_spirals += 0.5;
+        //     }
+        //     this.pace_samples = [];
         // }
 
         // this.fps_update_counter--;
@@ -128,11 +121,11 @@ Game.StatePerformance = Flynn.State.extend({
         var start_milliseconds, stop_milliseconds;
         
 
-        var num_spirals = 800;
+        // var num_spirals = 800;
         //-----------------------
         //  BEGIN TIMED SECTION
         //-----------------------
-        start_milliseconds = window.performance.now();
+        // start_milliseconds = window.performance.now();
         ctx.clearAll();
         // ctx.clearRect(
         //     this.spiral_bounds.left,
@@ -141,7 +134,7 @@ Game.StatePerformance = Flynn.State.extend({
         //     this.spiral_bounds.height
         //     );
 
-        for(i=0; i<num_spirals; i++){
+        for(i=0; i<this.num_spirals; i++){
             this.polygon_spiral.position.x = spiral_x;
             this.polygon_spiral.position.y = spiral_y;
             this.polygon_spiral.render(ctx);
@@ -151,23 +144,29 @@ Game.StatePerformance = Flynn.State.extend({
                 spiral_y += spiral_step;
             }   
         }
-        stop_milliseconds = window.performance.now();
+        // stop_milliseconds = window.performance.now();
         //-----------------------
         //  END TIMED SECTION
         //-----------------------
 
-        var polygons_per_second = num_spirals / ((stop_milliseconds - start_milliseconds) / 1000);
-        var polygons_per_frame = polygons_per_second / 60;
+        // var polygons_per_second = this.num_spirals / ((stop_milliseconds - start_milliseconds) / 1000);
+        // var polygons_per_frame = polygons_per_second / 60;
 
-        this.pace_samples.push(polygons_per_frame);
-        if(this.pace_samples.length > this.pace_window){
-            this.pace_samples.splice(0,1);
-        }
-        var median_polygons_per_frame = this.median(this.pace_samples);
+        // this.polygons_per_frame_samples.push(polygons_per_frame);
+        // if(this.polygons_per_frame_samples.length > this.pace_window){
+        //     this.polygons_per_frame_samples.splice(0,1);
+        // }
+        // var median_polygons_per_frame = this.median(this.polygons_per_frame_samples);
 
         Game.render_page_frame(ctx);
+        // ctx.vectorText(
+        //     "POLYGONS PER FRAME: " + Math.floor(median_polygons_per_frame),
+        //     Game.FONT_SCALE, 
+        //     Game.BOUNDS.left + Game.FONT_MARGIN_LEFT,
+        //     Game.BOUNDS.top + Game.FONT_MARGIN_TOP, 
+        //     'left', Flynn.Colors.YELLOW);
         ctx.vectorText(
-            "POLYGONS PER FRAME: " + Math.floor(median_polygons_per_frame),
+            "NUM POLYGONS: " + Math.floor(this.num_spirals),
             Game.FONT_SCALE, 
             Game.BOUNDS.left + Game.FONT_MARGIN_LEFT,
             Game.BOUNDS.top + Game.FONT_MARGIN_TOP, 
