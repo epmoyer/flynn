@@ -41,24 +41,35 @@ Flynn.Canvas = Class.extend({
         this.previousTimestamp = 0;
         this.constrained = false;
 
+        this.devLowFpsPaceFactor = 0;
+        this.devLowFpsFrameCount = 0;
+
         this.gaugeFps = new Flynn.Gauge(
             new Victor(width - 135, height - 80),
-            // new Victor(width/2, height/2),
-            // new Victor(10, height/2),
-            120,  // num_samples
+            120, // num_samples
             60,  // range
-            1, // scale
+            1,   // scale
             10,  // tick_interval
-            Flynn.Colors.YELLOW 
+            Flynn.Colors.YELLOW,
+            'FPS'
+            );
+
+        this.gaugeRenderTime = new Flynn.Gauge(
+            new Victor(width - 135, height - 170),
+            120,  // num_samples
+            34,   // range
+            2,    // scale
+            16.6, // tick_interval
+            Flynn.Colors.DODGERBLUE,
+            'Render'
             );
 
         self = this;
         this.ctx = (function(canvas) {
 
-            // NOTE: It is very important to realize that the "Context" (ctx) used in Flynn
-            //       is (for legacy reasons) NOT an HTML5 graphics context.  It is, rather,
-            //       a custom object which contains data and functions related to
-            //       rendering.
+            // NOTE: The "Context" (ctx) used in Flynn is (for legacy reasons) NOT
+            //       an HTML5 graphics context.  It is, rather, a custom object
+            //       which contains data and functions related to rendering.
             //
             var ctx = {};
 
@@ -595,6 +606,7 @@ Flynn.Canvas = Class.extend({
             if (paceFactor > Flynn.Config.MAX_PACE_RECOVERY_TICKS) {
                 paceFactor = 1;
             }
+            paceFactor *= Flynn.mcp.gameSpeedFactor;
 
             self.ctx.ticks += 1;
 
@@ -607,71 +619,105 @@ Flynn.Canvas = Class.extend({
             self.previousTimestamp = timeNow;
 
             self.gaugeFps.record(1000/deltaMsec);
+
+            //---------------------------
+            // Apply Developer Speed/Pacing options
+            //---------------------------
+            var label = '';
+            var skip_this_frame = false;
+            switch(Flynn.mcp.devPacingMode){
+                case Flynn.DevPacingMode.SLOW_MO:
+                    paceFactor *=  0.2;
+                    label = "SLOW_MO";
+                    break;
+                case Flynn.DevPacingMode.FPS_20:
+                    ++self.devLowFpsFrameCount;
+                    self.devLowFpsPaceFactor += paceFactor;
+                    if(self.devLowFpsFrameCount === 5){
+                        self.devLowFpsFrameCount = 0;
+                        paceFactor = self.devLowFpsPaceFactor;
+                        self.devLowFpsPaceFactor = 0;
+                    }
+                    else{
+                        // Skip this frame (to simulate low frame rate)
+                        skip_this_frame = true;
+                    }
+                    label = "FPS_20";
+                    break;
+            }
             
             //---------------------------
             // Do animation
             //---------------------------
-            var start=0;
-            var end=0;
-            if(Flynn.mcp.browserSupportsPerformance){
-                start = performance.now();
+            if(!skip_this_frame){
+                var start=0;
+                var end=0;
+                if(Flynn.mcp.browserSupportsPerformance){
+                    start = performance.now();
+                }
+                
+                // ***** Clear the PixiJS Graphics object ******
+                self.ctx.stage.removeChildren();
+                self.ctx.graphics.clear();
+                self.ctx.stage.addChild(self.ctx.graphics);
+
+                if(label){
+                    self.ctx.vectorText(label, 1.5, 10, self.canvas.height-20, 'left', Flynn.Colors.RED);
+                }
+
+                animation_callback_f(paceFactor);
+                
+                // TODO: Need to store performance data and render it for the previous frame in
+                //       order to get the gauges below to work in PixiJS.  Fix spelling of 
+                //       drawFpsGague to drawFpsGauge as well :)
+
+                // var color, percentage;
+                // if (self.showMetrics){
+                //     if(Flynn.mcp.browserSupportsPerformance){
+                //         // Render Time 
+                //         //   Green: Good
+                //         //   Red:   Too long
+                //         percentage = (end-start)/(1000/30); // 100% of bar is the 30fps render time (50% is 60fps)
+                //         self.ctx.drawFpsGague(
+                //             new Victor(
+                //                 self.canvas.width-70,
+                //                 self.canvas.height-21
+                //                 ),
+                //             percentage<=50 ? Flynn.Colors.GREEN: Flynn.Colors.RED,
+                //             percentage);
+                //     }
+                //     // FPS:
+                //     //   Green:  Good
+                //     //   Orange: < 59 fps
+                //     //   Red:    < 30 fps
+                //     percentage = self.ctx.fps/60; // 100% of bar is 60fps
+                //     if(self.ctx.fps<59){
+                //         color = Flynn.Colors.ORANGE;
+                //     }
+                //     else if (self.ctx.fps<30){
+                //         color = Flynn.Colors.RED;
+                //     }
+                //     else{
+                //         color = Flynn.Colors.GREEN;
+                //     }
+                //     self.ctx.drawFpsGague(
+                //         new Victor(self.canvas.width-70, self.canvas.height-15), 
+                //         color, percentage);
+                // }
+
+                if (self.showMetrics){
+                    self.gaugeFps.render(self.ctx);
+                    self.gaugeRenderTime.render(self.ctx);
+                }
+
+                if(Flynn.mcp.browserSupportsPerformance){
+                    end = performance.now();
+                    self.gaugeRenderTime.record(end-start);
+                }
+
+                // ***** Render the PixiJS Graphics object ******
+                self.ctx.renderer.render(self.ctx.stage);
             }
-            
-            // ***** Clear the PixiJS Graphics object ******
-            // self.ctx.stage.removeChildren();
-            self.ctx.graphics.clear();
-            // self.ctx.stage.addChild(self.ctx.graphics);
-
-            animation_callback_f(paceFactor);
-            
-            // TODO: Need to store performance data and render it for the previous frame in
-            //       order to get the gauges below to work in PixiJS.  Fix spelling of 
-            //       drawFpsGague to drawFpsGauge as well :)
-
-            // var color, percentage;
-            // if (self.showMetrics){
-            //     if(Flynn.mcp.browserSupportsPerformance){
-            //         // Render Time 
-            //         //   Green: Good
-            //         //   Red:   Too long
-            //         percentage = (end-start)/(1000/30); // 100% of bar is the 30fps render time (50% is 60fps)
-            //         self.ctx.drawFpsGague(
-            //             new Victor(
-            //                 self.canvas.width-70,
-            //                 self.canvas.height-21
-            //                 ),
-            //             percentage<=50 ? Flynn.Colors.GREEN: Flynn.Colors.RED,
-            //             percentage);
-            //     }
-            //     // FPS:
-            //     //   Green:  Good
-            //     //   Orange: < 59 fps
-            //     //   Red:    < 30 fps
-            //     percentage = self.ctx.fps/60; // 100% of bar is 60fps
-            //     if(self.ctx.fps<59){
-            //         color = Flynn.Colors.ORANGE;
-            //     }
-            //     else if (self.ctx.fps<30){
-            //         color = Flynn.Colors.RED;
-            //     }
-            //     else{
-            //         color = Flynn.Colors.GREEN;
-            //     }
-            //     self.ctx.drawFpsGague(
-            //         new Victor(self.canvas.width-70, self.canvas.height-15), 
-            //         color, percentage);
-            // }
-
-            if (self.showMetrics){
-                self.gaugeFps.render(self.ctx);
-            }
-
-            if(Flynn.mcp.browserSupportsPerformance){
-                end = performance.now();
-            }
-
-            // ***** Render the PixiJS Graphics object ******
-            self.ctx.renderer.render(self.ctx.stage);
             
             // Update screen and request callback
             if(!Flynn.mcp.halted){
