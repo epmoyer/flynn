@@ -41,6 +41,17 @@ Flynn.Canvas = Class.extend({
         this.previousTimestamp = 0;
         this.constrained = false;
 
+        this.gaugeFps = new Flynn.Gauge(
+            new Victor(width - 135, height - 80),
+            // new Victor(width/2, height/2),
+            // new Victor(10, height/2),
+            120,  // num_samples
+            60,  // range
+            1, // scale
+            10,  // tick_interval
+            Flynn.Colors.YELLOW 
+            );
+
         self = this;
         this.ctx = (function(canvas) {
 
@@ -255,8 +266,6 @@ Flynn.Canvas = Class.extend({
                     this.graphics.endFill();
                 }
             };
-
-            ctx.fillStyle = '#ff0000';
 
             ctx.fillRect = function(x, y, width, height){
                 this.graphics.lineStyle();
@@ -578,7 +587,8 @@ Flynn.Canvas = Class.extend({
                 timeNow = timeStamp;
             }
             
-            self.ctx.fpsMsecCount += timeNow - self.previousTimestamp;
+            var deltaMsec = timeNow - self.previousTimestamp;
+            self.ctx.fpsMsecCount += deltaMsec;
             // paceFactor represents the % of a 60fps frame that has elapsed.
             // At 30fps the paceFactor is 2.0,  At 15fps it is 4.0
             var paceFactor = (60*(timeNow - self.previousTimestamp))/1000;
@@ -595,6 +605,8 @@ Flynn.Canvas = Class.extend({
                 self.ctx.fpsMsecCount = 0;
             }
             self.previousTimestamp = timeNow;
+
+            self.gaugeFps.record(1000/deltaMsec);
             
             //---------------------------
             // Do animation
@@ -606,9 +618,9 @@ Flynn.Canvas = Class.extend({
             }
             
             // ***** Clear the PixiJS Graphics object ******
-            self.ctx.stage.removeChildren();
+            // self.ctx.stage.removeChildren();
             self.ctx.graphics.clear();
-            self.ctx.stage.addChild(self.ctx.graphics);
+            // self.ctx.stage.addChild(self.ctx.graphics);
 
             animation_callback_f(paceFactor);
             
@@ -649,6 +661,10 @@ Flynn.Canvas = Class.extend({
             //         new Victor(self.canvas.width-70, self.canvas.height-15), 
             //         color, percentage);
             // }
+
+            if (self.showMetrics){
+                self.gaugeFps.render(self.ctx);
+            }
 
             if(Flynn.mcp.browserSupportsPerformance){
                 end = performance.now();

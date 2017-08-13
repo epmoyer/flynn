@@ -406,6 +406,7 @@ Flynn.Util = {
     },
 
     parseColor: function (color, toNumber) {
+        // Translate a color from ASCII format to hex number or vice versa
         if (toNumber === true) {
             if (typeof color === 'number') {
                 return (color | 0); //chop off decimal

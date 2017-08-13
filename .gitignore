@@ -1,5 +1,5 @@
 .DS_Store
-Untracked/
+untracked/
 js/lib/box2d/demo.html
 js/lib/box2d/example.html
 deploy.sh

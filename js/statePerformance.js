@@ -26,7 +26,7 @@ Game.StatePerformance = Flynn.State.extend({
             );
 
         this.angle = 0;
-        this.num_spirals = 300;
+        this.num_spirals = 800;
         var offset = Game.BOUNDS.top + Game.FONT_MARGIN_TOP * 2 + Game.FONT_SCALE * Flynn.Font.Normal.CharacterHeight;
         this.spiral_bounds = new Flynn.Rect(
             Game.BOUNDS.left,
@@ -37,6 +37,22 @@ Game.StatePerformance = Flynn.State.extend({
         this.fps_update_counter = this.fps_update_ticks;
         this.pace_samples = [];
         this.pace_window = 10;
+
+
+        //################
+        // this.texture = new PIXI.Texture.fromImage("spiral.png");
+        // this.container = new PIXI.Container();
+        // Flynn.mcp.canvas.ctx.stage.addChild(this.container);
+        // this.sprites = [];
+        // for(var i=0; i<10; i++){
+        //     var sprite = new PIXI.Sprite(this.texture);
+        //     // this.container = new PIXI.particles.ParticleContainer(100, [false, true, false, false, false]);
+        //     sprite.scale = new PIXI.Point(0.5, 0.5);
+        //     sprite.position = new PIXI.Point(i * 24, 10);
+        //     // Flynn.mcp.canvas.ctx.stage.addChild(this.sprite);
+        //     this.container.addChild(sprite);
+        //     this.sprites.push(sprite);
+        // }
 
     },
 
@@ -56,13 +72,14 @@ Game.StatePerformance = Flynn.State.extend({
     },
 
     update: function(paceFactor) {
+        var avg_pace_factor, i;
         this.angle += this.ANGLE_STEP * paceFactor;
         this.polygon_spiral.setAngle(this.angle);
 
         this.pace_samples.push(paceFactor);
         if(this.pace_samples.length > this.pace_window){
             this.pace_samples.splice(0,1);
-            var avg_pace_factor = 0, i;
+            avg_pace_factor = 0;
             for(i=0; i<this.pace_window; i++){
                 avg_pace_factor += this.pace_samples[i];
             }
@@ -74,6 +91,10 @@ Game.StatePerformance = Flynn.State.extend({
                 this.num_spirals += 0.1;
             }
         }
+
+        // for(i=0; i<this.sprites.length; i++){
+        //     this.sprites[i].rotation = this.angle;
+        // }
 
         // this.fps_update_counter--;
         // if(this.fps_update_counter <= 0){
