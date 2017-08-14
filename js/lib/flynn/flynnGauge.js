@@ -39,14 +39,15 @@ Flynn.Gauge = Class.extend({
                 this.title,
                 {   fontFamily: "Arial",
                     fontSize: font_size, 
-                    fill: "#fff8",
+                    fill: "#fff",
                     fontWeight: "bold"
                 }
             );
+        text.alpha = 0.3;
         text.anchor.set(0.5, 0.5);
         text.position.set(
-            this.rect.left + this.rect.width/2,
-            this.rect.top + this.rect.height - this.PAD - 5
+            this.rect.left + this.rect.width/2 + 0.5,
+            this.rect.top + this.rect.height - this.PAD - 6 + 0.5
             );
         this.text_items.push(text);
 
@@ -56,8 +57,10 @@ Flynn.Gauge = Class.extend({
             y=this.rect.top + this.rect.height - this.PAD - (tick * this.scale);
             text = new PIXI.Text(
                 tick.toString(),
-                {   fontFamily: "Arial", fontSize: font_size, 
-                    fill: "#aaa", fontWeight: "bold"}
+                {   fontFamily: "Arial",
+                    fontSize: font_size, 
+                    fill: "#aaa",
+                    fontWeight: "bold"}
             );
             text.anchor.set(0, 0.5);
             text.position.set(
@@ -82,11 +85,9 @@ Flynn.Gauge = Class.extend({
         var graphics = ctx.graphics;
         var offset, y, x, i, tick;
 
-
-        
         // Bounding Box
         graphics.lineStyle(1, 0xcccccc, 1);
-        graphics.beginFill(0x000000);
+        graphics.beginFill(0x000070);
         graphics.drawRect(
             this.rect.left+0.5,
             this.rect.top+0.5, 
@@ -94,7 +95,7 @@ Flynn.Gauge = Class.extend({
             this.rect.height);
         graphics.endFill();
 
-        // Scale lines
+        // Horizontal grid lines
         graphics.lineStyle(1, 0x555555, 1);
         for(tick=0; tick<=this.range; tick+=this.tick_interval){
             y=this.rect.top + this.rect.height - this.PAD - (tick * this.scale);
@@ -107,7 +108,7 @@ Flynn.Gauge = Class.extend({
         graphics.beginFill(this.color_number);
         for(i=0; i<this.samples.length; i++){
             x = this.rect.left + 1 + i;
-            y = y=this.rect.top + this.rect.height - this.PAD - (this.samples[i] * this.scale);
+            y = this.rect.top + this.rect.height - this.PAD - (this.samples[i] * this.scale);
             if(y>this.rect.top + 1){
                 graphics.drawRect(x, y, 2, 2);
             }

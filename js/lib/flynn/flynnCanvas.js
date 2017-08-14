@@ -665,25 +665,28 @@ Flynn.Canvas = Class.extend({
             }
             self.previousTimestamp = timeNow;
 
-            self.gaugeFps.record(1000/deltaMsec);
-
             //---------------------------
             // Apply Developer Speed/Pacing options
             //---------------------------
             var label = '';
             var skip_this_frame = false;
             switch(Flynn.mcp.devPacingMode){
+                case Flynn.DevPacingMode.NORMAL:
+                    self.gaugeFps.record(1000/deltaMsec);
+                    break;
                 case Flynn.DevPacingMode.SLOW_MO:
                     paceFactor *=  0.2;
                     label = "SLOW_MO";
+                    self.gaugeFps.record(1000/deltaMsec);
                     break;
                 case Flynn.DevPacingMode.FPS_20:
                     ++self.devLowFpsFrameCount;
                     self.devLowFpsPaceFactor += paceFactor;
-                    if(self.devLowFpsFrameCount === 5){
+                    if(self.devLowFpsFrameCount === 3){
                         self.devLowFpsFrameCount = 0;
                         paceFactor = self.devLowFpsPaceFactor;
                         self.devLowFpsPaceFactor = 0;
+                        self.gaugeFps.record(60/paceFactor);
                     }
                     else{
                         // Skip this frame (to simulate low frame rate)
@@ -706,50 +709,13 @@ Flynn.Canvas = Class.extend({
                 self.ctx.graphics.clear();
                 self.ctx.stage.addChild(self.ctx.graphics);
 
+
+                animation_callback_f(paceFactor);
+
                 if(label){
                     self.ctx.vectorText(label, 1.5, 10, self.canvas.height-20, 'left', Flynn.Colors.RED);
                 }
-
-                animation_callback_f(paceFactor);
                 
-                // TODO: Need to store performance data and render it for the previous frame in
-                //       order to get the gauges below to work in PixiJS.  Fix spelling of 
-                //       drawFpsGague to drawFpsGauge as well :)
-
-                // var color, percentage;
-                // if (self.showMetrics){
-                //     if(Flynn.mcp.browserSupportsPerformance){
-                //         // Render Time 
-                //         //   Green: Good
-                //         //   Red:   Too long
-                //         percentage = (end-render_start)/(1000/30); // 100% of bar is the 30fps render time (50% is 60fps)
-                //         self.ctx.drawFpsGague(
-                //             new Victor(
-                //                 self.canvas.width-70,
-                //                 self.canvas.height-21
-                //                 ),
-                //             percentage<=50 ? Flynn.Colors.GREEN: Flynn.Colors.RED,
-                //             percentage);
-                //     }
-                //     // FPS:
-                //     //   Green:  Good
-                //     //   Orange: < 59 fps
-                //     //   Red:    < 30 fps
-                //     percentage = self.ctx.fps/60; // 100% of bar is 60fps
-                //     if(self.ctx.fps<59){
-                //         color = Flynn.Colors.ORANGE;
-                //     }
-                //     else if (self.ctx.fps<30){
-                //         color = Flynn.Colors.RED;
-                //     }
-                //     else{
-                //         color = Flynn.Colors.GREEN;
-                //     }
-                //     self.ctx.drawFpsGague(
-                //         new Victor(self.canvas.width-70, self.canvas.height-15), 
-                //         color, percentage);
-                // }
-
                 if (self.showMetrics){
                     self.gaugeFps.render(self.ctx);
                     self.gaugeGameLogicTime.render(self.ctx);
@@ -760,9 +726,9 @@ Flynn.Canvas = Class.extend({
                 render_end = performance_proxy.now();
                 self.gaugeGameLogicTime.record(render_end - render_start);
 
-                // ***** Render the PixiJS Graphics object ******
                 var pixi_start, pixi_end;
                 pixi_start = performance_proxy.now();
+                // ***** Render the PixiJS Graphics object ******
                 self.ctx.renderer.render(self.ctx.stage);
                 pixi_end = performance_proxy.now();
 

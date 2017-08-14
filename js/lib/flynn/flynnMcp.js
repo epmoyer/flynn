@@ -39,8 +39,6 @@ Flynn.Mcp = Class.extend({
         this.current_state = null;
 
         this.devPacingMode = Flynn.DevPacingMode.NORMAL;
-        // this.devLowFpsPaceFactor = 0;
-        // this.devLowFpsFrameCount = 0;
 
         this.viewport = {x:0, y:0};
 
@@ -282,45 +280,9 @@ Flynn.Mcp = Class.extend({
     run: function(){
         var self = this;
 
-        this.canvas.animate( function(paceFactor) {
-
-            // var skipThisFrame = false;
-            // var label = null;
-
-            // switch(self.devPacingMode){
-            //     case Flynn.DevPacingMode.NORMAL:
-            //         paceFactor *= self.gameSpeedFactor;
-            //         break;
-            //     case Flynn.DevPacingMode.SLOW_MO:
-            //         paceFactor *= self.gameSpeedFactor * 0.2;
-            //         label = "SLOW_MO";
-            //         break;
-            //     case Flynn.DevPacingMode.FPS_20:
-            //         paceFactor *= self.gameSpeedFactor;
-            //         ++self.devLowFpsFrameCount;
-            //         self.devLowFpsPaceFactor += paceFactor;
-            //         if(self.devLowFpsFrameCount === 5){
-            //             self.devLowFpsFrameCount = 0;
-            //             paceFactor = self.devLowFpsPaceFactor;
-            //             self.devLowFpsPaceFactor = 0;
-            //         }
-            //         else{
-            //             // Skip this frame (to simulate low frame rate)
-            //             skipThisFrame = true;
-            //         }
-            //         label = "FPS_20";
-            //         break;
-            // }
-
-            // if(!skipThisFrame){
-                
+        this.canvas.animate( function(paceFactor) {  
             // Change state (if pending)
             if (self.next_state_id !== self.noChangeState) {
-
-                // Hide all touch controls on a state change
-                //self.input.hideTouchRegionAll();
-                //self.input.hideVirtualJoystickAll();
-
                 if(self.current_state && self.current_state.destructor){
                     self.current_state.destructor();
                 }
@@ -330,7 +292,6 @@ Flynn.Mcp = Class.extend({
 
                 // Update controls visibility to reflect new state
                 self.input.updateVisibilityAllControls();
-
             }
 
             // Update clock and timers
@@ -343,10 +304,6 @@ Flynn.Mcp = Class.extend({
                 self.current_state.update(paceFactor);
                 self.current_state.render(self.canvas.ctx);
 
-                // if(label){
-                //     self.canvas.ctx.vectorText(label, 1.5, 10, self.canvasHeight-20, 'left', Flynn.Colors.GRAY);
-                // }
-
                 // Render any visible virtual controls
                 self.input.renderTouchRegions(self.touch_control_canvas.ctx);
                 self.input.renderVirtualJoysticks(self.touch_control_canvas.ctx);
@@ -357,8 +314,6 @@ Flynn.Mcp = Class.extend({
                     self.devHalt();
                 }
             }
-
-            // }
         });
     },
 
