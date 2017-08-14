@@ -44,7 +44,12 @@ Flynn.Canvas = Class.extend({
         this.devLowFpsPaceFactor = 0;
         this.devLowFpsFrameCount = 0;
 
+        //---------------------------
+        // Add performance gauges
+        //---------------------------
+
         var gauge_x = width - 131;
+        var gauge_spacing = 8;
         this.gaugeFps = new Flynn.Gauge(
             new Victor(gauge_x, height - 80),
             120, // num_samples
@@ -56,7 +61,8 @@ Flynn.Canvas = Class.extend({
             );
 
         this.gaugeGameLogicTime = new Flynn.Gauge(
-            new Victor(gauge_x, this.gaugeFps.position.y - 90),
+            // new Victor(gauge_x, this.gaugeFps.position.y - 90),
+            new Victor(gauge_x, 100),
             120,  // num_samples
             34,   // range
             2,    // scale
@@ -64,30 +70,42 @@ Flynn.Canvas = Class.extend({
             Flynn.Colors.DODGERBLUE,
             'Input/Update/Render'
             );
+        this.gaugeGameLogicTime.moveTo( new Victor(
+                gauge_x, 
+                this.gaugeFps.rect.top - this.gaugeGameLogicTime.rect.height - gauge_spacing
+            ));
 
         this.gaugePixiTime = new Flynn.Gauge(
             new Victor(
                 gauge_x, 
-                this.gaugeGameLogicTime.position.y - 93),
-            120,  // num_samples
-            34,   // range
-            2,    // scale
-            16.6, // tick_interval
-            Flynn.Colors.GREEN,
-            'Pixi'
-            );
-
-        this.gaugeTotalAnimation = new Flynn.Gauge(
-            new Victor(
-                gauge_x, 
-                this.gaugePixiTime.position.y - 93),
+                this.gaugeGameLogicTime.rect.top - 93),
             120,  // num_samples
             34,   // range
             2,    // scale
             16.6, // tick_interval
             Flynn.Colors.CYAN,
+            'Pixi'
+            );
+        this.gaugePixiTime.moveTo( new Victor(
+                gauge_x, 
+                this.gaugeGameLogicTime.rect.top - this.gaugePixiTime.rect.height - gauge_spacing
+            ));
+
+        this.gaugeTotalAnimation = new Flynn.Gauge(
+            new Victor(
+                gauge_x, 
+                this.gaugePixiTime.rect.top - 93),
+            120,  // num_samples
+            34,   // range
+            2,    // scale
+            16.6, // tick_interval
+            Flynn.Colors.MAGENTA,
             'Animation'
             );
+        this.gaugeTotalAnimation.moveTo( new Victor(
+                gauge_x, 
+                this.gaugePixiTime.rect.top - this.gaugeTotalAnimation.rect.height - gauge_spacing
+            ));
 
         self = this;
         this.ctx = (function(canvas) {

@@ -5,7 +5,7 @@ Flynn.Gauge = Class.extend({
     PAD: 6,
 
     init: function(position, num_samples, range, scale, tick_interval, color, title){
-        var i;
+        var i, width, height;
 
         this.position = position;
         this.num_samples = num_samples;
@@ -14,9 +14,12 @@ Flynn.Gauge = Class.extend({
         this.tick_interval = tick_interval;
         this.color_number = Flynn.Util.parseColor(color, true);
         this.title = title;
+        
+        this.text_items = [];
 
-        this.height = range * scale + (2 * this.PAD);
-        this.width = num_samples + 2;
+        height = range * scale + (2 * this.PAD);
+        width = num_samples + 2;
+        this.rect = new Flynn.Rect(position.x, position.y, width, height);
         
         this.samples = [];
 
@@ -24,26 +27,33 @@ Flynn.Gauge = Class.extend({
             this.samples.push(0);
         }
 
+        this._buildText();
+    },
+
+    _buildText: function(){
         var font_size = 10;
         var text;
         this.text_items = [];
 
         text = new PIXI.Text(
-            title,
-            {   fontFamily: "Arial", fontSize: font_size, 
-                fill: "#fff8", fontWeight: "bold"}
-        );
+                this.title,
+                {   fontFamily: "Arial",
+                    fontSize: font_size, 
+                    fill: "#fff8",
+                    fontWeight: "bold"
+                }
+            );
         text.anchor.set(0.5, 0.5);
         text.position.set(
-            position.x + this.width/2,
-            position.y + this.height - this.PAD - 5
+            this.rect.left + this.rect.width/2,
+            this.rect.top + this.rect.height - this.PAD - 5
             );
         this.text_items.push(text);
 
         var y, x, tick;
-        x = position.x + 5;
+        x = this.rect.left + 5;
         for(tick=0; tick<=this.range; tick+=this.tick_interval){
-            y=this.position.y + this.height - this.PAD - (tick * this.scale);
+            y=this.rect.top + this.rect.height - this.PAD - (tick * this.scale);
             text = new PIXI.Text(
                 tick.toString(),
                 {   fontFamily: "Arial", fontSize: font_size, 
@@ -56,7 +66,11 @@ Flynn.Gauge = Class.extend({
             );
             this.text_items.push(text);
         }
+    },
 
+    moveTo: function(position){
+        this.rect.moveTo(position);
+        this._buildText();
     },
 
     record: function(sample){
@@ -74,27 +88,27 @@ Flynn.Gauge = Class.extend({
         graphics.lineStyle(1, 0xcccccc, 1);
         graphics.beginFill(0x000000);
         graphics.drawRect(
-            this.position.x+0.5,
-            this.position.y+0.5, 
-            this.width,
-            this.height);
+            this.rect.left+0.5,
+            this.rect.top+0.5, 
+            this.rect.width,
+            this.rect.height);
         graphics.endFill();
 
         // Scale lines
         graphics.lineStyle(1, 0x555555, 1);
         for(tick=0; tick<=this.range; tick+=this.tick_interval){
-            y=this.position.y + this.height - this.PAD - (tick * this.scale);
-            graphics.moveTo(this.position.x + 1, y);
-            graphics.lineTo(this.position.x + this.width - 1, y);
+            y=this.rect.top + this.rect.height - this.PAD - (tick * this.scale);
+            graphics.moveTo(this.rect.left + 1, y);
+            graphics.lineTo(this.rect.left + this.rect.width - 1, y);
         }
 
         // Samples
         graphics.lineStyle();
         graphics.beginFill(this.color_number);
         for(i=0; i<this.samples.length; i++){
-            x = this.position.x + 1 + i;
-            y = y=this.position.y + this.height - this.PAD - (this.samples[i] * this.scale);
-            if(y>this.position.y + 1){
+            x = this.rect.left + 1 + i;
+            y = y=this.rect.top + this.rect.height - this.PAD - (this.samples[i] * this.scale);
+            if(y>this.rect.top + 1){
                 graphics.drawRect(x, y, 2, 2);
             }
         }
