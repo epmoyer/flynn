@@ -47,7 +47,7 @@ Flynn.Gauge = Class.extend({
             text = new PIXI.Text(
                 tick.toString(),
                 {   fontFamily: "Arial", fontSize: font_size, 
-                    fill: "#ccc", fontWeight: "bold"}
+                    fill: "#aaa", fontWeight: "bold"}
             );
             text.anchor.set(0, 0.5);
             text.position.set(

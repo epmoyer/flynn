@@ -44,8 +44,9 @@ Flynn.Canvas = Class.extend({
         this.devLowFpsPaceFactor = 0;
         this.devLowFpsFrameCount = 0;
 
+        var gauge_x = width - 131;
         this.gaugeFps = new Flynn.Gauge(
-            new Victor(width - 135, height - 80),
+            new Victor(gauge_x, height - 80),
             120, // num_samples
             60,  // range
             1,   // scale
@@ -54,14 +55,38 @@ Flynn.Canvas = Class.extend({
             'FPS'
             );
 
-        this.gaugeRenderTime = new Flynn.Gauge(
-            new Victor(width - 135, height - 170),
+        this.gaugeGameLogicTime = new Flynn.Gauge(
+            new Victor(gauge_x, this.gaugeFps.position.y - 90),
             120,  // num_samples
             34,   // range
             2,    // scale
             16.6, // tick_interval
             Flynn.Colors.DODGERBLUE,
-            'Render'
+            'Input/Update/Render'
+            );
+
+        this.gaugePixiTime = new Flynn.Gauge(
+            new Victor(
+                gauge_x, 
+                this.gaugeGameLogicTime.position.y - 93),
+            120,  // num_samples
+            34,   // range
+            2,    // scale
+            16.6, // tick_interval
+            Flynn.Colors.GREEN,
+            'Pixi'
+            );
+
+        this.gaugeTotalAnimation = new Flynn.Gauge(
+            new Victor(
+                gauge_x, 
+                this.gaugePixiTime.position.y - 93),
+            120,  // num_samples
+            34,   // range
+            2,    // scale
+            16.6, // tick_interval
+            Flynn.Colors.CYAN,
+            'Animation'
             );
 
         self = this;
@@ -591,11 +616,15 @@ Flynn.Canvas = Class.extend({
             // Calculate FPS and pacing
             //---------------------------
             var timeNow;
+            var performance_proxy;
+
             if(Flynn.mcp.browserSupportsPerformance){
                 timeNow = performance.now();
+                performance_proxy = performance;
             }
             else{
                 timeNow = timeStamp;
+                performance_proxy = Flynn.PerformanceNull;
             }
             
             var deltaMsec = timeNow - self.previousTimestamp;
@@ -650,11 +679,9 @@ Flynn.Canvas = Class.extend({
             // Do animation
             //---------------------------
             if(!skip_this_frame){
-                var start=0;
-                var end=0;
-                if(Flynn.mcp.browserSupportsPerformance){
-                    start = performance.now();
-                }
+                var render_start=0;
+                var render_end=0;
+                render_start = performance_proxy.now();
                 
                 // ***** Clear the PixiJS Graphics object ******
                 self.ctx.stage.removeChildren();
@@ -677,7 +704,7 @@ Flynn.Canvas = Class.extend({
                 //         // Render Time 
                 //         //   Green: Good
                 //         //   Red:   Too long
-                //         percentage = (end-start)/(1000/30); // 100% of bar is the 30fps render time (50% is 60fps)
+                //         percentage = (end-render_start)/(1000/30); // 100% of bar is the 30fps render time (50% is 60fps)
                 //         self.ctx.drawFpsGague(
                 //             new Victor(
                 //                 self.canvas.width-70,
@@ -707,16 +734,25 @@ Flynn.Canvas = Class.extend({
 
                 if (self.showMetrics){
                     self.gaugeFps.render(self.ctx);
-                    self.gaugeRenderTime.render(self.ctx);
+                    self.gaugeGameLogicTime.render(self.ctx);
+                    self.gaugePixiTime.render(self.ctx);
+                    self.gaugeTotalAnimation.render(self.ctx);
                 }
 
-                if(Flynn.mcp.browserSupportsPerformance){
-                    end = performance.now();
-                    self.gaugeRenderTime.record(end-start);
-                }
+                render_end = performance_proxy.now();
+                self.gaugeGameLogicTime.record(render_end - render_start);
 
                 // ***** Render the PixiJS Graphics object ******
+                var pixi_start, pixi_end;
+                pixi_start = performance_proxy.now();
                 self.ctx.renderer.render(self.ctx.stage);
+                pixi_end = performance_proxy.now();
+
+                self.gaugePixiTime.record(pixi_end - pixi_start);
+                self.gaugeTotalAnimation.record(
+                        render_end - render_start +
+                        pixi_end - pixi_start
+                    );
             }
             
             // Update screen and request callback
@@ -726,7 +762,14 @@ Flynn.Canvas = Class.extend({
 
         };
         refresh_f(callback_f, this.canvas );
-    }
+    },
 });
+
+Flynn.PerformanceNull = {
+    now: function(){
+        return 0;
+    },
+};
+
 
 }()); // "use strict" wrapper
