@@ -82,8 +82,6 @@ Flynn.StateEnd = Flynn.State.extend({
     },
 
     render: function(ctx) {
-        ctx.clearAll();
-
         if (this.hasEnteredName) {
             ctx.vectorText(this.title, 4, null, 130, null, this.color);
             for (var i = 0, len = this.leaderboard.leaderList.length; i < len; i++) {

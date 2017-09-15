@@ -36,9 +36,6 @@ Game.render_page_frame = function(ctx){
         ctx.vectorText(text, Game.BANNER_FONT_SCALE, x, 11, 'left', color);
         x += Flynn.Font.Normal.CharacterSpacing * Game.BANNER_FONT_SCALE * (text.length + 2);
     }
-
-    // TOTO: Remove later.  For now, identify this clearly as the PIXI build
-    ctx.vectorText('PIXI', Game.BANNER_FONT_SCALE, ctx.width-Game.BORDER_MARGIN-8, 11, 'right', Flynn.Colors.RED);
 };
 
 Game.handleInputs_common = function(input){

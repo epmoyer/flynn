@@ -424,6 +424,47 @@ Flynn.Util = {
         }
     },
 
+    validateProperties: function(target, required_keys, defaults){
+        // - Validate that object has all required keys
+        // - Validate that object has no unexpected keys
+        // - Apply defaults
+        //
+        // Arguments:
+        //     target: The object to validate
+        //     required_keys: List of strings 
+        //     defaults: Object containing key/value pairs
+        //
+        var i, key;
+        
+        var default_keys = Object.keys(defaults);
+        var permitted_keys = required_keys.concat(default_keys);
+        var target_keys = Object.keys(target);
+
+        // Validate that object has all required keys
+        for(i=0; i<required_keys.length; i++){
+            key = required_keys[i];
+            if(target_keys.indexOf(key) == -1){
+                throw Error('Required key "' + key + '" not present in object.');
+            }
+        }
+
+        // Validate that object has no unexpected keys
+        for(i=0; i<target_keys.length; i++){
+            key = target_keys[i];
+            if(permitted_keys.indexOf(key) == -1){
+                throw Error('Unexpected key "' + key + '" in object.');
+            }
+        }
+
+        // Apply defaults
+        for(i=0; i<default_keys.length; i++){
+            key = default_keys[i];
+            if(target_keys.indexOf(key) == -1){
+                target[key] = defaults[key];
+            }
+        }
+    },
+
 };
 
 }()); // "use strict" wrapper

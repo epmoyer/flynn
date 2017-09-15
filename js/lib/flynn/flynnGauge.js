@@ -83,7 +83,7 @@ Flynn.Gauge = Class.extend({
 
     render: function(ctx){
         var graphics = ctx.graphics;
-        var offset, y, x, i, tick;
+        var y, x, i, tick;
 
         // Bounding Box
         graphics.lineStyle(1, 0xcccccc, 1);

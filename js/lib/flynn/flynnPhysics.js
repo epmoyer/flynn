@@ -183,7 +183,7 @@ Flynn.Body= Class.extend({
     },
 
     draw: function(context, scale){
-        var points, i;
+        var points;
         var pos = this.body.GetPosition();
         var angle = this.body.GetAngle();
      

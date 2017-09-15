@@ -153,3 +153,50 @@ describe("Victor.boundMagnitude()", function() {
     });
 
 });
+
+describe("Util.validateProperties()", function() {
+
+    it("does nothing if target validates and has no defaults", function() {
+        target = {'arg_1': 1, 'arg_2': 2};
+        target_copy = Object.assign({}, target);
+        var result = Flynn.Util.validateProperties(
+            target,
+            ['arg_1', 'arg_2'],
+            {}
+        );
+        expect(target).toEqual(target_copy);
+    });
+
+    it("adds defaults to target if they do not exist", function() {
+        target = {'arg_1': 1, 'arg_2': 2};
+        var result = Flynn.Util.validateProperties(
+            target,
+            ['arg_1', 'arg_2'],
+            {'arg_2': 222, 'arg_3': 3, 'arg_4': 4}
+        );
+        expect(target).toEqual({'arg_1': 1, 'arg_2': 2, 'arg_3':3, 'arg_4': 4});
+    });
+
+    it("throws Error if required key does not exist", function() {
+        target = {'arg_1': 1, 'arg_2': 2};
+        expect( function(){
+            Flynn.Util.validateProperties(
+                target,
+                ['arg_1', 'arg_2', 'arg_3'],
+                {}
+            );
+        }).toThrow(new Error('Required key "arg_3" not present in object.'));
+    });
+
+    it("throws Error for unexpected key", function() {
+        target = {'arg_1': 1, 'arg_2': 2, 'arg_3': 3};
+        expect( function(){
+            Flynn.Util.validateProperties(
+                target,
+                ['arg_1', 'arg_2'],
+                {}
+            );
+        }).toThrow(new Error('Unexpected key "arg_3" in object.'));
+    });
+
+});

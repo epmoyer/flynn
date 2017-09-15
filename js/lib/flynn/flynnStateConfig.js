@@ -193,8 +193,6 @@ Flynn.StateConfig = Flynn.State.extend({
     },
 
     render: function(ctx) {
-        ctx.clearAll();
-
         ctx.vectorText("CONFIGURATION OPTIONS", 4, null, 100, null, this.mainTextColor);
 
         var line_spacing = 15;
