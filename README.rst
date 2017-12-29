@@ -68,9 +68,4 @@ As of this writing (v2.5.1), Flynn supports the following features:
    - Browser resize
    - Screen rotation (mobile devices)
 
-Revision History
-================
-2.5.3
-   Baseline release.
-
 .. _`Eric Moyer`: mailto:eric@lemoncrab.com  
