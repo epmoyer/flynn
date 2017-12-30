@@ -42,7 +42,7 @@ def uglify(filenames, out_filename):
     command = 'uglifyjs'
     for filename in filenames:
         command += ' ' + filename
-    command += f' -o {out_filename} --source-map {out_filename}.source-map -c -m'
+    command += f' -o {out_filename} --source-map -c -m'
     print(f'Building "{out_filename}"...')
     print(Fore.GREEN + command)
     subprocess.run(command, shell=True)

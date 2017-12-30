@@ -27,8 +27,6 @@ Game.StateText = Flynn.State.extend({
         if (true){
             this.render_dirty = false;
 
-            ctx.clearAll();
-
             var left_x = 10;
             var margin = 3;
             var i, j, x;

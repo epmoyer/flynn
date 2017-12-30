@@ -22,8 +22,6 @@ Game.StateInfo = Flynn.State.extend({
     render: function(ctx){
         var credit_text, y_step, y_text, line_text, line_color;
 
-        ctx.clearAll();
-
         Game.render_page_frame(ctx);
 
         credit_text = [

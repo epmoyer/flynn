@@ -13,6 +13,20 @@ Unreleased
 
 (None)
 
+3.3.0 - 2017-12-29
+------------------
+
+Added
+^^^^^
+- Engine
+
+  - Add ctx.world_wrap_enabled to wrap drawing
+  - Add world_wrap parameter to Flynn.Projectiles
+
+- Test Application
+
+  - Change WORLD panel to demo draw wrapping.
+
 3.2.2 - 2017-09-15
 ------------------
 

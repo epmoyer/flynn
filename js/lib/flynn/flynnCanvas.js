@@ -157,6 +157,11 @@ Flynn.Canvas = Class.extend({
             ctx.LOWERCASE_A = 'a'.charCodeAt(0);
             ctx.LOWERCASE_Z = 'z'.charCodeAt(0);
             ctx.UPPER_TO_LOWER = 0x20;
+
+            ctx.world_wrap_enabled = false;
+            ctx.world_bounds = null;
+            ctx.world_wrap_offset_x = 0;
+            ctx.world_wrap_offset_y = 0;
             
             ctx.drawPolygon = function(p, x, y) {
                 // .drawPolypon is deprecated. No world support.
@@ -262,8 +267,9 @@ Flynn.Canvas = Class.extend({
                 }
                 if(this.is_world){
                     // World coordinates
-                    x -= Math.floor(Flynn.mcp.viewport.x);
-                    y -= Math.floor(Flynn.mcp.viewport.y);
+                    var world = this.worldToScreen(x, y, true);
+                    x = world.x;
+                    y = world.y;
                 }
                 this.vectorVericies.push(x, y);
                 if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
@@ -287,8 +293,9 @@ Flynn.Canvas = Class.extend({
                 }
                 if(this.is_world){
                     // World coordinates
-                    x -= Math.floor(Flynn.mcp.viewport.x);
-                    y -= Math.floor(Flynn.mcp.viewport.y);
+                    var world = this.worldToScreen(x, y, false);
+                    x = world.x;
+                    y = world.y;
                 }
                 this.vectorVericies.push(x, y);
                 if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
@@ -319,6 +326,40 @@ Flynn.Canvas = Class.extend({
                     }
                     this.graphics.endFill();
                 }
+            };
+
+            ctx.worldToScreen = function(x, y, preserve){
+                // Convert a location from world coordinates to screen coordinates
+                x -= Math.floor(Flynn.mcp.viewport.x);
+                y -= Math.floor(Flynn.mcp.viewport.y);
+                if(!this.world_wrap_enabled){
+                    return({ 'x': x, 'y': y });
+                }
+                var wrap_margin = 40;
+                if(!preserve){
+                    if(x < -wrap_margin){
+                        this.world_wrap_offset_x = this.world_bounds.width; 
+                    }
+                    else if(x > this.width + wrap_margin){
+                        this.world_wrap_offset_x = -this.world_bounds.width; 
+                    }
+                    else{
+                        this.world_wrap_offset_x = 0;
+                    }
+                    if(y < -wrap_margin){
+                        this.world_wrap_offset_y = this.world_bounds.height; 
+                    }
+                    else if(y > this.height + wrap_margin){
+                        this.world_wrap_offset_y = -this.world_bounds.height; 
+                    }
+                    else{
+                        this.world_wrap_offset_y = 0;
+                    }
+                }
+                return({ 
+                    'x': x + this.world_wrap_offset_x, 
+                    'y': y + this.world_wrap_offset_y
+                });
             };
 
             ctx.fillRect = function(x, y, width, height){

@@ -30,8 +30,15 @@ Flynn.Projectile= Class.extend({
             // Add impulse
             this.position.add(this.velocity.clone().multiplyScalar(paceFactor));
         }
-        if(!this.projectiles.bounds_rect.hasPoint(this.position.x, this.position.y)){
-            isAlive = false;
+        if(this.projectiles.world_wrap){
+            // Wrap at world boundary
+            Flynn.Util.doBoundsWrap(this, this.projectiles.bounds_rect);
+        }
+        else{
+            // Die when leaving world boundary
+            if(!this.projectiles.bounds_rect.hasPoint(this.position.x, this.position.y)){
+                isAlive = false;
+            }
         }
         return isAlive;
     },
@@ -40,9 +47,13 @@ Flynn.Projectile= Class.extend({
         ctx.fillStyle=this.color;
         if(this.projectiles.is_world){
             // Render as world coordinates
+            var world = ctx.worldToScreen(
+                this.position.x,
+                this.position.y,
+                false);
             ctx.fillRect(
-                this.position.x - Flynn.mcp.viewport.x,
-                this.position.y - Flynn.mcp.viewport.y,
+                world.x,
+                world.y,
                 this.size,
                 this.size);
         }
@@ -60,15 +71,19 @@ Flynn.Projectile= Class.extend({
 
 Flynn.Projectiles = Class.extend({
 
-    init: function(bounds_rect, is_world){
+    init: function(bounds_rect, is_world, world_wrap){
         if(bounds_rect.object_id != "Flynn.Rect"){
             throw("API has changed. Expected bounds_rect type of Flynn.Rect");
         }
         if(typeof(is_world)=='undefined'){
             is_world = false; // Default to screen coordinates
         }
+        if(typeof(world_wrap)=='undefined'){
+            world_wrap = false; // Default to non-wrapping
+        }
         this.bounds_rect = bounds_rect.clone();
         this.is_world = is_world;
+        this.world_wrap = world_wrap;
         
         this.projectiles=[];
     },

@@ -180,7 +180,6 @@ Game.StateUtil = Flynn.State.extend({
         var left_margin = 8, top_margin = 10, scale = 1.5, heading_color=Flynn.Colors.YELLOW;
         var line_step_y = 18;
         var left_x, curret_y;
-        ctx.clearAll();
 
         Game.render_page_frame (ctx);
 

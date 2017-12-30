@@ -51,9 +51,13 @@ Game.StarField = Flynn.State.extend({
 
         for(i=0, len=this.stars.length; i<len; i++){
             ctx.fillStyle=this.stars[i].color;
+            var world = ctx.worldToScreen(
+                this.stars[i].x,
+                this.stars[i].y,
+                false);
             ctx.fillRect(
-                this.stars[i].x - Math.floor(Flynn.mcp.viewport.x),
-                this.stars[i].y - Math.floor(Flynn.mcp.viewport.y),
+                world.x,
+                world.y,
                 2,
                 2);
         }
@@ -73,8 +77,11 @@ Game.StateWorld = Flynn.State.extend({
         this.center_y = Flynn.mcp.canvasHeight/2;
 
         this.world_rect = new Flynn.Rect(
-            0, 0, Flynn.mcp.canvasWidth * 2, Flynn.mcp.canvasHeight * 2
+            0, 0, Flynn.mcp.canvasWidth * 1.1, Flynn.mcp.canvasHeight * 1.25
             );
+
+        Flynn.mcp.canvas.ctx.world_bounds = this.world_rect;
+        Flynn.mcp.canvas.ctx.world_wrap_enabled = true;
 
         this.starfield = new Game.StarField(
             this.world_rect.width,
@@ -181,8 +188,6 @@ Game.StateWorld = Flynn.State.extend({
 
     render: function(ctx){
 
-        ctx.clearAll();
-
         var left_x = 10;
         var margin = 3;
         var i, j, x, len;
@@ -205,6 +210,17 @@ Game.StateWorld = Flynn.State.extend({
                 true // is_world
                 );
             }
+
+        // World boundary
+        ctx.vectorRect(
+            this.world_rect.left - Math.floor(Flynn.mcp.viewport.x),
+            this.world_rect.top - Math.floor(Flynn.mcp.viewport.y),
+            this.world_rect.width,
+            this.world_rect.height,
+            Flynn.Colors.GRAY_DK,
+            null,   // fill_color
+            false   // is_world
+            );
 
         ctx.vectorTextArc(
             "ARC TEXT IN WORLD COORDINATES",

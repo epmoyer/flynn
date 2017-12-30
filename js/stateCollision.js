@@ -205,8 +205,6 @@ Game.StateCollision = Flynn.State.extend({
 
     render: function(ctx){
 
-        ctx.clearAll();
-
         this.projectiles.render(ctx);
 
         var left_x = 10;

@@ -20,8 +20,6 @@ Game.StateFont = Flynn.State.extend({
     },
 
     render: function(ctx){
-        ctx.clearAll();
-
         var left_x = 10;
         var margin = 3;
         var i, j, x;

@@ -126,7 +126,6 @@ Game.StatePerformance = Flynn.State.extend({
         //  BEGIN TIMED SECTION
         //-----------------------
         // start_milliseconds = window.performance.now();
-        ctx.clearAll();
         // ctx.clearRect(
         //     this.spiral_bounds.left,
         //     this.spiral_bounds.top,
