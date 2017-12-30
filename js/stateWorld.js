@@ -68,6 +68,9 @@ Game.StateWorld = Flynn.State.extend({
 
     VIEWPORT_SWEEP_ANGLE_SPEED: 0.008,
     TIMER_EXPLODE_TICKS: 0.3 * Flynn.TICKS_PER_SECOND,
+    TIMER_SHOOT_TICKS: 1.0 * Flynn.TICKS_PER_SECOND,
+    BULLET_LIFETIME: 1.0 * Flynn.TICKS_PER_SECOND,
+    BULLET_SPEED: 1,
 
     init: function() {
         var i, x, len;
@@ -102,7 +105,7 @@ Game.StateWorld = Flynn.State.extend({
             {points:Game.Points.RESPAWN,     scale:3, color: Flynn.Colors.CYAN}
             ];
         this.polygons = [];
-        var poly_radius = 300;
+        var poly_radius = 280;
         var angle_step = Math.PI*2/poly_init.length;
         for (i=0,len=poly_init.length; i<len; i++){
             this.polygons.push(new Flynn.Polygon(
@@ -112,6 +115,45 @@ Game.StateWorld = Flynn.State.extend({
                 new Victor(
                     this.world_rect.center_x + Math.cos(i*angle_step) * poly_radius, 
                     this.world_rect.center_y + Math.sin(i*angle_step) * poly_radius),
+                false, // constrained
+                true   // is_world
+                ));
+        }
+
+        // Make Drones
+        this.drones = [];
+        var angle_margin = Math.PI*2/64;
+        var drone_radius = 340;
+        angle_step = Math.PI*2/4;
+        var margin = 40;
+        var drone_locations = [
+            // Corners
+            new Victor(margin, margin),
+            new Victor(this.world_rect.right - margin, this.world_rect.bottom - margin),
+
+            // Center, vertical
+            new Victor(this.world_rect.center_x, margin),
+            new Victor(this.world_rect.center_x, this.world_rect.bottom - margin),
+
+            // Center, horizontal
+            new Victor(margin, this.world_rect.center_y),
+            new Victor(this.world_rect.right - margin, this.world_rect.center_y),
+        ];
+        // Radial 
+        for (var angle=0; angle<Math.PI*2; angle+=angle_step){
+            for (var offset=-1; offset<=1; offset+=2){
+                drone_locations.push(new Victor(
+                        this.world_rect.center_x + Math.cos(angle + angle_margin * offset) * drone_radius,
+                        this.world_rect.center_y + Math.sin(angle + angle_margin * offset) * drone_radius
+                        ));
+            }
+        }
+        for (i=0,len=drone_locations.length; i<len; i++){
+            this.drones.push(new Flynn.Polygon(
+                Game.Points.DRONE,
+                Flynn.Colors.GREEN,
+                3, // scale
+                drone_locations[i],
                 false, // constrained
                 true   // is_world
                 ));
@@ -133,6 +175,7 @@ Game.StateWorld = Flynn.State.extend({
 
         this.timers = new Flynn.Timers();
         this.timers.add("Explode", this.TIMER_EXPLODE_TICKS, null);
+        this.timers.add("Shoot", this.TIMER_SHOOT_TICKS, null);
 
         this.colors=[
             Flynn.Colors.DODGERBLUE,
@@ -141,6 +184,12 @@ Game.StateWorld = Flynn.State.extend({
             Flynn.Colors.ORANGE,
             Flynn.Colors.MAGENTA,
             Flynn.Colors.CYAN ];
+
+        this.projectiles = new Flynn.Projectiles(
+            this.world_rect,
+            true, // is_world
+            true  // world_wrap
+            );
 
     },
 
@@ -152,6 +201,7 @@ Game.StateWorld = Flynn.State.extend({
         var i, len;
 
         this.particles.update(paceFactor);
+        this.projectiles.update(paceFactor);
         
         // Swirl the viewport around the world center
         this.viewport_sweep_angle += this.VIEWPORT_SWEEP_ANGLE_SPEED * paceFactor;
@@ -175,6 +225,8 @@ Game.StateWorld = Flynn.State.extend({
 
         if(this.timers.hasExpired("Explode")){
             this.timers.set("Explode", this.TIMER_EXPLODE_TICKS);
+
+            // Explode center
             this.particles.explosion(
                 this.world_rect.center_position, 
                 Flynn.Util.randomIntFromInterval(10, 200),      // quantity
@@ -182,6 +234,20 @@ Game.StateWorld = Flynn.State.extend({
                 Flynn.Util.randomChoice(this.colors),           // color
                 new Victor(0,0)                                 // velocity
                 );
+        }
+
+        if(this.timers.hasExpired("Shoot")){
+            this.timers.set("Shoot", this.TIMER_SHOOT_TICKS);
+            // Drones shoot
+            for (i=0,len=this.drones.length; i<len; i++){
+                this.projectiles.add(
+                    this.drones[i].position,
+                    new Victor(this.BULLET_SPEED, 0),
+                    this.BULLET_LIFETIME,
+                    3,
+                    Flynn.Colors.YELLOW
+                    );
+            }
         }
 
     },
@@ -209,6 +275,9 @@ Game.StateWorld = Flynn.State.extend({
                 Flynn.Colors.YELLOW,
                 true // is_world
                 );
+            }
+        for (i=0,len=this.drones.length; i<len; i++){
+            this.drones[i].render(ctx);
             }
 
         // World boundary
@@ -256,6 +325,7 @@ Game.StateWorld = Flynn.State.extend({
         }
 
         this.particles.render(ctx);
+        this.projectiles.render(ctx);
     },
 });
     
