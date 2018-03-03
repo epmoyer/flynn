@@ -333,7 +333,7 @@ Flynn.Canvas = Class.extend({
                 x -= Math.floor(Flynn.mcp.viewport.x);
                 y -= Math.floor(Flynn.mcp.viewport.y);
                 if(!this.world_wrap_enabled){
-                    return({ 'x': x, 'y': y });
+                    return new Victor(x, y);
                 }
                 var wrap_margin = 40;
                 if(!preserve){
@@ -356,10 +356,10 @@ Flynn.Canvas = Class.extend({
                         this.world_wrap_offset_y = 0;
                     }
                 }
-                return({ 
-                    'x': x + this.world_wrap_offset_x, 
-                    'y': y + this.world_wrap_offset_y
-                });
+                return new Victor( 
+                    x + this.world_wrap_offset_x, 
+                    y + this.world_wrap_offset_y
+                );
             };
 
             ctx.fillRect = function(x, y, width, height){

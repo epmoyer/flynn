@@ -373,7 +373,7 @@ Flynn.sounds = {
         volume: 0.4 }),
 };
 
-Flynn.Rect= Class.extend({
+Flynn.Rect = Class.extend({
     init: function(left, top, width, height){
         this.object_id = 'Flynn.Rect';
         this._setAttributes(left, top, width, height);

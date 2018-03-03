@@ -467,4 +467,47 @@ Flynn.Util = {
 
 };
 
+Flynn.WrapUtil = Class.extend({
+
+    init: function(bounds){
+        // bounds: Flynn.Rect
+        
+        this.bounds = bounds;
+    },
+
+    getRelativePosition: function(primary, secondary){
+        // Given a two object positions (primary and secondary),
+        // return a vector pointing from primary to secondary
+        // along the shortest path when taking into consideration
+        // wrap-around at the world boundaries.
+
+        var quadrant_origin_x = primary.x - this.bounds.width / 2;
+        var quadrant_origin_y = primary.y - this.bounds.height / 2;
+
+        var quadrant_secondary_x = secondary.x - quadrant_origin_x;
+        var quadrant_secondary_y = secondary.y - quadrant_origin_y;
+
+        if(quadrant_secondary_x < 0){
+            quadrant_secondary_x += this.bounds.width; 
+        }
+        else if(quadrant_secondary_x > this.bounds.width){
+            quadrant_secondary_x -= this.bounds.width; 
+        }
+
+        if(quadrant_secondary_y < 0){
+            quadrant_secondary_y += this.bounds.height; 
+        }
+        else if(quadrant_secondary_y > this.bounds.height){
+            quadrant_secondary_y -= this.bounds.height; 
+        }
+
+        return new Victor(
+            (quadrant_origin_x + quadrant_secondary_x) - primary.x,
+            (quadrant_origin_y + quadrant_secondary_y) - primary.y
+            );
+        
+    },
+
+});
+
 }()); // "use strict" wrapper

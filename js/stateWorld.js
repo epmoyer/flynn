@@ -82,9 +82,9 @@ Game.StateWorld = Flynn.State.extend({
         this.world_rect = new Flynn.Rect(
             0, 0, Flynn.mcp.canvasWidth * 1.1, Flynn.mcp.canvasHeight * 1.25
             );
-
         Flynn.mcp.canvas.ctx.world_bounds = this.world_rect;
         Flynn.mcp.canvas.ctx.world_wrap_enabled = true;
+        this.wrap_util = new Flynn.WrapUtil(this.world_rect);
 
         this.starfield = new Game.StarField(
             this.world_rect.width,
@@ -198,7 +198,7 @@ Game.StateWorld = Flynn.State.extend({
     },
 
     update: function(paceFactor) {
-        var i, len;
+        var i, j, len;
 
         this.particles.update(paceFactor);
         this.projectiles.update(paceFactor);
@@ -239,15 +239,42 @@ Game.StateWorld = Flynn.State.extend({
         if(this.timers.hasExpired("Shoot")){
             this.timers.set("Shoot", this.TIMER_SHOOT_TICKS);
             // Drones shoot
-            for (i=0,len=this.drones.length; i<len; i++){
+            len=this.drones.length
+            for(i=0; i<len; i++){
+                var min_distance = 9000000;
+                var closest_v = null;
+                for(j=0; j<len; j++){
+                    if(j != i){
+                        var relative_v = this.wrap_util.getRelativePosition(
+                            this.drones[i].position,
+                            this.drones[j].position
+                            );
+                        var distance = relative_v.length();
+                        if(distance < min_distance){
+                            min_distance = distance;
+                            closest_v = relative_v;
+                        }
+                    }
+                }
+                console.log(closest_v);
                 this.projectiles.add(
                     this.drones[i].position,
-                    new Victor(this.BULLET_SPEED, 0),
+                    closest_v.normalize().multiplyScalar(this.BULLET_SPEED),
                     this.BULLET_LIFETIME,
                     3,
                     Flynn.Colors.YELLOW
                     );
+
+                // Drones explode center
+                this.particles.explosion(
+                    this.drones[i].position, 
+                    10,                  // quantity
+                    0.5,                 // max_velocity
+                    Flynn.Colors.GREEN,  // color
+                    new Victor(0,0)      // velocity
+                    );
             }
+
         }
 
     },

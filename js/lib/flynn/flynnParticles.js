@@ -54,10 +54,10 @@ Flynn.Particle = Class.extend({
 
         if(is_world){
             // Render in world coordinates
-            position = new Victor(
-                this.position.x - Flynn.mcp.viewport.x,
-                this.position.y - Flynn.mcp.viewport.y 
-            );
+            position = ctx.worldToScreen(
+                this.position.x,
+                this.position.y,
+                false);
         }
         else{
             // Render in screen coordinates
