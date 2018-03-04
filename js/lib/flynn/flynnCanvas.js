@@ -454,6 +454,10 @@ Flynn.Canvas = Class.extend({
                 //    true: Use world coordinates
                 //    false: Use screen coordinates
                 // font: Flynn font object (Flynn.Font.Normal, Flynn.Font.Block, etc.)
+                // angle: Rotation angle (radians).  Set null (or do not pass it) for 
+                //    unrotated text.  Rotated text does not support justification.
+                //    Note: Unrotated text has better rendering performance than text with
+                //    an angle of "0", so pass null (or do not pass) for unrotated use.
                 var i, len, ch, p, pen_up;
 
                 text = String(text);
