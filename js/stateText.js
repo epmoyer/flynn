@@ -12,6 +12,8 @@ Game.StateText = Flynn.State.extend({
         this.viewport_v = new Victor(0,0);
         this.gameClock = 0;
         this.render_dirty = true;
+        this.rotate_angle = 0;
+        this.rotate_step = (Math.PI/3)/60;
     },
 
     handleInputs: function(input, paceFactor) {
@@ -20,6 +22,7 @@ Game.StateText = Flynn.State.extend({
 
     update: function(paceFactor) {
         this.gameClock += paceFactor;
+        this.rotate_angle += this.rotate_step * paceFactor;
     },
 
     render: function(ctx){
@@ -114,6 +117,17 @@ Game.StateText = Flynn.State.extend({
                 Flynn.mcp.canvasWidth/2, Flynn.mcp.canvasHeight/2, 
                 -Math.PI/2, 
                 230, Flynn.Colors.CYAN, true, false);
+
+            ctx.vectorText(
+                "ROTATION",
+                2.5,
+                Flynn.mcp.canvasWidth * 0.9,
+                Flynn.mcp.canvasHeight * 0.15,
+                'center',
+                Flynn.Colors.CYAN,
+                false,
+                Flynn.Font.Normal,
+                this.rotate_angle);
         }
     }
 });

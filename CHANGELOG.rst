@@ -13,6 +13,20 @@ Unreleased
 
 (None)
 
+3.5.0 - 2018-3-3
+------------------
+
+Added
+^^^^^
+- Engine
+
+  - Add text rotation via angle parameter to ctx.vectorText()
+
+- Test Application
+
+  - Add text rotation demo to TEXT panel
+
+
 3.4.0 - 2018-3-3
 ------------------
 
