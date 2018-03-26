@@ -308,12 +308,12 @@ Game.StateUtil = Flynn.State.extend({
                 Flynn.Colors.GRAY);
 
             polygon.render(ctx);
-            
+
             // Show vertex
             ctx.fillStyle=Flynn.Colors.YELLOW;
             ctx.fillRect(
-                polygon.position.x,
-                polygon.position.y,
+                polygon.position.x-1,
+                polygon.position.y-1,
                 3,
                 3);
         }

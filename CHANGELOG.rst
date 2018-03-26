@@ -13,6 +13,19 @@ Unreleased
 
 (None)
 
+3.6.1 - 2018-3-25
+------------------
+
+Added
+^^^^^
+- Engine
+
+  - Update minified versions
+
+- Test Application
+
+  - Fix anchor dot position for span
+
 3.6.0 - 2018-3-25
 ------------------
 
