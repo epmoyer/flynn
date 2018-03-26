@@ -13,7 +13,7 @@ Game.StateText = Flynn.State.extend({
         this.gameClock = 0;
         this.render_dirty = true;
         this.rotate_angle = 0;
-        this.rotate_step = (Math.PI/3)/60;
+        this.rotate_step = -(Math.PI/3)/60;
     },
 
     handleInputs: function(input, paceFactor) {
@@ -52,48 +52,48 @@ Game.StateText = Flynn.State.extend({
                 Flynn.mcp.canvasHeight-2*margin-guide_inset,
                 Flynn.Colors.GREEN);
 
-            var curret_y = 42;
+            var current_y = 42;
             var indent = 20;
             var line_step = 15;
-            ctx.vectorText("LEFT JUSTIFY", 1.5, left_x, curret_y, 'left', heading_color);
+            ctx.vectorText("LEFT JUSTIFY", 1.5, left_x, current_y, 'left', heading_color);
             var strings = ["A", "AB", "ABC"];
             var num_strings = strings.length;
             var text_x = left_x + indent;
-            curret_y += 20;
-            ctx.vectorLine(text_x, curret_y, text_x, curret_y+num_strings*line_step, Flynn.Colors.GREEN);
+            current_y += 20;
+            ctx.vectorLine(text_x, current_y, text_x, current_y+num_strings*line_step, Flynn.Colors.GREEN);
             for(i=0; i<strings.length; i++){
-                ctx.vectorText(strings[i], 1.5, left_x + indent, curret_y + i*line_step, 'left', Flynn.Colors.WHITE);
+                ctx.vectorText(strings[i], 1.5, left_x + indent, current_y + i*line_step, 'left', Flynn.Colors.WHITE);
             }
 
-            curret_y += 4*line_step;
-            ctx.vectorText("RIGHT JUSTIFY", 1.5, left_x, curret_y, 'left', heading_color);
-            curret_y += 20;
+            current_y += 4*line_step;
+            ctx.vectorText("RIGHT JUSTIFY", 1.5, left_x, current_y, 'left', heading_color);
+            current_y += 20;
             text_x = left_x + indent + 80;
-            ctx.vectorLine(text_x, curret_y, text_x, curret_y+num_strings*line_step, Flynn.Colors.GREEN);
+            ctx.vectorLine(text_x, current_y, text_x, current_y+num_strings*line_step, Flynn.Colors.GREEN);
             for(i=0; i<strings.length; i++){
-                ctx.vectorText(strings[i], 1.5, text_x, curret_y + i*15, 'right', Flynn.Colors.WHITE);
+                ctx.vectorText(strings[i], 1.5, text_x, current_y + i*15, 'right', Flynn.Colors.WHITE);
             }
 
-            curret_y += 4*line_step;
-            ctx.vectorText("CENTER JUSTIFY", 1.5, left_x, curret_y, 'left', heading_color);
-            curret_y += 20;
+            current_y += 4*line_step;
+            ctx.vectorText("CENTER JUSTIFY", 1.5, left_x, current_y, 'left', heading_color);
+            current_y += 20;
             text_x = left_x + indent + 40;
             strings = ["OO", "A_OO_B", "ABC_O_DEF"];
             num_strings = strings.length;
-            ctx.vectorLine(text_x, curret_y, text_x, curret_y+num_strings*line_step, Flynn.Colors.GREEN);
+            ctx.vectorLine(text_x, current_y, text_x, current_y+num_strings*line_step, Flynn.Colors.GREEN);
             for(i=0; i<strings.length; i++){
-                ctx.vectorText(strings[i], 1.5, text_x, curret_y + i*15, 'center', Flynn.Colors.WHITE);
+                ctx.vectorText(strings[i], 1.5, text_x, current_y + i*15, 'center', Flynn.Colors.WHITE);
             }
 
-            curret_y += 4*line_step;
-            ctx.vectorText("SCALING", 1.5, left_x, curret_y, 'left', heading_color);
+            current_y += 4*line_step;
+            ctx.vectorText("SCALING", 1.5, left_x, current_y, 'left', heading_color);
             text_x = left_x + indent;
-            curret_y += 20;
-            ctx.vectorLine(text_x, curret_y, text_x, curret_y+360, Flynn.Colors.GREEN);
+            current_y += 20;
+            ctx.vectorLine(text_x, current_y, text_x, current_y+360, Flynn.Colors.GREEN);
             for(i=0; i<15; i++){
                 var scale = 1.0 + 0.25*i;
-                ctx.vectorText("SCALE = " + scale.toFixed(2), scale, text_x, curret_y, 'left', Flynn.Colors.WHITE);
-                curret_y += scale * Flynn.Font.Normal.CharacterHeight + 8;
+                ctx.vectorText("SCALE = " + scale.toFixed(2), scale, text_x, current_y, 'left', Flynn.Colors.WHITE);
+                current_y += scale * Flynn.Font.Normal.CharacterHeight + 8;
             }
 
             ctx.vectorText("HORIZONTAL CENTERING", 1.5, null, 50, null, Flynn.Colors.WHITE);

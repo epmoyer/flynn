@@ -13,6 +13,17 @@ Unreleased
 
 (None)
 
+3.6.2 - 2018-3-25
+------------------
+
+Added
+^^^^^
+
+- Test Application
+
+  - Add rotation to font tab (block font)
+  - Code cleanup
+
 3.6.1 - 2018-3-25
 ------------------
 
