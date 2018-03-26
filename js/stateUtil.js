@@ -106,6 +106,35 @@ Game.StateUtil = Flynn.State.extend({
             {points:Game.Points.MUTICOLOR5, scale:2.3},
             {points:Game.Points.MUTICOLOR6, scale:3.2},
         ];
+
+        
+        this.span_polygons = [];
+        var span_colors=[
+            Flynn.Colors.DODGERBLUE,
+            Flynn.Colors.RED,
+            Flynn.Colors.GREEN]
+            ;
+
+        var span_points = [
+            Game.Points.SHIP,
+            Game.Points.SHIPB,
+            Game.Points.POINTY_SHIP,
+            ];
+
+        var i;
+        for (i=0; i<span_points.length; i++){
+            this.span_polygons.push(new Flynn.Polygon(
+                span_points[i],
+                span_colors[i],
+                3, // scale
+                new Victor(
+                    Game.BOUNDS.center_x + 30 + i*50,
+                    Game.BOUNDS.center_y + 60),
+                false, // constrained
+                false  // is_world
+                ));
+        }
+
     },
 
     handleInputs: function(input, paceFactor) {
@@ -173,6 +202,14 @@ Game.StateUtil = Flynn.State.extend({
             }
         }
         this.particles.update(paceFactor);
+
+        //--------------------
+        // Spin span polygons
+        //--------------------
+        var i;
+        for (i=0; i<this.span_polygons.length; i++){
+            this.span_polygons[i].setAngle(this.span_polygons[i].angle + Math.PI/180.0 * paceFactor * (1 + 0.2*i));
+        }
     },
 
     render: function(ctx){
@@ -237,6 +274,51 @@ Game.StateUtil = Flynn.State.extend({
         this.ship_polygon[1].render(ctx);
 
         //--------------------
+        // polygon.getSpan() testing
+        //--------------------
+        left_x = Game.BOUNDS.center_x;
+        ctx.vectorText("SPAN", scale, left_x, curret_y, 'left', heading_color);
+        var length = 45;
+        for (i=0; i<this.span_polygons.length; i++){
+            var polygon = this.span_polygons[i]
+            var span = polygon.getSpan();
+            ctx.vectorLine(
+                polygon.position.x - span.left, 
+                polygon.position.y - length/2, 
+                polygon.position.x - span.left, 
+                polygon.position.y + length/2, 
+                Flynn.Colors.GRAY);
+            ctx.vectorLine(
+                polygon.position.x + span.right, 
+                polygon.position.y - length/2, 
+                polygon.position.x + span.right, 
+                polygon.position.y + length/2, 
+                Flynn.Colors.GRAY);
+            ctx.vectorLine(
+                polygon.position.x - length/2, 
+                polygon.position.y - span.up, 
+                polygon.position.x + length/2, 
+                polygon.position.y - span.up, 
+                Flynn.Colors.GRAY);
+            ctx.vectorLine(
+                polygon.position.x - length/2, 
+                polygon.position.y + span.down, 
+                polygon.position.x + length/2, 
+                polygon.position.y + span.down, 
+                Flynn.Colors.GRAY);
+
+            polygon.render(ctx);
+            
+            // Show vertex
+            ctx.fillStyle=Flynn.Colors.YELLOW;
+            ctx.fillRect(
+                polygon.position.x,
+                polygon.position.y,
+                3,
+                3);
+        }
+
+        //--------------------
         // Polygon shatter (particles)
         //--------------------
         ctx.vectorCircle(
@@ -247,6 +329,7 @@ Game.StateUtil = Flynn.State.extend({
             true // is_world
             );
         curret_y = Game.BOUNDS.center_y + top_margin + 55;
+        left_x = Game.BOUNDS.left + left_margin;
         ctx.vectorText("POYGON SHATTER (PARTICLES)", scale, left_x, curret_y, 'left', heading_color);
         for(i = 0; i < this.shatter_polygons.length; i++){
             this.shatter_polygons[i].render(ctx);

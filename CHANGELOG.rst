@@ -13,6 +13,19 @@ Unreleased
 
 (None)
 
+3.6.0 - 2018-3-25
+------------------
+
+Added
+^^^^^
+- Engine
+
+  - Add .getSpan() to Flynn.Polygon
+
+- Test Application
+
+  - Add .getSpan() demo to UTIL panel
+
 3.5.0 - 2018-3-3
 ------------------
 

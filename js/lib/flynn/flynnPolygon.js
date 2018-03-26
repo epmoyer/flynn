@@ -69,6 +69,39 @@ Flynn.Polygon = Class.extend({
         this.points_bounding_dirty = true;
     },
 
+    getSpan: function(){
+        // Get the span (screen size) of the polygon at it's current scale and angle.
+        // Returns an object of the form:
+        //    {left:<float>, right:<float>, up:<float>, down:<float>}
+        // where each float represents the distance (in pixels) from the anchor point 
+        // (this.position) to the farthest vertex (at the current scale) in the given
+        // cardinal direction.
+        // 
+        var span = {left:-1000, right:-1000, up:-1000, down:-1000}
+
+
+        for(var i=0, len=this.pointsMaster.length; i<len; i+=2){
+            var x = this.points[i];
+            var y = this.points[i+1];
+
+            if(x != Flynn.PEN_COMMAND){
+                if(x > 0){
+                    span.right = Math.max(span.right, x)
+                }
+                else{
+                    span.left = Math.max(span.left, -x)
+                }
+                if(y > 0){
+                    span.down = Math.max(span.down, y)
+                }
+                else{
+                    span.up = Math.max(span.up, -y)
+                }
+            }
+        }
+        return(span);
+    },
+
     setScale: function(c){
         this.scale = c;
         this.setAngle(this.angle);
