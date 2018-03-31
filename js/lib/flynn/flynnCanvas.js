@@ -15,9 +15,9 @@ if (typeof Flynn.Config == "undefined") {
 Flynn.Config.MAX_PACE_RECOVERY_TICKS = 5; // Max elapsed 60Hz frames to apply pacing (beyond this, just jank)
 
 // Vector graphics simulation
-Flynn.Config.VECTOR_DIM_FACTOR_THICK = 0.75; // Brightness dimming for vector lines
-Flynn.Config.VECTOR_DIM_FACTOR_THIN  = 0.65;
-Flynn.Config.VECTOR_OVERDRIVE_FACTOR = 0.2;  // White overdrive for vertex point artifacts
+Flynn.Config.VECTOR_DIM_FACTOR_THICK = -0.15; // Brightness dimming for vector lines
+Flynn.Config.VECTOR_DIM_FACTOR_THIN  = -0.15;
+Flynn.Config.VECTOR_OVERDRIVE_FACTOR = 0.5;  // White overdrive for vertex point artifacts
 
 Flynn.Canvas = Class.extend({
 
@@ -204,18 +204,16 @@ Flynn.Canvas = Class.extend({
                     this.constrained = constrained;
                 }
 
-                // Determine vector line color
-                var dim_color_rgb = Flynn.Util.hexToRgb(color);
                 var vectorDimFactor = 1;
                 var lineWidth = 1;
                 switch(Flynn.mcp.options.vectorMode){
                     case Flynn.VectorMode.PLAIN:
-                        vectorDimFactor = 1;
+                        vectorDimFactor = 0;
                         lineWidth = 1;
                         break;
                     case Flynn.VectorMode.V_THICK:
                         vectorDimFactor = Flynn.Config.VECTOR_DIM_FACTOR_THICK;
-                        lineWidth = 3;
+                        lineWidth = 2;
                         break;
                     case Flynn.VectorMode.V_THIN:
                         vectorDimFactor = Flynn.Config.VECTOR_DIM_FACTOR_THIN;
@@ -225,10 +223,10 @@ Flynn.Canvas = Class.extend({
                         var phase = Math.floor(this.ticks) % 3;
                         if (phase === 0){
                             vectorDimFactor = Flynn.Config.VECTOR_DIM_FACTOR_THIN;
-                            lineWidth = 3;
+                            lineWidth = 2;
                         }
                         else if(phase === 1){
-                            vectorDimFactor = 1;
+                            vectorDimFactor = 0;
                             lineWidth = 1;
                         }
                         else{
@@ -237,14 +235,16 @@ Flynn.Canvas = Class.extend({
                         }
                         break;
                 }
-                dim_color_rgb.r *= vectorDimFactor;
-                dim_color_rgb.g *= vectorDimFactor;
-                dim_color_rgb.b *= vectorDimFactor;
-                var dim_color = Flynn.Util.rgbToHex(dim_color_rgb.r, dim_color_rgb.g, dim_color_rgb.b);
+                var dim_color = Flynn.Util.shadeColor(color, vectorDimFactor)
 
                 // Determine vector vertex color
-                var color_overdrive = Flynn.Util.rgbOverdirve(Flynn.Util.hexToRgb(color), Flynn.Config.VECTOR_OVERDRIVE_FACTOR);
-                this.vectorVertexColor = Flynn.Util.rgbToHex(color_overdrive.r, color_overdrive.g, color_overdrive.b);
+                var overdrive = 0.0;
+                if(Flynn.mcp.options.vectorMode != Flynn.VectorMode.PLAIN){
+                    overdrive = Flynn.Config.VECTOR_OVERDRIVE_FACTOR;
+                }
+                // var color_overdrive = Flynn.Util.rgbOverdirve(Flynn.Util.hexToRgb(color), overdrive);
+                // this.vectorVertexColor = Flynn.Util.rgbToHex(color_overdrive.r, color_overdrive.g, color_overdrive.b);
+                this.vectorVertexColor = Flynn.Util.shadeColor(color, overdrive);
 
                 this.vectorVericies = [];
                 var color_num = Flynn.Util.parseColor(dim_color, true);
@@ -274,15 +274,17 @@ Flynn.Canvas = Class.extend({
                 this.vectorVericies.push(x, y);
                 if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
                     this.graphics.lineTo(x, y);
-                    if(this.line_width > 1){
-                        this.graphics.moveTo(x, y);
-                    }
+                    // This "moveTo" keeps PixiJS from drawing ugly long un-mitered corners
+                    // for vertices with very acute angles.
+                    this.graphics.moveTo(x, y);
+                    
                 }
                 else{
                     this.graphics.lineTo(x+0.5, y+0.5);
-                    if(this.line_width > 1){
-                        this.graphics.moveTo(x+0.5, y+0.5);
-                    }
+                    // This "moveTo" keeps PixiJS from drawing ugly long un-mitered corners
+                    // for vertices with very acute angles.
+                    this.graphics.moveTo(x+0.5, y+0.5);
+
                 }
             };
 
@@ -306,26 +308,23 @@ Flynn.Canvas = Class.extend({
                 }
             };
 
-
             ctx.vectorEnd = function(){
-                if(Flynn.mcp.options.vectorMode != Flynn.VectorMode.PLAIN){
-                    // Draw the (bright) vector vertex points
-                    var offset, size;
-                    if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
-                        offset = 1;
-                        size = 2;
-                    }
-                    else{
-                        offset = 0;
-                        size = 1;
-                    }
-                    this.graphics.lineStyle();
-                    this.graphics.beginFill(Flynn.Util.parseColor(this.vectorVertexColor, true));
-                    for(var i=0, len=this.vectorVericies.length; i<len; i+=2) {
-                        this.graphics.drawRect(this.vectorVericies[i]-offset, this.vectorVericies[i+1]-offset, size, size);
-                    }
-                    this.graphics.endFill();
+                // Draw the (bright) vector vertex points
+                var offset, size;
+                if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
+                    offset = 1;
+                    size = 2;
                 }
+                else{
+                    offset = 0;
+                    size = 1;
+                }
+                this.graphics.lineStyle();
+                this.graphics.beginFill(Flynn.Util.parseColor(this.vectorVertexColor, true));
+                for(var i=0, len=this.vectorVericies.length; i<len; i+=2) {
+                    this.graphics.drawRect(this.vectorVericies[i]-offset, this.vectorVericies[i+1]-offset, size, size);
+                }
+                this.graphics.endFill();
             };
 
             ctx.worldToScreen = function(x, y, preserve){
