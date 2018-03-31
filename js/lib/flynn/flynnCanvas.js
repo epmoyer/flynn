@@ -5,7 +5,6 @@ Flynn.VectorMode = {
     PLAIN:     0,   // No Vector rendering emulation (plain lines)
     V_THIN:    1,   // Thin Vector rendering 
     V_THICK:   2,   // Thick Vector rendering
-    V_FLICKER: 3,   // Flicker rendering    
 };
 
 if (typeof Flynn.Config == "undefined") {
@@ -15,6 +14,26 @@ if (typeof Flynn.Config == "undefined") {
 Flynn.Config.MAX_PACE_RECOVERY_TICKS = 5; // Max elapsed 60Hz frames to apply pacing (beyond this, just jank)
 
 // Vector graphics simulation
+Flynn.Config.VectorRender = {
+    PLAIN: {
+        lineBrightness: 0.0,
+        vertexBrightness: 0.0,
+        lineSize: 1.0,
+        vertexSize: 1.0,
+    },
+    V_THIN: {
+        lineBrightness: -0.15,
+        vertexBrightness: 0.5,
+        lineSize: 1.0,
+        vertexSize: 1.0,
+    },
+    V_THICK: {
+        lineBrightness: -0.15,
+        vertexBrightness: 0.5,
+        lineSize: 2.0,
+        vertexSize: 2.0,
+    },
+}
 Flynn.Config.VECTOR_DIM_FACTOR_THICK = -0.15; // Brightness dimming for vector lines
 Flynn.Config.VECTOR_DIM_FACTOR_THIN  = -0.15;
 Flynn.Config.VECTOR_OVERDRIVE_FACTOR = 0.5;  // White overdrive for vertex point artifacts
@@ -147,7 +166,8 @@ Flynn.Canvas = Class.extend({
             ctx.vectorVericies = [];
             ctx.ticks = 0;
             ctx.is_world = false;
-            ctx.line_width = 1;
+            ctx.lineSize = 1;
+            ctx.vertexSize = 1;
 
             ctx.ACODE = "A".charCodeAt(0);
             ctx.ZEROCODE = "0".charCodeAt(0);
@@ -204,52 +224,27 @@ Flynn.Canvas = Class.extend({
                     this.constrained = constrained;
                 }
 
-                var vectorDimFactor = 1;
-                var lineWidth = 1;
+                var config;
                 switch(Flynn.mcp.options.vectorMode){
                     case Flynn.VectorMode.PLAIN:
-                        vectorDimFactor = 0;
-                        lineWidth = 1;
-                        break;
-                    case Flynn.VectorMode.V_THICK:
-                        vectorDimFactor = Flynn.Config.VECTOR_DIM_FACTOR_THICK;
-                        lineWidth = 2;
+                        config = Flynn.Config.VectorRender.PLAIN;
                         break;
                     case Flynn.VectorMode.V_THIN:
-                        vectorDimFactor = Flynn.Config.VECTOR_DIM_FACTOR_THIN;
-                        lineWidth = 1;
+                        config = Flynn.Config.VectorRender.V_THIN;
                         break;
-                    case Flynn.VectorMode.V_FLICKER:
-                        var phase = Math.floor(this.ticks) % 3;
-                        if (phase === 0){
-                            vectorDimFactor = Flynn.Config.VECTOR_DIM_FACTOR_THIN;
-                            lineWidth = 2;
-                        }
-                        else if(phase === 1){
-                            vectorDimFactor = 0;
-                            lineWidth = 1;
-                        }
-                        else{
-                            vectorDimFactor = Flynn.Config.VECTOR_DIM_FACTOR_THIN;
-                            lineWidth = 1;
-                        }
+                    case Flynn.VectorMode.V_THICK:
+                        config = Flynn.Config.VectorRender.V_THICK;
                         break;
                 }
-                var dim_color = Flynn.Util.shadeColor(color, vectorDimFactor)
-
-                // Determine vector vertex color
-                var overdrive = 0.0;
-                if(Flynn.mcp.options.vectorMode != Flynn.VectorMode.PLAIN){
-                    overdrive = Flynn.Config.VECTOR_OVERDRIVE_FACTOR;
-                }
-                // var color_overdrive = Flynn.Util.rgbOverdirve(Flynn.Util.hexToRgb(color), overdrive);
-                // this.vectorVertexColor = Flynn.Util.rgbToHex(color_overdrive.r, color_overdrive.g, color_overdrive.b);
-                this.vectorVertexColor = Flynn.Util.shadeColor(color, overdrive);
-
+                var line_color = Flynn.Util.shadeColor(color, config.lineBrightness)
+                this.vectorVertexColor = Flynn.Util.shadeColor(color, config.vertexBrightness);
                 this.vectorVericies = [];
-                var color_num = Flynn.Util.parseColor(dim_color, true);
-                this.line_width = lineWidth;
-                this.graphics.lineStyle(lineWidth, color_num, 1);
+                this.lineSize = config.lineSize;
+                this.vertexSize = config.vertexSize;
+                this.graphics.lineStyle(
+                    config.lineSize,
+                    Flynn.Util.parseColor(line_color, true),
+                    1);
             };
 
             ctx.vectorLineToUnconstrained = function(x, y){
@@ -272,20 +267,10 @@ Flynn.Canvas = Class.extend({
                     y = world.y;
                 }
                 this.vectorVericies.push(x, y);
-                if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
-                    this.graphics.lineTo(x, y);
-                    // This "moveTo" keeps PixiJS from drawing ugly long un-mitered corners
-                    // for vertices with very acute angles.
-                    this.graphics.moveTo(x, y);
-                    
-                }
-                else{
-                    this.graphics.lineTo(x+0.5, y+0.5);
-                    // This "moveTo" keeps PixiJS from drawing ugly long un-mitered corners
-                    // for vertices with very acute angles.
-                    this.graphics.moveTo(x+0.5, y+0.5);
-
-                }
+                this.graphics.lineTo(x+0.5, y+0.5);
+                // This "moveTo" keeps PixiJS from drawing ugly long un-mitered corners
+                // for vertices with very acute angles.
+                this.graphics.moveTo(x+0.5, y+0.5);
             };
 
             ctx.vectorMoveTo = function(x, y){
@@ -300,29 +285,20 @@ Flynn.Canvas = Class.extend({
                     y = world.y;
                 }
                 this.vectorVericies.push(x, y);
-                if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
-                    this.graphics.moveTo(x, y);
-                }
-                else{
-                    this.graphics.moveTo(x+0.5, y+0.5);
-                }
+                this.graphics.moveTo(x+0.5, y+0.5);
             };
 
             ctx.vectorEnd = function(){
                 // Draw the (bright) vector vertex points
-                var offset, size;
-                if(Flynn.mcp.options.vectorMode === Flynn.VectorMode.V_THICK){
-                    offset = 1;
-                    size = 2;
-                }
-                else{
-                    offset = 0;
-                    size = 1;
-                }
+                var offset = this.vertexSize / 2;
                 this.graphics.lineStyle();
                 this.graphics.beginFill(Flynn.Util.parseColor(this.vectorVertexColor, true));
                 for(var i=0, len=this.vectorVericies.length; i<len; i+=2) {
-                    this.graphics.drawRect(this.vectorVericies[i]-offset, this.vectorVericies[i+1]-offset, size, size);
+                    this.graphics.drawRect(
+                        this.vectorVericies[i] - offset + 0.5,
+                        this.vectorVericies[i + 1] - offset + 0.5,
+                        this.vertexSize,
+                        this.vertexSize);
                 }
                 this.graphics.endFill();
             };

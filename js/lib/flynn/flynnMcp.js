@@ -131,7 +131,6 @@ Flynn.Mcp = Class.extend({
                 [   ['NONE',     Flynn.VectorMode.PLAIN],
                     ['NORMAL',   Flynn.VectorMode.V_THIN],
                     ['THICK' ,   Flynn.VectorMode.V_THICK],
-                    ['FLICKER' , Flynn.VectorMode.V_FLICKER]
                 ],
                 null);
         }
