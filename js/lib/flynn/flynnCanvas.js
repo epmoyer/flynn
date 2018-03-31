@@ -825,7 +825,6 @@ Flynn.Canvas = Class.extend({
                 self.ctx.graphics.clear();
                 self.ctx.stage.addChild(self.ctx.graphics);
 
-
                 animation_callback_f(paceFactor);
 
                 if(label){
