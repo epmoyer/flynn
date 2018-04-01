@@ -428,6 +428,17 @@ Game.StateHome = Flynn.State.extend({
         this.va_logo.render(ctx);
         this.va_logo2.render(ctx);
 
+        //-----------------
+        // Vertex brightness test
+        //-----------------
+        var center_x = Game.BOUNDS.right - 70;
+        var center_y = Game.BOUNDS.bottom - 70;
+        var color = Flynn.Colors.RED;
+        for (var size = 100; size >= 10; size-=10){
+            ctx.vectorRect(center_x - size/2, center_y - size/2, size, size, color);
+            color = Flynn.Util.shadeColor(color, -0.2)
+        }
+
     }
 });
 

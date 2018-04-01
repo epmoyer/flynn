@@ -42,17 +42,58 @@ Flynn.Util = {
         return "#" + Flynn.Util.componentToHex(r) + Flynn.Util.componentToHex(g) + Flynn.Util.componentToHex(b);
     },
 
-    rgbOverdirve: function(rgb, overdrive) {
-        // Inputs:
-        //   rgb:       Object with r,g,b components
-        //   overdrive: Float between 0 and 1.
-        // Returns an rgb object in with the color overdiven toward white.  Calling with an overdirve of 1.0 will return white.
-        var rgb_retutn = {
-            r: Math.floor(rgb.r + (255 - rgb.r)*overdrive),
-            g: Math.floor(rgb.g + (255 - rgb.g)*overdrive),
-            b: Math.floor(rgb.b + (255 - rgb.b)*overdrive),
-        };
-        return rgb_retutn;
+    colorOverdrive: function(color, increase){
+        // Takes a color and increases it by some amount.  Once a color channel saturates, the color 
+        // will overdrive towards pure white.  This color transformation is used to determine the color
+        // of vector vertices, to simulate the effect of the CRT beam pausing at vertices.
+        // Arguments:
+        //     color: A color of the form "#FF1200"
+        //     increase: A brightness increase in the range (0.0 to 2.0)
+        var gain, rgb, max_brightness, white_distance, overdrive_gain, saturated_color;
+
+        rgb = Flynn.Util.hexToRgb(color);
+        max_brightness = Math.max(rgb.r, rgb.g, rgb.b) / 255;
+        white_distance = 1.0 - max_brightness;
+
+        var scale_factor = 0.20;
+        increase = increase * (scale_factor + ((1-scale_factor) * max_brightness));
+
+        if(max_brightness == 0){
+            // Started with black
+            rgb.r = increase * 255;
+            rgb.g = increase * 255;
+            rgb.b = increase * 255;
+            rgb.r = Math.min(rgb.r, 255);
+            rgb.g = Math.min(rgb.g, 255);
+            rgb.b = Math.min(rgb.b, 255);
+            return(Flynn.Util.rgbToHex(rgb.r, rgb.g, rgb.b))
+        }
+        if(increase <= white_distance){
+            // Increase does not saturate any color channel
+            gain = (max_brightness + increase) / max_brightness;
+            rgb.r = rgb.r * gain;
+            rgb.g = rgb.g * gain;
+            rgb.b = rgb.b * gain;
+            rgb.r = Math.min(rgb.r, 255);
+            rgb.g = Math.min(rgb.g, 255);
+            rgb.b = Math.min(rgb.b, 255);
+            return(Flynn.Util.rgbToHex(rgb.r, rgb.g, rgb.b))
+        }
+        
+        // Increase saturates a color channel
+
+        // Make saturated color fist
+        gain = (max_brightness + white_distance) / max_brightness;
+        rgb.r = rgb.r * gain;
+        rgb.g = rgb.g * gain;
+        rgb.b = rgb.b * gain;
+        rgb.r = Math.min(rgb.r, 255);
+        rgb.g = Math.min(rgb.g, 255);
+        rgb.b = Math.min(rgb.b, 255);
+
+        overdrive_gain = Math.min(increase - white_distance, 1.0);
+        saturated_color = Flynn.Util.rgbToHex(rgb.r, rgb.g, rgb.b);
+        return(Flynn.Util.shadeColor(saturated_color, overdrive_gain));
     },
 
     angleBound2Pi: function(angle){

@@ -13,6 +13,31 @@ Unreleased
 
 (None)
 
+3.7.1 - 2018-3-31
+------------------
+
+Added
+^^^^^
+
+- Engine
+
+  - Parameterized vector render modes.
+
+    - Developers can overwrite Flynn.Config.VectorRender values to change render behaviors.
+
+  - Improved vector render behavior and implementation.  
+
+    - Vectors are brighter and more saturated in Normal and Thick modes.
+    - Thickness reduced in Thick mode.
+    - Improved vertex coloring (overdrive) algorithm to behave better with dark vectors.
+
+  - Removed "flicker" mode from vector renderer.
+
+- Test Application
+
+  - Add vertex test for dark vector lines
+
+
 3.6.2 - 2018-3-25
 ------------------
 

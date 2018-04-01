@@ -23,20 +23,17 @@ Flynn.Config.VectorRender = {
     },
     V_THIN: {
         lineBrightness: -0.15,
-        vertexBrightness: 0.5,
+        vertexBrightness: 0.6,
         lineSize: 1.0,
         vertexSize: 1.0,
     },
     V_THICK: {
         lineBrightness: -0.15,
-        vertexBrightness: 0.5,
+        vertexBrightness: 0.4,
         lineSize: 2.0,
         vertexSize: 2.0,
     },
 }
-Flynn.Config.VECTOR_DIM_FACTOR_THICK = -0.15; // Brightness dimming for vector lines
-Flynn.Config.VECTOR_DIM_FACTOR_THIN  = -0.15;
-Flynn.Config.VECTOR_OVERDRIVE_FACTOR = 0.5;  // White overdrive for vertex point artifacts
 
 Flynn.Canvas = Class.extend({
 
@@ -237,7 +234,8 @@ Flynn.Canvas = Class.extend({
                         break;
                 }
                 var line_color = Flynn.Util.shadeColor(color, config.lineBrightness)
-                this.vectorVertexColor = Flynn.Util.shadeColor(color, config.vertexBrightness);
+                // this.vectorVertexColor = Flynn.Util.shadeColor(color, config.vertexBrightness);
+                this.vectorVertexColor = Flynn.Util.colorOverdrive(color, config.vertexBrightness);
                 this.vectorVericies = [];
                 this.lineSize = config.lineSize;
                 this.vertexSize = config.vertexSize;
