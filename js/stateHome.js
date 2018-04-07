@@ -180,6 +180,19 @@ Game.StateHome = Flynn.State.extend({
                 ));
         }
 
+        this.fade_polygon = new Flynn.Polygon(
+            Game.Points.POINTY_SHIP,
+            Flynn.Colors.RED,
+            3, // scale
+            new Victor(
+                Game.BOUNDS.right - 70,
+                Game.BOUNDS.bottom - 160),
+            false, // constrained
+            false  // is_world
+            );
+        this.fade_angle = 0;
+        this.fade_angular_velocity = Math.PI / (60 * 4);
+
         this.particles = new Flynn.Particles();
         this.timers = new Flynn.Timers();
         this.timers.add("Explode1", this.TIMER_EXPLODE1_TICKS, null);
@@ -281,6 +294,8 @@ Game.StateHome = Flynn.State.extend({
         }
 
         this.partice_gun.angle += this.partice_gun.angular_velocity * paceFactor;
+
+        this.fade_angle += this.fade_angular_velocity * paceFactor;
 
         this.va_logo.update(paceFactor);
         this.va_logo2.update(paceFactor);
@@ -436,7 +451,25 @@ Game.StateHome = Flynn.State.extend({
         var color = Flynn.Colors.RED;
         for (var size = 100; size >= 10; size-=10){
             ctx.vectorRect(center_x - size/2, center_y - size/2, size, size, color);
-            color = Flynn.Util.shadeColor(color, -0.2)
+            color = Flynn.Util.shadeColor(color, -0.2);
+        }
+
+        // Test vertex brightness across full vector brightness range, fading
+        // to full black, for multiple color component distributions
+        var brightness = Math.floor(255 * ((Math.sin(this.fade_angle) + 1)/2));
+        var variants = [
+            {r: brightness, g: brightness, b: brightness},      // white
+            {r: 0, g: brightness, b: 0},                        // green
+            {r: Math.floor(brightness/2), g: 0, b: brightness}, // purple
+        ];
+        for(i=0; i<variants.length; i++){
+            this.fade_polygon.position = new Victor(
+                Game.BOUNDS.right - 115 + i * 45,
+                Game.BOUNDS.bottom - 150);
+            this.fade_polygon.color = Flynn.Util.rgbToHex(
+                variants[i].r, variants[i].g, variants[i].b);
+            this.fade_polygon.setAngle(this.fade_angle);
+            this.fade_polygon.render(ctx);
         }
 
     }

@@ -39,6 +39,13 @@ Flynn.Util = {
     },
 
     rgbToHex: function(r, g, b) {
+        // Convert color from r, g, b components to hex string of the form "#RRGGBB"
+        // Arguments:
+        //     r: red   (0-255)
+        //     g: green (0-255)
+        //     b: blue  (0-255)
+        // Returns:
+        //     Hex color string of the form "#RRGGBB"
         return "#" + Flynn.Util.componentToHex(r) + Flynn.Util.componentToHex(g) + Flynn.Util.componentToHex(b);
     },
 
@@ -59,14 +66,8 @@ Flynn.Util = {
         increase = increase * (scale_factor + ((1-scale_factor) * max_brightness));
 
         if(max_brightness == 0){
-            // Started with black
-            rgb.r = increase * 255;
-            rgb.g = increase * 255;
-            rgb.b = increase * 255;
-            rgb.r = Math.min(rgb.r, 255);
-            rgb.g = Math.min(rgb.g, 255);
-            rgb.b = Math.min(rgb.b, 255);
-            return(Flynn.Util.rgbToHex(rgb.r, rgb.g, rgb.b))
+            // Started with black.  Always return black for overdrive of black.
+            return('#000000');
         }
         if(increase <= white_distance){
             // Increase does not saturate any color channel
@@ -77,7 +78,7 @@ Flynn.Util = {
             rgb.r = Math.min(rgb.r, 255);
             rgb.g = Math.min(rgb.g, 255);
             rgb.b = Math.min(rgb.b, 255);
-            return(Flynn.Util.rgbToHex(rgb.r, rgb.g, rgb.b))
+            return(Flynn.Util.rgbToHex(rgb.r, rgb.g, rgb.b));
         }
         
         // Increase saturates a color channel

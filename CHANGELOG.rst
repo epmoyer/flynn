@@ -13,6 +13,23 @@ Unreleased
 
 (None)
 
+3.7.2 - 2018-4-7
+----------------
+
+Changed
+^^^^^^^
+
+- Engine
+
+  - Vertices no longer appear for black vectors (allows a clean "fade-out" effect to be achieved).
+
+Added
+^^^^^
+
+- Test Application
+
+  - Fade out demo (on "Home" tab)
+
 3.7.1 - 2018-3-31
 ------------------
 
