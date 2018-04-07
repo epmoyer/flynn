@@ -122,6 +122,16 @@ Flynn.Canvas = Class.extend({
                 gauge_x, 
                 this.gaugePixiTime.rect.top - this.gaugeTotalAnimation.rect.height - gauge_spacing
             ));
+        this.filter_bloom = new PIXI.filters.BloomFilter(3, 3, PIXI.settings.RESOLUTION * 5, 5);
+        this.filter_bloom.resolution = 1;
+
+        // this.filter_bloom = new PIXI.filters.AdvancedBloomFilter();
+        // this.filter_bloom.threshold = 0.1;
+        // this.filter_bloom.brightness = 1.0;
+        // this.filter_bloom.bloomScale = 1.0;
+        // this.filter_bloom.pixelSize = 1.0;
+        // this.filter_bloom.resolution = 4;
+        // console.log('Resolution: ' + PIXI.settings.RESOLUTION.toString());
 
         self = this;
         this.ctx = (function(canvas) {
@@ -179,6 +189,10 @@ Flynn.Canvas = Class.extend({
             ctx.world_bounds = null;
             ctx.world_wrap_offset_x = 0;
             ctx.world_wrap_offset_y = 0;
+
+           // var filter = new PIXI.filters.BloomFilter(3, 11, PIXI.settings.RESOLUTION * 5, 5);
+            // Flynn.mcp.optionManager.getOption('vectorBloomEnabled');
+            // ctx.graphics.filters = [filter];
             
             ctx.drawPolygon = function(p, x, y) {
                 // .drawPolypon is deprecated. No world support.
@@ -798,6 +812,38 @@ Flynn.Canvas = Class.extend({
                 self.ctx.stage.removeChildren();
                 self.ctx.graphics.clear();
                 self.ctx.stage.addChild(self.ctx.graphics);
+
+                if(Flynn.mcp.optionManager.getOption('vectorBloomEnabled')){
+                    if(self.ctx.graphics.filters == null){
+                        self.ctx.graphics.filters = [self.filter_bloom];
+                    }
+                } else{
+                    if(self.ctx.graphics.filters != null){
+                        self.ctx.graphics.filters = null;
+                    }
+                }
+            // ctx.graphics.filters = [filter];
+
+                // self.ctx.graphics.beginPath();
+                // self.ctx.strokeStyle = Flynn.Colors.BLACK;
+                // self.ctx.fillRect(0, 0, 400, 400);
+                // self.ctx.stroke();
+                // self.ctx.vectorRect(0, 0, 400, 400, Flynn.Colors.RED, Flynn.Colors.BLACK, false);
+
+                // self.ctx.fillStyle = '#FF000';
+                // self.ctx.fillStyle = Flynn.Colors.GREEN;
+                // self.ctx.fillRect(20, 20, 100, 100);
+
+                self.ctx.graphics.lineStyle();
+                self.ctx.graphics.beginFill(0x00000000, 0.3);
+                self.ctx.graphics.drawRect(0, 0, self.ctx.width, self.ctx.height);
+                self.ctx.graphics.endFill();
+
+                // var filter = new PIXI.filters.BlurFilter();
+                // filter.blur = 2;
+                // var filter = new PIXI.filters.BloomFilter(4, 3, PIXI.settings.RESOLUTION, 11);
+                // self.ctx.graphics.filters = [filter];
+                
 
                 animation_callback_f(paceFactor);
 

@@ -134,6 +134,9 @@ Flynn.Mcp = Class.extend({
                 ],
                 null);
         }
+        Flynn.mcp.optionManager.addOption('vectorBloomEnabled', Flynn.OptionType.BOOLEAN, true, true, 'VECTOR BLOOM', null,
+            null // No callback
+            );
 
         //--------------------------
         // Resize handler
