@@ -13,8 +13,21 @@ Unreleased
 
 (None)
 
+3.8.1 - 2018-4-7
+----------------
+("bloom" branch)
+
+Added
+^^^^^
+
+- Engine
+
+  - Experimental vector bloom support (via PixiJS filter)
+  - Vector bloom on/off in Configuration menu
+
+
 3.7.1 - 2018-3-31
-------------------
+-----------------
 
 Added
 ^^^^^
@@ -39,7 +52,7 @@ Added
 
 
 3.6.2 - 2018-3-25
-------------------
+-----------------
 
 Added
 ^^^^^
@@ -50,7 +63,7 @@ Added
   - Code cleanup
 
 3.6.1 - 2018-3-25
-------------------
+-----------------
 
 Added
 ^^^^^
@@ -63,7 +76,7 @@ Added
   - Fix anchor dot position for span
 
 3.6.0 - 2018-3-25
-------------------
+-----------------
 
 Added
 ^^^^^
@@ -76,7 +89,7 @@ Added
   - Add .getSpan() demo to UTIL panel
 
 3.5.0 - 2018-3-3
-------------------
+----------------
 
 Added
 ^^^^^
@@ -90,7 +103,7 @@ Added
 
 
 3.4.0 - 2018-3-3
-------------------
+----------------
 
 Added
 ^^^^^
