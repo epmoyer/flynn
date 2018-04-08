@@ -9,3 +9,8 @@ scrapbook
 # npm
 node_modules/
 package-lock.json
+
+# Sphinx
+_build
+_static
+_templates
