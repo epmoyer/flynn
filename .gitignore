@@ -14,3 +14,4 @@ package-lock.json
 _build
 _static
 _templates
+autosphinx.sh
