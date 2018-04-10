@@ -3,22 +3,22 @@ Pacing
 
 "Pacing" is used to control the perceived speed a game runs at. Flynn strives to render games at 60 frames per second (FPS), but several factors can reduce the actual frame rate achieved by a game. A properly written game should run at a consistent speed regardless of the frame rate it achieves from moment to moment.
 
-For example, suppose you write a game in which an airplane drops a bomb.  Running on your state-of-the-art laptop the game renders at 60FPS and the bomb takes 1 second to fall from the top of the screen to the bottom.  Now you run the same code on an old PC and, because the processor is slower, it only renders at 30FPS.  The animation will look choppier on the slower machine, but when you drop a bomb it should still take 1 second to fall.  Flynn's Pacing infrastructure will help you achieve that.
+For example, suppose you write a game in which an airplane drops a bomb.  Running on your state-of-the-art laptop the game renders at 60FPS and the bomb takes 1 second to fall from the top of the screen to the bottom.  Now you run the same code on an old PC and, because the processor is slower, it only renders at 30FPS.  The animation will look choppier on the slower machine, but when you drop a bomb it should still take 1 second to fall.  Flynn's pacing infrastructure will help you achieve that.
 
 Why frame rates vary
 ====================
 
-The frame rate of a game is affected primarily by four things:
+The frame rate of a game is primarily affected by four things:
 
 1. **CPU performance**: Slower CPUs may render at a lower frame rate than faster CPUs.
 2. **CPU Load**: Other processes running on the machine may overburden the CPU, causing the frame rate to drop.
-3. **Rendering Time**: At 60FPS, a game has 1/60 of a second (.0167 seconds) to update the game world and draw (render) it.  For a game to render at 60FPS, the combined time for the browser to process an animation frame, the game to update the state of the game world, and the game to draw the new frame, must not exceed 0.167 seconds.  If it does, the frame rate will drop.
+3. **Rendering Time**: At 60FPS, a game has 1/60 of a second (.0167 seconds) to update the game world and draw it.  For a game to render at 60FPS, the combined time for the browser to process an animation frame, the game to update the state of the game world, and the game to draw the new frame, must not exceed 0.167 seconds.  If it does, the frame rate will drop.
 4. **Update Time**: See previous.
 
 Callbacks
 =========
 
-The Flynn engine makes 3 callbacks to your game code each animation frame. Nominally (if maintaining 60FPS), they get called 60 times per second:
+The Flynn engine makes 3 callbacks to your game code each animation frame. Nominally (if maintaining 60FPS), they each get called 60 times per second:
 
 - ``handleInputs(input, paceFactor)``: Processes all user input to your game (button presses, screen touch events).
 - ``update(paceFactor)``: Updates the state of the game world.
@@ -27,18 +27,48 @@ The Flynn engine makes 3 callbacks to your game code each animation frame. Nomin
 Using paceFactor
 ================
 
-The speed at which events occur (the velocity of ships, the action of gravity, the frequency of enemy shots, etc.) should be invariant to the frame rate of a game. 
+Flynn calls each of your 3 callback functions once per frame. Each time Flynn calls ``update()`` and ``handleInputs()`` your game will change the game world a little. In practice, you need to know how much time has elapsed since the last call so that you can change the game world by the appropriate amount.  If 16.6 milliseconds have elapsed (1/60 of a second), then you may, for example, need to move a particular space ship 1 pixel.  But if 33.3 milliseconds have elapsed (1/30 of a second), then you should move that ship 2 pixels.
+
+Flynn tells you how much time has elapsed by passing you a the parameter ``paceFactor``, which tells you how many nominal 60FPS game "ticks" have elapsed. If your game is running at 30FPS, then Flynn will pass a ``paceFactor`` of 2.0 to your callbacks. 
+
+If you'd like to know the elapsed time in seconds, you can always calculate it like this:
+
+.. code-block:: javascript
+
+    update: function(paceFactor) {
+
+        // ...
+
+        var elapsed_seconds = paceFactor / Flynn.TICKS_PER_SECOND;
+        // Note: Flynn.TICKS_PER_SECOND always == 60
+
+        // ...
+    }
+
+In general, you'll use paceFactor to calculate the appropriate movement of objects by doing something like:
+
+.. code-block:: javascript
+
+    position = position + velocity * paceFactor;
+
+Below you'll find code recipes for various common pacing scenarios. 
 
 .. note ::
-    ``paceFactor`` should probably have been called ``elapsedTicks``.  I am likely to refactor it in a future version of Flynn.  In the meantime, user programs can name the argument passed to their ``update()`` and ``handleInputs()`` methods ``elapsedTicks`` instead of ``paceFactor`` for improved readability.
+    ``paceFactor`` should probably have been called ``elapsedTicks``.  I plan to refactor it in a future version of Flynn.  In the meantime, you can name the argument passed to your ``update()`` and ``handleInputs()`` methods ``elapsedTicks`` (instead of ``paceFactor``) for improved readability.
 
 Recipes
 =======
 
 Here are some code recipes for using ``paceFactor`` to update positions, velocities, and timers.
 
-In the vectorized versions below, variables with the ``_v`` suffix are 2d vectors; they are instances of type ``Victor``, implemented by the victorjs_ library.
+In the vectorized versions below, variables with the ``_v`` suffix are 2d vectors. They are instances of type ``Victor``, implemented by the victorjs_ library.
 
+In all recipes below, variables have the following units:
+
+  - Position: pixels
+  - Velocity: pixels/tick (i.e. pixels per tick)
+  - Acceleration: pixels/tick^2 (i.e. pixels per tick per tick)
+  - Time Constant: ticks
 
 Motion without acceleration
 ===========================
@@ -78,6 +108,8 @@ Governing equations:
    //-------------------
    // Single Axis form
    //-------------------
+   // Note: The position must be updated before the velocity, since the position
+   //   equation presumes velocity_y is the old velocity.
 
    // Position (from equivalent physics equation p1 = P0 + a*t^2/2 + v0*t)
    position_y += acceleration_y * Math.pow(paceFactor, 2) / 2 + velocity_y * paceFactor;
@@ -85,9 +117,12 @@ Governing equations:
    // Velocity
    velocity_y += acceleration_y * paceFactor;
 
+
    //-------------------
    // Vectorized form
    //-------------------
+   // Note: The position must be updated before the velocity, since the position
+   //   equation presumes velocity_v is the old velocity.
 
    // Position (from equivalent physics equation p1 = P0 + a*t^2/2 + v0*t)
    position_v += 
@@ -112,6 +147,8 @@ Governing equations:
    //-------------------
    // Single Axis form
    //-------------------
+   // Note: The position must be updated before the velocity, since the position
+   //   equation presumes velocity_y is the old velocity.
 
    // Position 
    position_y += 
@@ -124,6 +161,8 @@ Governing equations:
    //-------------------
    // Vectorized form
    //-------------------
+   // Note: The position must be updated before the velocity, since the position
+   //   equation presumes velocity_v is the old velocity.
 
    // Position 
    position_v += 
@@ -136,7 +175,7 @@ Governing equations:
 Game timers
 ===========
 
-To keep track of the total elapsed time (in seconds) in your game, you need to add the elapsed time for each game tick.
+To keep track of the total elapsed time (in seconds) in your game, you need to accumulate the elapsed time for each game tick.
 
 .. code-block:: javascript
 
@@ -167,15 +206,15 @@ First, activate "Developer mode", by adding "?develop" to the end of your game's
 
 There are three "Developer mode" features specifically designed to help you validate pacing...
 
-- **FPS20**: Press the ``\`` key to toggle FPS20 mode.  The text "FPS_20" will appear in the lower-left corner of the screen, and your game will be forced to run at 20 frames per second. If you have applied paceFactor correctly, the "speed" of your game should remain unchanged.  If, for example, your space ships run at normal speed but their bullets run slow in FPS20 mode, then you have forgotten to apply paceFactor to your bullet code.
+- **FPS20**: Press the ``\`` key to toggle FPS20 mode.  The text "FPS_20" will appear in the lower-left corner of the screen, and your game will be forced to run at 20 frames per second. If you've applied paceFactor correctly, the "speed" of your game should remain unchanged.  If, for example, you discover that in FPS20 mode your space ship moves at normal speed but its bullets move slowly, then you have forgotten to apply paceFactor to your bullet code.
 
-- **SLOWMO**: Press the ``7`` key to toggle SLOWMO mode.  The text "SLOWMO" will appear in the lower-left corner of the screen, and your game will be forced to run in slow motion (though still at nominally 60FPS). If you have applied paceFactor correctly, everything should be super slow. If, for example, your space ships run slow but their bullets run normally in SLOWMO mode, then you have forgotten to apply paceFactor to your bullet code.
+- **SLOWMO**: Press the ``7`` key to toggle SLOWMO mode.  The text "SLOWMO" will appear in the lower-left corner of the screen, and your game will be forced to run in slow motion (though still at nominally 60FPS). If you've applied paceFactor correctly, everything should be super slow. If, for example, you discover that your space ship moves slowly in SNOWMO mode but its bullets move at their normal speed, then you have forgotten to apply paceFactor to your bullet code.
 
 - **STATS**: Press the ``6`` key to toggle the STATS display.  Flynn will show you four real-time graphs:
 
-  - **Yellow**: The actual frame rate of your game
+  - **Yellow**: The actual frame rate of your game.
   - **Dark Blue**: The total (combined) time (in milliseconds) spent in your handleInputs(), update(), and render() methods.
-  - **Light Blue**: The total (combined) time (in milliseconds) spend by the WebGL renderer (PixiJS) to draw frames.
+  - **Light Blue**: The total (combined) time (in milliseconds) spent by the WebGL renderer (PixiJS) to draw frames.
   - **Magenta**: The total (combined) time spent in the browser's animation callback (includes game logic, Pixi rendering and browser rendering).  If this time exceeds 16.6ms, your frame rate will drop below 60FPS.
 
 .. note ::
