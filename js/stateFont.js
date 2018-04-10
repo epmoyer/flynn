@@ -14,12 +14,12 @@ Game.StateFont = Flynn.State.extend({
         this.rotate_step = -(Math.PI/3)/60;
     },
 
-    handleInputs: function(input, paceFactor) {
+    handleInputs: function(input, elapsedTicks) {
         Game.handleInputs_common(input);
     },
 
-    update: function(paceFactor) {
-        this.rotate_angle += this.rotate_step * paceFactor;
+    update: function(elapsedTicks) {
+        this.rotate_angle += this.rotate_step * elapsedTicks;
     },
 
     render: function(ctx){

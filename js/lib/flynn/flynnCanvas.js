@@ -57,7 +57,7 @@ Flynn.Canvas = Class.extend({
         this.previousTimestamp = 0;
         this.constrained = false;
 
-        this.devLowFpsPaceFactor = 0;
+        this.devLowFpsElapsedTicks = 0;
         this.devLowFpsFrameCount = 0;
 
         //---------------------------
@@ -737,13 +737,14 @@ Flynn.Canvas = Class.extend({
             
             var deltaMsec = timeNow - self.previousTimestamp;
             self.ctx.fpsMsecCount += deltaMsec;
-            // paceFactor represents the % of a 60fps frame that has elapsed.
-            // At 30fps the paceFactor is 2.0,  At 15fps it is 4.0
-            var paceFactor = (60*(timeNow - self.previousTimestamp))/1000;
-            if (paceFactor > Flynn.Config.MAX_PACE_RECOVERY_TICKS) {
-                paceFactor = 1;
+            // elapsedTicks represents the (possibly fractional) number of
+            // 60FPS game ticks which have elapsed.
+            // If a game is running at 30FPS then elapsedTicks will be 2.0,  At 15FPS it will be 4.0
+            var elapsedTicks = (60*(timeNow - self.previousTimestamp))/1000;
+            if (elapsedTicks > Flynn.Config.MAX_PACE_RECOVERY_TICKS) {
+                elapsedTicks = 1;
             }
-            paceFactor *= Flynn.mcp.gameSpeedFactor;
+            elapsedTicks *= Flynn.mcp.gameSpeedFactor;
 
             self.ctx.ticks += 1;
 
@@ -765,18 +766,18 @@ Flynn.Canvas = Class.extend({
                     self.gaugeFps.record(1000/deltaMsec);
                     break;
                 case Flynn.DevPacingMode.SLOW_MO:
-                    paceFactor *=  0.2;
+                    elapsedTicks *=  0.2;
                     label = "SLOW_MO";
                     self.gaugeFps.record(1000/deltaMsec);
                     break;
                 case Flynn.DevPacingMode.FPS_20:
                     ++self.devLowFpsFrameCount;
-                    self.devLowFpsPaceFactor += paceFactor;
+                    self.devLowFpsElapsedTicks += elapsedTicks;
                     if(self.devLowFpsFrameCount === 3){
                         self.devLowFpsFrameCount = 0;
-                        paceFactor = self.devLowFpsPaceFactor;
-                        self.devLowFpsPaceFactor = 0;
-                        self.gaugeFps.record(60/paceFactor);
+                        elapsedTicks = self.devLowFpsElapsedTicks;
+                        self.devLowFpsElapsedTicks = 0;
+                        self.gaugeFps.record(60/elapsedTicks);
                     }
                     else{
                         // Skip this frame (to simulate low frame rate)
@@ -799,7 +800,7 @@ Flynn.Canvas = Class.extend({
                 self.ctx.graphics.clear();
                 self.ctx.stage.addChild(self.ctx.graphics);
 
-                animation_callback_f(paceFactor);
+                animation_callback_f(elapsedTicks);
 
                 if(label){
                     self.ctx.vectorText(label, 1.5, 10, self.canvas.height-20, 'left', Flynn.Colors.RED);

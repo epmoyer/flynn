@@ -56,8 +56,8 @@ Flynn.Physics= Class.extend({
         this.world.SetDebugDraw(this.debugDraw);
     },
 
-    update: function(paceFactor){
-        this.dtRemaining += paceFactor * 1/60;
+    update: function(elapsedTicks){
+        this.dtRemaining += elapsedTicks * 1/60;
         while (this.dtRemaining > this.stepAmount) {
             this.dtRemaining -= this.stepAmount;
             this.world.Step(this.stepAmount,

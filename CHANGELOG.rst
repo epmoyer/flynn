@@ -16,6 +16,11 @@ Added
 
 - Sphinx documentation (http://flynn.readthedocs.io/en/docs/index.html)
 
+Changed
+^^^^^^^
+
+- paceFactor renamed to elapsedTicks in Engine and Test Application
+
 3.7.2 - 2018-4-7
 ----------------
 

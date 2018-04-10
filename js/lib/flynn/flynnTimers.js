@@ -66,11 +66,11 @@ Flynn.Timers = Class.extend({
         delete this.timers[timerName];
     },
 
-    update: function(paceFactor) {
+    update: function(elapsedTicks) {
         for (var timerName in this.timers){
             var timer = this.timers[timerName];
             if (timer.tickCounter > 0){
-                timer.tickCounter -= paceFactor;
+                timer.tickCounter -= elapsedTicks;
                 if (timer.tickCounter <= 0){
                     // Timer has expired
                     timer.tickCounter = 0;

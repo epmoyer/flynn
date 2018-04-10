@@ -279,7 +279,7 @@ Flynn.Mcp = Class.extend({
     run: function(){
         var self = this;
 
-        this.canvas.animate( function(paceFactor) {  
+        this.canvas.animate( function(elapsedTicks) {  
             // Change state (if pending)
             if (self.next_state_id !== self.noChangeState) {
                 if(self.current_state && self.current_state.destructor){
@@ -294,13 +294,13 @@ Flynn.Mcp = Class.extend({
             }
 
             // Update clock and timers
-            self.clock += paceFactor;
-            self.timers.update(paceFactor);
+            self.clock += elapsedTicks;
+            self.timers.update(elapsedTicks);
 
             // Process state (if set)
             if(self.current_state){
-                self.current_state.handleInputs(self.input, paceFactor);
-                self.current_state.update(paceFactor);
+                self.current_state.handleInputs(self.input, elapsedTicks);
+                self.current_state.update(elapsedTicks);
                 self.current_state.render(self.canvas.ctx);
 
                 // Render any visible virtual controls

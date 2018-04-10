@@ -17,18 +17,18 @@ Flynn.Projectile= Class.extend({
         this.lifetime = 0;
     },
 
-    update: function(paceFactor) {
+    update: function(elapsedTicks) {
         var isAlive = true;
 
         // Decay and die
-        this.lifetime -= paceFactor;
+        this.lifetime -= elapsedTicks;
         if(this.lifetime <= 0){
             // Kill particle
             isAlive = false;
         }
         else{
             // Add impulse
-            this.position.add(this.velocity.clone().multiplyScalar(paceFactor));
+            this.position.add(this.velocity.clone().multiplyScalar(elapsedTicks));
         }
         if(this.projectiles.world_wrap){
             // Wrap at world boundary
@@ -105,9 +105,9 @@ Flynn.Projectiles = Class.extend({
         this.projectiles[this.projectiles.length-1].update(1.0);
     },
 
-    update: function(paceFactor) {
+    update: function(elapsedTicks) {
         for(var i=0, len=this.projectiles.length; i<len; i+=1){
-            if(!this.projectiles[i].update(paceFactor)){
+            if(!this.projectiles[i].update(elapsedTicks)){
                 // Projectile has died.  Remove it
                 this.projectiles.splice(i, 1);
                 len--;

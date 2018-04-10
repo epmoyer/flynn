@@ -193,18 +193,18 @@ Game.StateWorld = Flynn.State.extend({
 
     },
 
-    handleInputs: function(input, paceFactor) {
+    handleInputs: function(input, elapsedTicks) {
         Game.handleInputs_common(input);
     },
 
-    update: function(paceFactor) {
+    update: function(elapsedTicks) {
         var i, j, len;
 
-        this.particles.update(paceFactor);
-        this.projectiles.update(paceFactor);
+        this.particles.update(elapsedTicks);
+        this.projectiles.update(elapsedTicks);
         
         // Swirl the viewport around the world center
-        this.viewport_sweep_angle += this.VIEWPORT_SWEEP_ANGLE_SPEED * paceFactor;
+        this.viewport_sweep_angle += this.VIEWPORT_SWEEP_ANGLE_SPEED * elapsedTicks;
         Flynn.mcp.viewport.x = (
               this.world_rect.center_x 
             + Math.cos(this.viewport_sweep_angle) * this.viewport_sweep_radius
@@ -218,10 +218,10 @@ Game.StateWorld = Flynn.State.extend({
 
         // Rotate polygons
         for (i=0,len=this.polygons.length; i<len; i++){
-            this.polygons[i].setAngle(this.polygons[i].angle - Math.PI/60.0 * paceFactor * (1 + 0.2*i));
+            this.polygons[i].setAngle(this.polygons[i].angle - Math.PI/60.0 * elapsedTicks * (1 + 0.2*i));
         }
 
-        this.timers.update(paceFactor);
+        this.timers.update(elapsedTicks);
 
         if(this.timers.hasExpired("Explode")){
             this.timers.set("Explode", this.TIMER_EXPLODE_TICKS);

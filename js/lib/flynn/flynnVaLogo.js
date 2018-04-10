@@ -95,15 +95,15 @@ Flynn.VALogo = Class.extend({
             bubble.y * this.scale + this.position.y);
     },
 
-    update: function(paceFactor){
-        // this.angle += this.spin_rate * paceFactor;
-        this.wiggle_rate += this.WIGGLE_RATE_ACCELERATION * paceFactor;
+    update: function(elapsedTicks){
+        // this.angle += this.spin_rate * elapsedTicks;
+        this.wiggle_rate += this.WIGGLE_RATE_ACCELERATION * elapsedTicks;
         this.wiggle_rate = Math.min(this.wiggle_rate, this.WIGGLE_RATE_MAX);
-        this.wiggle_angle += this.wiggle_rate * paceFactor;
+        this.wiggle_angle += this.wiggle_rate * elapsedTicks;
         this.angle = Math.sin(this.wiggle_angle) * this.WIGGLE_DISPLACEMENT_ANGLE;
 
         // Create new bubbles
-        this.bubble_time += paceFactor;
+        this.bubble_time += elapsedTicks;
         if(this.bubble_time > this.BUBBLE_RATE){
             this.bubble_time -= this.BUBBLE_RATE;
             var new_bubble = { 
@@ -140,17 +140,17 @@ Flynn.VALogo = Class.extend({
 
         // Update bubbles
         var length = this.bubbles.length;
-        var pacedAcceleration = this.BUBBLE_ACCELERATION * paceFactor;
-        var pacedDeceleration = this.BUBBLE_DECELERARION * paceFactor;
+        var pacedAcceleration = this.BUBBLE_ACCELERATION * elapsedTicks;
+        var pacedDeceleration = this.BUBBLE_DECELERARION * elapsedTicks;
         for(var i=0; i<length; i++){
             var bubble = this.bubbles[i];
 
             // Brighten / Darken
             if(bubble.y > this.FLASK_INNER_Y_MIN){
-                bubble.brightness += this.BUBBLE_GROW_RATE * paceFactor;
+                bubble.brightness += this.BUBBLE_GROW_RATE * elapsedTicks;
             }
             else{
-                bubble.brightness += bubble.die_rate * paceFactor;
+                bubble.brightness += bubble.die_rate * elapsedTicks;
             }
             bubble.brightness = Flynn.Util.minMaxBound(bubble.brightness, 0, 1);
 
@@ -168,7 +168,7 @@ Flynn.VALogo = Class.extend({
                     continue;
                 }
             }
-            bubble.y += bubble.velocity * paceFactor;
+            bubble.y += bubble.velocity * elapsedTicks;
             
             // Drift
             if(bubble.y > this.FLASK_INNER_Y_MIN){
@@ -184,7 +184,7 @@ Flynn.VALogo = Class.extend({
             }
             else{
                 // Smoke drift
-                bubble.x += 0.2 * paceFactor * Math.sin(this.wiggle_angle - Math.PI/4) * this.wiggle_rate/this.WIGGLE_RATE_MAX;
+                bubble.x += 0.2 * elapsedTicks * Math.sin(this.wiggle_angle - Math.PI/4) * this.wiggle_rate/this.WIGGLE_RATE_MAX;
             }
 
             // Expire

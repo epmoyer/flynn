@@ -76,7 +76,7 @@ Flynn.StateConfig = Flynn.State.extend({
         this.selectedLineIndex = 0;
     },
 
-    handleInputs: function(input, paceFactor) {
+    handleInputs: function(input, elapsedTicks) {
         var optionKeyName = this.optionKeyNames[this.selectedLineIndex];
         var commandHandler;
         var currentlyAssignedKeyCode;
@@ -188,7 +188,7 @@ Flynn.StateConfig = Flynn.State.extend({
 
     },
 
-    update: function(paceFactor) {
+    update: function(elapsedTicks) {
 
     },
 

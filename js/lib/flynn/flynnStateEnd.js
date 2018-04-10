@@ -52,7 +52,7 @@ Flynn.StateEnd = Flynn.State.extend({
         }
     },
 
-    handleInputs: function(input, paceFactor) {
+    handleInputs: function(input, elapsedTicks) {
         if (this.hasEnteredName) {
             if (input.virtualButtonWasPressed("UI_enter")) {
                 // Exit back to the parent state
@@ -74,8 +74,8 @@ Flynn.StateEnd = Flynn.State.extend({
         }
     },
 
-    update: function(paceFactor) {
-        this.cursorBlinkTimer += ((this.CURSOR_BLINK_RATE*2)/60) * paceFactor;
+    update: function(elapsedTicks) {
+        this.cursorBlinkTimer += ((this.CURSOR_BLINK_RATE*2)/60) * elapsedTicks;
         if (!this.hasEnteredName) {
             this.getAndCleanNickname();
         }

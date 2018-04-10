@@ -100,13 +100,13 @@ Game.StateBox2d = Flynn.State.extend({
 
     },
 
-    handleInputs: function(input, paceFactor) {
+    handleInputs: function(input, elapsedTicks) {
         Game.handleInputs_common(input);
     },
 
-    update: function(paceFactor) {
-        this.gameClock += paceFactor;
-        this.physics.update(paceFactor);
+    update: function(elapsedTicks) {
+        this.gameClock += elapsedTicks;
+        this.physics.update(elapsedTicks);
     },
 
     render: function(ctx){

@@ -233,15 +233,15 @@ Game.StateHome = Flynn.State.extend({
             );
     },
 
-    handleInputs: function(input, paceFactor) {
+    handleInputs: function(input, elapsedTicks) {
         Game.handleInputs_common(input);
     },
 
-    update: function(paceFactor) {
-        this.gameClock += paceFactor;
+    update: function(elapsedTicks) {
+        this.gameClock += elapsedTicks;
         
-        this.timers.update(paceFactor);
-        this.particles.update(paceFactor);
+        this.timers.update(elapsedTicks);
+        this.particles.update(elapsedTicks);
 
         if(this.timers.hasExpired("Explode1")){
             this.timers.set("Explode1", this.TIMER_EXPLODE1_TICKS);
@@ -284,21 +284,21 @@ Game.StateHome = Flynn.State.extend({
 
         var i;
         for (i=0; i<this.polygons.length; i++){
-            this.polygons[i].setAngle(this.polygons[i].angle + Math.PI/60.0 * paceFactor * (1 + 0.2*i));
+            this.polygons[i].setAngle(this.polygons[i].angle + Math.PI/60.0 * elapsedTicks * (1 + 0.2*i));
         }
         for (i=0; i<this.penup_polygons.length; i++){
-            this.penup_polygons[i].setAngle(this.penup_polygons[i].angle + Math.PI/60.0 * paceFactor * (1 + 0.2*i));
+            this.penup_polygons[i].setAngle(this.penup_polygons[i].angle + Math.PI/60.0 * elapsedTicks * (1 + 0.2*i));
         }
         for (i=0; i<this.multicolor_polygons.length; i++){
-            this.multicolor_polygons[i].setAngle(this.multicolor_polygons[i].angle + Math.PI/60.0 * paceFactor * (1 + 0.2*i));
+            this.multicolor_polygons[i].setAngle(this.multicolor_polygons[i].angle + Math.PI/60.0 * elapsedTicks * (1 + 0.2*i));
         }
 
-        this.partice_gun.angle += this.partice_gun.angular_velocity * paceFactor;
+        this.partice_gun.angle += this.partice_gun.angular_velocity * elapsedTicks;
 
-        this.fade_angle += this.fade_angular_velocity * paceFactor;
+        this.fade_angle += this.fade_angular_velocity * elapsedTicks;
 
-        this.va_logo.update(paceFactor);
-        this.va_logo2.update(paceFactor);
+        this.va_logo.update(elapsedTicks);
+        this.va_logo2.update(elapsedTicks);
     },
 
     render: function(ctx){

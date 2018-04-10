@@ -12,11 +12,11 @@ Game.StateInfo = Flynn.State.extend({
         this.viewport_v = new Victor(0,0);
     },
 
-    handleInputs: function(input, paceFactor) {
+    handleInputs: function(input, elapsedTicks) {
         Game.handleInputs_common(input);
     },
 
-    update: function(paceFactor) {
+    update: function(elapsedTicks) {
     },
 
     render: function(ctx){

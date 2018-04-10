@@ -137,16 +137,16 @@ Game.StateUtil = Flynn.State.extend({
 
     },
 
-    handleInputs: function(input, paceFactor) {
+    handleInputs: function(input, elapsedTicks) {
         Game.handleInputs_common(input);
     },
 
-    update: function(paceFactor) {
+    update: function(elapsedTicks) {
         var i, j, len, polygon;
         for(var set = 0; set < this.ball_sets.length; set++){
             var balls = this.ball_sets[set];
             for(i=0, len=balls.length; i<len; i++){
-                balls[i].update(paceFactor);
+                balls[i].update(elapsedTicks);
             }
 
             len=balls.length;
@@ -159,12 +159,12 @@ Game.StateUtil = Flynn.State.extend({
             }
         }
 
-        this.angle += this.ANGLE_STEP * paceFactor;
+        this.angle += this.ANGLE_STEP * elapsedTicks;
 
         //------------------------
         // Spawn shatter polygons
         //------------------------
-        this.shatter_spawn_counter -= paceFactor;
+        this.shatter_spawn_counter -= elapsedTicks;
         if (this.shatter_spawn_counter <= 0){
             this.shatter_spawn_counter = this.SHATTER_SPAWN_INTERVAL;
             var shatter_item = Flynn.Util.randomChoice(this.shatter_polygon_catalog);
@@ -188,7 +188,7 @@ Game.StateUtil = Flynn.State.extend({
         //--------------------
         for(i = 0; i < this.shatter_polygons.length; i++){
             polygon = this.shatter_polygons[i];
-            polygon.lifetime -= paceFactor;
+            polygon.lifetime -= elapsedTicks;
             if(polygon.lifetime <= 0){
                 // Shatter
                 this.particles.shatter(polygon, this.SHATTER_PARTICLE_VELOCITY_MAX);
@@ -198,17 +198,17 @@ Game.StateUtil = Flynn.State.extend({
                 i--;
             }
             else{
-                polygon.position.add(polygon.velocity.clone().multiplyScalar(paceFactor));
+                polygon.position.add(polygon.velocity.clone().multiplyScalar(elapsedTicks));
             }
         }
-        this.particles.update(paceFactor);
+        this.particles.update(elapsedTicks);
 
         //--------------------
         // Spin span polygons
         //--------------------
         var i;
         for (i=0; i<this.span_polygons.length; i++){
-            this.span_polygons[i].setAngle(this.span_polygons[i].angle + Math.PI/180.0 * paceFactor * (1 + 0.2*i));
+            this.span_polygons[i].setAngle(this.span_polygons[i].angle + Math.PI/180.0 * elapsedTicks * (1 + 0.2*i));
         }
     },
 
