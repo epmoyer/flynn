@@ -1,3 +1,7 @@
+.. image:: https://readthedocs.org/projects/flynn/badge/?version=latest
+  :target: http://flynn.readthedocs.io/en/latest/?badge=latest
+  :alt: Documentation Status
+
 :author: `Eric Moyer`_
 :copyright: Copyright © 2015-2017 Eric Moyer <eric@lemoncrab.com>
 :license: MIT
