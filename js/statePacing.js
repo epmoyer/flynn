@@ -20,8 +20,8 @@ Game.StatePacing = Flynn.State.extend({
         ];
         this.counters = [
             {name:'  ELAPSED TICKS', value:0, color:this.COLOR_60FPS, is_20fps:false, is_ticks:true },
-            {name:'ELAPSED SECONDS', value:0, color:this.COLOR_60FPS, is_20fps:false, is_ticks:false},
             {name:'  ELAPSED TICKS', value:0, color:this.COLOR_20FPS, is_20fps:false, is_ticks:true },
+            {name:'ELAPSED SECONDS', value:0, color:this.COLOR_60FPS, is_20fps:false, is_ticks:false},
             {name:'ELAPSED SECONDS', value:0, color:this.COLOR_20FPS, is_20fps:false, is_ticks:false},
         ];
         this.drones = [];
@@ -75,6 +75,7 @@ Game.StatePacing = Flynn.State.extend({
             for(i=0; i<this.drones.length; i++){
                 this.drones[i].reinitialize();
             }
+            this.historic_elapsed_ticks = [];
         }
 
         var elapsed_ticks_20fps = null;
@@ -94,6 +95,9 @@ Game.StatePacing = Flynn.State.extend({
                 // every 3 animation frames, and pass them the accumulated sum of the
                 // elapsed ticks for the previous 3 frames.
                 drone.update(elapsed_ticks_20fps);
+
+                // Error between drone positions
+                drone.error = drone.position.x - this.drones[i-1].position.x ;
             }
         }
 
@@ -142,7 +146,25 @@ Game.StatePacing = Flynn.State.extend({
 
         // Drones
         for(i=0; i<this.drones.length; i++){
-            this.drones[i].render(ctx);
+            var drone = this.drones[i];
+            drone.render(ctx);
+            if(!drone.is_20fps){
+                // This is the 60FPS drone
+                ctx.vectorLine(
+                    drone.position.x, 
+                    drone.position.y - 20, 
+                    drone.position.x, 
+                    drone.position.y + 55, 
+                    Flynn.Colors.GRAY);
+
+            }
+            else{
+                // Error between drone positions
+                var text_color = Math.abs(drone.error) < 5.0 ? Flynn.Colors.GRAY : Flynn.Colors.RED;
+                var text_y = this.region_info[(i-1)/2].bounds.top + top_margin;
+                var text_x = Game.BOUNDS.right - 145;
+                ctx.vectorText('ERROR: ' + format_float(drone.error, true), scale, text_x, text_y, 'left', text_color);
+            }
         }
 
         // Counters
@@ -151,7 +173,8 @@ Game.StatePacing = Flynn.State.extend({
 
         for(i=0; i<this.counters.length; i++){
             var counter = this.counters[i];
-            ctx.vectorText(counter.name + ': ' + counter.value.toFixed(2), scale, left_margin, pos_y, 'left', counter.color);
+
+            ctx.vectorText(counter.name + ': ' + format_float(counter.value, false), scale, Game.BOUNDS.left + left_margin, pos_y, 'left', counter.color);
             pos_y += line_height;
         }
 
@@ -188,6 +211,7 @@ Game.Drone = Flynn.Polygon.extend({
         this.mode = mode;
         this.is_20fps = is_20fps;
         this.acceleration_v = new Victor(this.ACCELERATION, 0);
+        this.error = 0;
 
         this.reinitialize();
     },
@@ -236,6 +260,19 @@ Game.Drone = Flynn.Polygon.extend({
         }
     },
 });
+
+function format_float(value, pad_minus){
+    var decimal_places = 2;
+    var text = value.toFixed(decimal_places);
+    if(text == '-0.00'){
+        value = 0;
+        text = '0.00';
+    }
+    if(value<0 || !pad_minus){
+        return(text);
+    }
+    return(' ' + text);
+}
 
 function sum_array(array){
     // Add the elements of an array, return the sum

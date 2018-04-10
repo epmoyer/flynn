@@ -11,11 +11,15 @@ The format is based on `Keep a Changelog`_ and this project adheres to `Semantic
 Unreleased
 ----------
 
+(None)
+
+3.7.3 - 2018-4-10
+-----------------
+
 Added
 ^^^^^
 
-- Sphinx documentation (http://flynn.readthedocs.io/en/docs/index.html)
-
+- Sphinx documentation (http://flynn.readthedocs.io/en/latest/index.html)
 - Engine
 
   - Pacing tab
