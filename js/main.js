@@ -33,10 +33,11 @@ Game.States = {
     WORLD:       5,
     FONT:        6,
     UTIL:        7,
-    PERFORMANCE: 8,
-    INFO:        9,
+    PACING:      8,
+    PERFORMANCE: 9,
+    INFO:        10,
 
-    LAST_PAGE: 9, // Match highest page above (used for navigation)
+    LAST_PAGE: 10, // Match highest page above (used for navigation)
 
     END:       90,
     CONFIG:    91,
@@ -69,6 +70,8 @@ Game.Main = Class.extend({
                         return new Game.StateFont();
                     case Game.States.UTIL:
                         return new Game.StateUtil();
+                    case Game.States.PACING:
+                        return new Game.StatePacing();
                     case Game.States.PERFORMANCE:
                         return new Game.StatePerformance();
                     case Game.States.INFO:

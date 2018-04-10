@@ -152,7 +152,7 @@ Governing equations:
 
    // Position 
    position_y += 
-      (velocity_y - velocity_y * Math.pow(Math.E, -time_constant * paceFactor)) /
+      velocity_y - velocity_y * Math.pow(Math.E, -time_constant * paceFactor)) /
       time_constant ;
 
    // Velocity
@@ -166,7 +166,7 @@ Governing equations:
 
    // Position 
    position_v += 
-      (velocity_v - velocity_v.clone().multiplyScalar(Math.pow(Math.E, -time_constant * paceFactor) /
+      velocity_v - velocity_v.clone().multiplyScalar(Math.pow(Math.E, -time_constant * paceFactor) /
       time_constant) ;
 
    // Velocity
