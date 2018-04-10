@@ -27,22 +27,22 @@ Flynn.Particle = Class.extend({
         this.life = this.PARTICLE_LIFE + (Math.random()-0.5) * this.PARTICLE_LIFE_VARIATION;
     },
 
-    update: function(elapsedTicks) {
+    update: function(elapsed_ticks) {
         var isAlive = true;
         // Decay and die
-        this.life -= elapsedTicks;
+        this.life -= elapsed_ticks;
         if(this.life <= 0){
             // Kill particle
             isAlive = false;
         }
         else{
             // Add impulse
-            this.position.add(this.velocity.clone().multiplyScalar(elapsedTicks));
+            this.position.add(this.velocity.clone().multiplyScalar(elapsed_ticks));
             // Decay impulse
-            this.velocity.multiplyScalar(Math.pow(this.PARTICLE_FRICTION, elapsedTicks));
+            this.velocity.multiplyScalar(Math.pow(this.PARTICLE_FRICTION, elapsed_ticks));
             if(this.length !== null){
                 // Rotate line
-                this.angle += this.angular_velocity * elapsedTicks;
+                this.angle += this.angular_velocity * elapsed_ticks;
             }
         }
         return isAlive;
@@ -188,9 +188,9 @@ Flynn.Particles = Class.extend({
 
     },
 
-    update: function(elapsedTicks) {
+    update: function(elapsed_ticks) {
         for(var i=0, len=this.particles.length; i<len; i+=1){
-            if(!this.particles[i].update(elapsedTicks)){
+            if(!this.particles[i].update(elapsed_ticks)){
                 // Particle has died.  Remove it
                 this.particles.splice(i, 1);
                 len--;

@@ -20,46 +20,43 @@ Callbacks
 
 The Flynn engine makes 3 callbacks to your game code each animation frame. Nominally (if maintaining 60FPS), they each get called 60 times per second:
 
-- ``handleInputs(input, paceFactor)``: Processes all user input to your game (button presses, screen touch events).
-- ``update(paceFactor)``: Updates the state of the game world.
+- ``handleInputs(input, elapsed_ticks)``: Processes all user input to your game (button presses, screen touch events).
+- ``update(elapsed_ticks)``: Updates the state of the game world.
 - ``render(ctx)``: Draws the game world
 
-Using paceFactor
-================
+Using elapsed_ticks
+===================
 
 Flynn calls each of your 3 callback functions once per frame. Each time Flynn calls ``update()`` and ``handleInputs()`` your game will change the game world a little. In practice, you need to know how much time has elapsed since the last call so that you can change the game world by the appropriate amount.  If 16.6 milliseconds have elapsed (1/60 of a second), then you may, for example, need to move a particular space ship 1 pixel.  But if 33.3 milliseconds have elapsed (1/30 of a second), then you should move that ship 2 pixels.
 
-Flynn tells you how much time has elapsed by passing you a the parameter ``paceFactor``, which tells you how many nominal 60FPS game "ticks" have elapsed. If your game is running at 30FPS, then Flynn will pass a ``paceFactor`` of 2.0 to your callbacks. 
+Flynn tells you how much time has elapsed by passing you a the parameter ``elapsed_ticks``, which tells you how many nominal 60FPS game "ticks" have elapsed. If your game is running at 30FPS, then Flynn will pass a ``elapsed_ticks`` of 2.0 to your callbacks. 
 
 If you'd like to know the elapsed time in seconds, you can always calculate it like this:
 
 .. code-block:: javascript
 
-    update: function(paceFactor) {
+    update: function(elapsed_ticks) {
 
         // ...
 
-        var elapsed_seconds = paceFactor / Flynn.TICKS_PER_SECOND;
+        var elapsed_seconds = elapsed_ticks / Flynn.TICKS_PER_SECOND;
         // Note: Flynn.TICKS_PER_SECOND always == 60
 
         // ...
     }
 
-In general, you'll use paceFactor to calculate the appropriate movement of objects by doing something like:
+In general, you'll use elapsed_ticks to calculate the appropriate movement of objects by doing something like:
 
 .. code-block:: javascript
 
-    position = position + velocity * paceFactor;
+    position = position + velocity * elapsed_ticks;
 
 Below you'll find code recipes for various common pacing scenarios. 
-
-.. note ::
-    ``paceFactor`` should probably have been called ``elapsedTicks``.  I plan to refactor it in a future version of Flynn.  In the meantime, you can name the argument passed to your ``update()`` and ``handleInputs()`` methods ``elapsedTicks`` (instead of ``paceFactor``) for improved readability.
 
 Recipes
 =======
 
-Here are some code recipes for using ``paceFactor`` to update positions, velocities, and timers.
+Here are some code recipes for using ``elapsed_ticks`` to update positions, velocities, and timers.
 
 In the vectorized versions below, variables with the ``_v`` suffix are 2d vectors. They are instances of type ``Victor``, implemented by the victorjs_ library.
 
@@ -70,8 +67,11 @@ In all recipes below, variables have the following units:
   - Acceleration: pixels/tick^2 (i.e. pixels per tick per tick)
   - Time Constant: ticks
 
-Motion without acceleration
-===========================
+.. note ::
+    The Flynn demo application implements the vector form of the recipes below (see the "PACING" tab in the demo), and shows their behavior at 60FPS and at 20FPS to validate that they behave the same way in both cases.
+
+Basic Motion
+============
 
 Governing equations:
 
@@ -84,14 +84,14 @@ Governing equations:
    //-------------------
 
    // Position
-   position_y += velocity_y * paceFactor;
+   position_y += velocity_y * elapsed_ticks;
 
    //-------------------
    // Vectorized form
    //-------------------
 
    // Position
-   position_v += velocity_v.clone().multiplyScalar(paceFactor);
+   position_v.add(velocity_v.clone().multiplyScalar(elapsed_ticks));
 
 Motion with acceleration
 ========================
@@ -103,74 +103,82 @@ Governing equations:
 
 .. code-block:: javascript
 
-   // Where acceleration is in units of pixels/tick^2  (i.e pixels per tick per tick)
-   
-   //-------------------
-   // Single Axis form
-   //-------------------
-   // Note: The position must be updated before the velocity, since the position
-   //   equation presumes velocity_y is the old velocity.
+    // Where acceleration is in units of pixels/tick^2  (i.e pixels per tick per tick)
 
-   // Position (from equivalent physics equation p1 = P0 + a*t^2/2 + v0*t)
-   position_y += acceleration_y * Math.pow(paceFactor, 2) / 2 + velocity_y * paceFactor;
+    //-------------------
+    // Single Axis form
+    //-------------------
+    // Note: The position must be updated before the velocity, since the position
+    //   equation presumes velocity_y is the old velocity.
 
-   // Velocity
-   velocity_y += acceleration_y * paceFactor;
+    // Position (from equivalent physics equation p1 = P0 + a*t^2/2 + v0*t)
+    position_y += acceleration_y * Math.pow(elapsed_ticks, 2) / 2 + velocity_y * elapsed_ticks;
+
+    // Velocity
+    velocity_y += acceleration_y * elapsed_ticks;
 
 
-   //-------------------
-   // Vectorized form
-   //-------------------
-   // Note: The position must be updated before the velocity, since the position
-   //   equation presumes velocity_v is the old velocity.
+    //-------------------
+    // Vectorized form
+    //-------------------
+    // Note: The position must be updated before the velocity, since the position
+    //   equation presumes velocity_v is the old velocity.
 
-   // Position (from equivalent physics equation p1 = P0 + a*t^2/2 + v0*t)
-   position_v += 
-      acceleration_v.clone().multiplyScalar(Math.pow(paceFactor, 2) / 2) + 
-      velocity_v.clone().multiplyScalar(paceFactor);
+    // Position (from equivalent physics equation p1 = P0 + a*t^2/2 + v0*t)
+    position_v.add(
+       acceleration_v.clone().multiplyScalar(Math.pow(elapsed_ticks, 2) / 2).add(
+           velocity_v.clone().multiplyScalar(elapsed_ticks)
+       )
+    );    
 
-   // Acceleration
-   velocity_v += acceleration_v.clone().multiplyScalar(paceFactor);
+    // Acceleration
+    velocity_v.add(
+       acceleration_v.clone().multiplyScalar(elapsed_ticks)
+    );
 
 Motion with friction
 ====================
 
-Friction is modeled using an exponential decay time constant.  The time constant is equal to the time, in game ticks, for the velocity to decay to about 37% of its initial value (1/e ≈ 0.367879441).
+Friction is modeled using an exponential decay time constant.  The time constant is equal to the time, in game ticks, for the velocity to decay to about 37% of its initial value (1/e ≈ 0.36788).
 
 Governing equations:
 
-  - position_new = position_old + (velocity_old - velocity_old * e^(-time_constant * elapsed_time)) / time_constant
-  - velocity_new = velocity_old * e^(-time_constant * elapsed_time)
+  - position_new = position_old + (velocity_old - velocity_old * e^(-elapsed_time / friction_time_constant) * friction_time_constant
+  - velocity_new = velocity_old * e^(-elapsed_time / friction_time_constant)
 
 .. code-block:: javascript
 
-   //-------------------
-   // Single Axis form
-   //-------------------
-   // Note: The position must be updated before the velocity, since the position
-   //   equation presumes velocity_y is the old velocity.
+    //-------------------
+    // Single Axis form
+    //-------------------
+    // Note: The position must be updated before the velocity, since the position
+    //   equation presumes velocity_y is the old velocity.
 
-   // Position 
-   position_y += 
-      velocity_y - velocity_y * Math.pow(Math.E, -time_constant * paceFactor)) /
-      time_constant ;
+    // Position 
+    position_y += 
+      (velocity_y - velocity_y * Math.pow(Math.E, -elapsed_ticks / friction_time_constant)) *
+      friction_time_constant;
 
-   // Velocity
-   velocity_y *= Math.pow(Math.E, -time_constant * paceFactor);
+    // Velocity
+    velocity_y *= Math.pow(Math.E, -elapsed_ticks / friction_time_constant;
 
-   //-------------------
-   // Vectorized form
-   //-------------------
-   // Note: The position must be updated before the velocity, since the position
-   //   equation presumes velocity_v is the old velocity.
+    //-------------------
+    // Vectorized form
+    //-------------------
+    // Note: The position must be updated before the velocity, since the position
+    //   equation presumes velocity_v is the old velocity.
 
-   // Position 
-   position_v += 
-      velocity_v - velocity_v.clone().multiplyScalar(Math.pow(Math.E, -time_constant * paceFactor) /
-      time_constant) ;
+    // Position 
+    position_v.add(
+       velocity_v.clone().subtract(
+            velocity_v.clone().multiplyScalar(
+                Math.pow(Math.E, - elapsed_ticks / friction_time_constant)
+            )
+        ).multiplyScalar(friction_time_constant)
+    );
 
-   // Velocity
-   velocity_y.multiplyScalar(Math.pow(Math.E, -time_constant * paceFactor));
+    // Velocity
+    velocity_v.multiplyScalar(Math.pow(Math.E, - elapsed_ticks / friction_time_constant));
 
 Game timers
 ===========
@@ -179,26 +187,26 @@ To keep track of the total elapsed time (in seconds) in your game, you need to a
 
 .. code-block:: javascript
 
-    update: function(paceFactor) {
+    update: function(elapsed_ticks) {
 
         // ...
 
         // Game timer in seconds
-        this.game_timer_sec += paceFactor / Flynn.TICKS_PER_SECOND; 
+        this.game_timer_sec += elapsed_ticks / Flynn.TICKS_PER_SECOND; 
 
         // Game timer in ticks
-        this.game_timer_ticks += paceFactor; 
+        this.game_timer_ticks += elapsed_ticks; 
 
         // ...
     }
    
 .. note ::
-    ``Flynn.mcp.gameSpeedFactor`` is a single parameter which can be used to speed up or slow down an entire game.  It gets passed as a parameter to ``Flynn.Mcp.init()`` during initialization to set the overall speed of a game. Setting the ``gameSpeedFactor`` to a value other than 1.0 causes Flynn to  *lie to you* when it calls ``handleInputs()`` and ``update()``, by artificially scaling paceFactor accordingly.
+    ``Flynn.mcp.gameSpeedFactor`` is a single parameter which can be used to speed up or slow down an entire game.  It gets passed as a parameter to ``Flynn.Mcp.init()`` during initialization to set the overall speed of a game. Setting the ``gameSpeedFactor`` to a value other than 1.0 causes Flynn to  *lie to you* when it calls ``handleInputs()`` and ``update()``, by artificially scaling elapsed_ticks accordingly.
 
 Validating your implementation
 ==============================
 
-Properly applying ``paceFactor`` in your game logic can be tricky. Personally I get it wrong *all the time*. But don't worry, Flynn has your back! 
+Properly applying ``elapsed_ticks`` in your game logic can be tricky. Personally I get it wrong *all the time*. But don't worry, Flynn has your back! 
 
 First, activate "Developer mode", by adding "?develop" to the end of your game's URL in the browser (for example, you can start Roundabout in developer mode like this:
 
@@ -206,9 +214,9 @@ First, activate "Developer mode", by adding "?develop" to the end of your game's
 
 There are three "Developer mode" features specifically designed to help you validate pacing...
 
-- **FPS20**: Press the ``\`` key to toggle FPS20 mode.  The text "FPS_20" will appear in the lower-left corner of the screen, and your game will be forced to run at 20 frames per second. If you've applied paceFactor correctly, the "speed" of your game should remain unchanged.  If, for example, you discover that in FPS20 mode your space ship moves at normal speed but its bullets move slowly, then you have forgotten to apply paceFactor to your bullet code.
+- **FPS20**: Press the ``\`` key to toggle FPS20 mode.  The text "FPS_20" will appear in the lower-left corner of the screen, and your game will be forced to run at 20 frames per second. If you've applied elapsed_ticks correctly, the "speed" of your game should remain unchanged.  If, for example, you discover that in FPS20 mode your space ship moves at normal speed but its bullets move slowly, then you have forgotten to apply elapsed_ticks to your bullet code.
 
-- **SLOWMO**: Press the ``7`` key to toggle SLOWMO mode.  The text "SLOWMO" will appear in the lower-left corner of the screen, and your game will be forced to run in slow motion (though still at nominally 60FPS). If you've applied paceFactor correctly, everything should be super slow. If, for example, you discover that your space ship moves slowly in SNOWMO mode but its bullets move at their normal speed, then you have forgotten to apply paceFactor to your bullet code.
+- **SLOWMO**: Press the ``7`` key to toggle SLOWMO mode.  The text "SLOWMO" will appear in the lower-left corner of the screen, and your game will be forced to run in slow motion (though still at nominally 60FPS). If you've applied elapsed_ticks correctly, everything should be super slow. If, for example, you discover that your space ship moves slowly in SNOWMO mode but its bullets move at their normal speed, then you have forgotten to apply elapsed_ticks to your bullet code.
 
 - **STATS**: Press the ``6`` key to toggle the STATS display.  Flynn will show you four real-time graphs:
 

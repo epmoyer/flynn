@@ -23,7 +23,7 @@ Added
 Changed
 ^^^^^^^
 
-- paceFactor renamed to elapsedTicks (in Engine and Test Application)
+- paceFactor renamed to elapsed_ticks (in Engine and Test Application)
 
 3.7.2 - 2018-4-7
 ----------------

@@ -16,13 +16,13 @@ Game.StateText = Flynn.State.extend({
         this.rotate_step = -(Math.PI/3)/60;
     },
 
-    handleInputs: function(input, elapsedTicks) {
+    handleInputs: function(input, elapsed_ticks) {
         Game.handleInputs_common(input);
     },
 
-    update: function(elapsedTicks) {
-        this.gameClock += elapsedTicks;
-        this.rotate_angle += this.rotate_step * elapsedTicks;
+    update: function(elapsed_ticks) {
+        this.gameClock += elapsed_ticks;
+        this.rotate_angle += this.rotate_step * elapsed_ticks;
     },
 
     render: function(ctx){

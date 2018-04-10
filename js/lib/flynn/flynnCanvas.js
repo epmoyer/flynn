@@ -737,14 +737,14 @@ Flynn.Canvas = Class.extend({
             
             var deltaMsec = timeNow - self.previousTimestamp;
             self.ctx.fpsMsecCount += deltaMsec;
-            // elapsedTicks represents the (possibly fractional) number of
+            // elapsed_ticks represents the (possibly fractional) number of
             // 60FPS game ticks which have elapsed.
-            // If a game is running at 30FPS then elapsedTicks will be 2.0,  At 15FPS it will be 4.0
-            var elapsedTicks = (60*(timeNow - self.previousTimestamp))/1000;
-            if (elapsedTicks > Flynn.Config.MAX_PACE_RECOVERY_TICKS) {
-                elapsedTicks = 1;
+            // If a game is running at 30FPS then elapsed_ticks will be 2.0,  At 15FPS it will be 4.0
+            var elapsed_ticks = (60*(timeNow - self.previousTimestamp))/1000;
+            if (elapsed_ticks > Flynn.Config.MAX_PACE_RECOVERY_TICKS) {
+                elapsed_ticks = 1;
             }
-            elapsedTicks *= Flynn.mcp.gameSpeedFactor;
+            elapsed_ticks *= Flynn.mcp.gameSpeedFactor;
 
             self.ctx.ticks += 1;
 
@@ -766,18 +766,18 @@ Flynn.Canvas = Class.extend({
                     self.gaugeFps.record(1000/deltaMsec);
                     break;
                 case Flynn.DevPacingMode.SLOW_MO:
-                    elapsedTicks *=  0.2;
+                    elapsed_ticks *=  0.2;
                     label = "SLOW_MO";
                     self.gaugeFps.record(1000/deltaMsec);
                     break;
                 case Flynn.DevPacingMode.FPS_20:
                     ++self.devLowFpsFrameCount;
-                    self.devLowFpsElapsedTicks += elapsedTicks;
+                    self.devLowFpsElapsedTicks += elapsed_ticks;
                     if(self.devLowFpsFrameCount === 3){
                         self.devLowFpsFrameCount = 0;
-                        elapsedTicks = self.devLowFpsElapsedTicks;
+                        elapsed_ticks = self.devLowFpsElapsedTicks;
                         self.devLowFpsElapsedTicks = 0;
-                        self.gaugeFps.record(60/elapsedTicks);
+                        self.gaugeFps.record(60/elapsed_ticks);
                     }
                     else{
                         // Skip this frame (to simulate low frame rate)
@@ -800,7 +800,7 @@ Flynn.Canvas = Class.extend({
                 self.ctx.graphics.clear();
                 self.ctx.stage.addChild(self.ctx.graphics);
 
-                animation_callback_f(elapsedTicks);
+                animation_callback_f(elapsed_ticks);
 
                 if(label){
                     self.ctx.vectorText(label, 1.5, 10, self.canvas.height-20, 'left', Flynn.Colors.RED);

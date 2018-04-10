@@ -100,25 +100,25 @@ Game.StateCollision = Flynn.State.extend({
         };
     },
 
-    handleInputs: function(input, elapsedTicks) {
+    handleInputs: function(input, elapsed_ticks) {
         Game.handleInputs_common(input);
 
         // Move cross-hair
         if (input.virtualButtonIsDown("left")){
-            this.crosshair_poly.position.x -= this.CROSSHAIR_SPEED * elapsedTicks;
+            this.crosshair_poly.position.x -= this.CROSSHAIR_SPEED * elapsed_ticks;
         }
         if (input.virtualButtonIsDown("right")){
-            this.crosshair_poly.position.x += this.CROSSHAIR_SPEED * elapsedTicks;
+            this.crosshair_poly.position.x += this.CROSSHAIR_SPEED * elapsed_ticks;
         }
         if (input.virtualButtonIsDown("up")){
-            this.crosshair_poly.position.y -= this.CROSSHAIR_SPEED * elapsedTicks;
+            this.crosshair_poly.position.y -= this.CROSSHAIR_SPEED * elapsed_ticks;
         }
         if (input.virtualButtonIsDown("down")){
-            this.crosshair_poly.position.y += this.CROSSHAIR_SPEED * elapsedTicks;
+            this.crosshair_poly.position.y += this.CROSSHAIR_SPEED * elapsed_ticks;
         }
         var analog_pos = Flynn.mcp.input.getAnalogJoystickPosition("a_stick");
-        this.crosshair_poly.position.x += analog_pos.x * this.CROSSHAIR_SPEED * elapsedTicks;
-        this.crosshair_poly.position.y += analog_pos.y * this.CROSSHAIR_SPEED * elapsedTicks;
+        this.crosshair_poly.position.x += analog_pos.x * this.CROSSHAIR_SPEED * elapsed_ticks;
+        this.crosshair_poly.position.y += analog_pos.y * this.CROSSHAIR_SPEED * elapsed_ticks;
         this.crosshair_poly.position.x = Flynn.Util.minMaxBound(
             this.crosshair_poly.position.x,
             this.joystick_test_rect.left,
@@ -153,28 +153,28 @@ Game.StateCollision = Flynn.State.extend({
         }
     },
 
-    update: function(elapsedTicks) {
-        this.gameClock += elapsedTicks;
-        this.projectiles.update(elapsedTicks);
+    update: function(elapsed_ticks) {
+        this.gameClock += elapsed_ticks;
+        this.projectiles.update(elapsed_ticks);
 
         var i;
         for (i=0; i<this.polygons.length; i++){
             this.polygons[i].setAngle(this.polygons[i].angle + 
-            Math.PI/280.0 * Math.pow(1.2, Math.min(i,3)) * elapsedTicks);
+            Math.PI/280.0 * Math.pow(1.2, Math.min(i,3)) * elapsed_ticks);
         }
 
-        this.bullet.position.add(this.bullet.velocity.clone().multiplyScalar(elapsedTicks));
-        // this.bullet.x += this.bullet.dx * elapsedTicks;
+        this.bullet.position.add(this.bullet.velocity.clone().multiplyScalar(elapsed_ticks));
+        // this.bullet.x += this.bullet.dx * elapsed_ticks;
         if(   (this.bullet.velocity.x > 0 && this.bullet.position.x > this.collision_rects[0].right)
            || (this.bullet.velocity.x < 0 && this.bullet.position.x < this.collision_rects[0].left)){
             this.bullet.velocity.x = -this.bullet.velocity.x;
-            this.bullet.position.x += this.bullet.velocity.x * elapsedTicks;
+            this.bullet.position.x += this.bullet.velocity.x * elapsed_ticks;
         }
-        // this.bullet.y += this.bullet.dy * elapsedTicks;
+        // this.bullet.y += this.bullet.dy * elapsed_ticks;
         if(   (this.bullet.velocity.y > 0 && this.bullet.position.y > this.collision_rects[0].bottom)
            || (this.bullet.velocity.y < 0 && this.bullet.position.y < this.collision_rects[0].top)){
             this.bullet.velocity.y = -this.bullet.velocity.y;
-            this.bullet.position.y += this.bullet.velocity.y * elapsedTicks;
+            this.bullet.position.y += this.bullet.velocity.y * elapsed_ticks;
         }
 
         if(this.polygons[0].hasPoint(this.bullet.position.x, this.bullet.position.y)){

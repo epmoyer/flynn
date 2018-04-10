@@ -233,15 +233,15 @@ Game.StateHome = Flynn.State.extend({
             );
     },
 
-    handleInputs: function(input, elapsedTicks) {
+    handleInputs: function(input, elapsed_ticks) {
         Game.handleInputs_common(input);
     },
 
-    update: function(elapsedTicks) {
-        this.gameClock += elapsedTicks;
+    update: function(elapsed_ticks) {
+        this.gameClock += elapsed_ticks;
         
-        this.timers.update(elapsedTicks);
-        this.particles.update(elapsedTicks);
+        this.timers.update(elapsed_ticks);
+        this.particles.update(elapsed_ticks);
 
         if(this.timers.hasExpired("Explode1")){
             this.timers.set("Explode1", this.TIMER_EXPLODE1_TICKS);
@@ -284,21 +284,21 @@ Game.StateHome = Flynn.State.extend({
 
         var i;
         for (i=0; i<this.polygons.length; i++){
-            this.polygons[i].setAngle(this.polygons[i].angle + Math.PI/60.0 * elapsedTicks * (1 + 0.2*i));
+            this.polygons[i].setAngle(this.polygons[i].angle + Math.PI/60.0 * elapsed_ticks * (1 + 0.2*i));
         }
         for (i=0; i<this.penup_polygons.length; i++){
-            this.penup_polygons[i].setAngle(this.penup_polygons[i].angle + Math.PI/60.0 * elapsedTicks * (1 + 0.2*i));
+            this.penup_polygons[i].setAngle(this.penup_polygons[i].angle + Math.PI/60.0 * elapsed_ticks * (1 + 0.2*i));
         }
         for (i=0; i<this.multicolor_polygons.length; i++){
-            this.multicolor_polygons[i].setAngle(this.multicolor_polygons[i].angle + Math.PI/60.0 * elapsedTicks * (1 + 0.2*i));
+            this.multicolor_polygons[i].setAngle(this.multicolor_polygons[i].angle + Math.PI/60.0 * elapsed_ticks * (1 + 0.2*i));
         }
 
-        this.partice_gun.angle += this.partice_gun.angular_velocity * elapsedTicks;
+        this.partice_gun.angle += this.partice_gun.angular_velocity * elapsed_ticks;
 
-        this.fade_angle += this.fade_angular_velocity * elapsedTicks;
+        this.fade_angle += this.fade_angular_velocity * elapsed_ticks;
 
-        this.va_logo.update(elapsedTicks);
-        this.va_logo2.update(elapsedTicks);
+        this.va_logo.update(elapsed_ticks);
+        this.va_logo2.update(elapsed_ticks);
     },
 
     render: function(ctx){

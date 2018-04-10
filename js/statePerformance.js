@@ -51,17 +51,17 @@ Game.StatePerformance = Flynn.State.extend({
         }
     },
 
-    handleInputs: function(input, elapsedTicks) {
+    handleInputs: function(input, elapsed_ticks) {
         Game.handleInputs_common(input);
     },
 
-    update: function(elapsedTicks) {
+    update: function(elapsed_ticks) {
         var avg_pace_factor, i;
-        this.angle += this.ANGLE_STEP * elapsedTicks;
+        this.angle += this.ANGLE_STEP * elapsed_ticks;
         this.polygon_spiral.setAngle(this.angle);
-        // console.log(elapsedTicks);
+        // console.log(elapsed_ticks);
 
-        if(elapsedTicks > 1.06){
+        if(elapsed_ticks > 1.06){
             this.num_spirals -= 1;
         }
         else{
@@ -69,7 +69,7 @@ Game.StatePerformance = Flynn.State.extend({
         }
 
 
-        // this.pace_samples.push(elapsedTicks);
+        // this.pace_samples.push(elapsed_ticks);
         // if(this.pace_samples.length == this.pace_window){
         //     avg_pace_factor = 0;
         //     for(i=0; i<this.pace_window; i++){
@@ -102,7 +102,7 @@ Game.StatePerformance = Flynn.State.extend({
         //     }
         // }
 
-        // if(elapsedTicks<1.0){
+        // if(elapsed_ticks<1.0){
         //     this.num_spirals += 1;
         // }
         // else{

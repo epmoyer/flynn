@@ -59,17 +59,17 @@ Game.StatePacing = Flynn.State.extend({
         }
     },
 
-    handleInputs: function(input, elapsedTicks) {
+    handleInputs: function(input, elapsed_ticks) {
         Game.handleInputs_common(input);
     },
 
-    update: function(elapsedTicks) {
+    update: function(elapsed_ticks) {
         var i, j;
 
         //------------------------------
         // Reset drones periodically
         //------------------------------
-        this.reset_counter += elapsedTicks;
+        this.reset_counter += elapsed_ticks;
         if(this.reset_counter > this.RESET_THRESHOLD){
             this.reset_counter = 0;
             for(i=0; i<this.drones.length; i++){
@@ -78,7 +78,7 @@ Game.StatePacing = Flynn.State.extend({
         }
 
         var elapsed_ticks_20fps = null;
-        this.historic_elapsed_ticks.push(elapsedTicks);
+        this.historic_elapsed_ticks.push(elapsed_ticks);
         if(this.historic_elapsed_ticks.length == this.TICKS_PER_20FPS){
             elapsed_ticks_20fps = sum_array(this.historic_elapsed_ticks);
             this.historic_elapsed_ticks = [];
@@ -87,7 +87,7 @@ Game.StatePacing = Flynn.State.extend({
         for(i=0; i<this.drones.length; i++){
             var drone = this.drones[i];
             if(!drone.is_20fps){
-                drone.update(elapsedTicks);
+                drone.update(elapsed_ticks);
             }
             if (drone.is_20fps && elapsed_ticks_20fps != null){
                 // For the 20fps drones (the Magenta ones), call update only once
@@ -101,7 +101,7 @@ Game.StatePacing = Flynn.State.extend({
         for(i=0; i<this.counters.length; i++){
             var counter = this.counters[i];
             if(!counter.is_20fps){
-                this.update_counter(counter, elapsedTicks);
+                this.update_counter(counter, elapsed_ticks);
             }
             if(counter.is_20fps && elapsed_ticks_20fps != null){
                 // For the 20fps counters (the Magenta ones), add time once
@@ -112,14 +112,14 @@ Game.StatePacing = Flynn.State.extend({
         }
     },
 
-    update_counter: function(counter, elapsedTicks){
+    update_counter: function(counter, elapsed_ticks){
         if(counter.is_ticks){
             // Accumulate elapsed game ticks
-            counter.value += elapsedTicks;
+            counter.value += elapsed_ticks;
         }
         else{
             // Accumulate elapsed seconds
-            counter.value += elapsedTicks / Flynn.TICKS_PER_SECOND;
+            counter.value += elapsed_ticks / Flynn.TICKS_PER_SECOND;
         }
     },  
 
@@ -207,32 +207,32 @@ Game.Drone = Flynn.Polygon.extend({
         }
     },
 
-    update: function(elapsedTicks){
+    update: function(elapsed_ticks){
 
-        this.setAngle(this.angle + this.ROTATE_SPEED * elapsedTicks);
+        this.setAngle(this.angle + this.ROTATE_SPEED * elapsed_ticks);
 
         if(this.mode == this.MODES.VELOCITY){
-            this.position.add(this.velocity.clone().multiplyScalar(elapsedTicks));
+            this.position.add(this.velocity.clone().multiplyScalar(elapsed_ticks));
         }
         else if (this.mode == this.MODES.ACCELERATION){
             this.position.add(
-                this.acceleration_v.clone().multiplyScalar(Math.pow(elapsedTicks, 2) / 2).add(
-                    this.velocity.clone().multiplyScalar(elapsedTicks)
+                this.acceleration_v.clone().multiplyScalar(Math.pow(elapsed_ticks, 2) / 2).add(
+                    this.velocity.clone().multiplyScalar(elapsed_ticks)
                 )
             );
             this.velocity.add(
-                this.acceleration_v.clone().multiplyScalar(elapsedTicks)
+                this.acceleration_v.clone().multiplyScalar(elapsed_ticks)
             );
         }
         else if (this.mode == this.MODES.FRICTION){
             this.position.add(
                this.velocity.clone().subtract(
                     this.velocity.clone().multiplyScalar(
-                        Math.pow(Math.E, - elapsedTicks / this.FRICTION_TIME_CONSTANT)
+                        Math.pow(Math.E, - elapsed_ticks / this.FRICTION_TIME_CONSTANT)
                     )
                 ).multiplyScalar(this.FRICTION_TIME_CONSTANT)
             );
-            this.velocity.multiplyScalar(Math.pow(Math.E, - elapsedTicks / this.FRICTION_TIME_CONSTANT ));
+            this.velocity.multiplyScalar(Math.pow(Math.E, - elapsed_ticks / this.FRICTION_TIME_CONSTANT ));
         }
     },
 });
