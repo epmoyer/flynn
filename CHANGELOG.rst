@@ -11,7 +11,10 @@ The format is based on `Keep a Changelog`_ and this project adheres to `Semantic
 Unreleased
 ----------
 
-(None)
+Added
+^^^^^
+
+- Sphinx documentation (http://flynn.readthedocs.io/en/docs/index.html)
 
 3.7.2 - 2018-4-7
 ----------------
