@@ -4,31 +4,35 @@ var Game = Game || {}; // Create namespace
 
 Game.State3D = Flynn.State.extend({
     ROTATE_SPEED: Math.PI/(60 * 6),
-    CAMERA_DISTANCE: 40,
-    CAMERA_SPEED: Math.PI/(60 * 3),
+    CAMERA_DISTANCE: 80,
+    CAMERA_SPEED: Math.PI/(60 * 8),
     CUBE_COLORS:[
-        Flynn.Colors.MAGENTA,
-        Flynn.Colors.DODGERBLUE,
-        Flynn.Colors.CYAN,
+        // Flynn.Colors.MAGENTA,
+        // Flynn.Colors.DODGERBLUE,
+        // Flynn.Colors.CYAN,
+        Flynn.Colors.YELLOW,
         Flynn.Colors.GREEN,
-        Flynn.Colors.LIGHTBLUE,
+        Flynn.Colors.BLUE,
+        // Flynn.Colors.LIGHTBLUE,
+        Flynn.Colors.RED,
+        // Flynn.Colors.ORANGE,
     ],
-    CUBE_DISTANCE: 5,
+    CUBE_DISTANCE: 15,
 
     init: function() {
         var i, x, drone_type, info;
         this._super();
-        this.cube = new Flynn._3DMeshCube('Cube', 2, Flynn.Colors.ORANGE);
+        this.cube = new Flynn._3DMeshCube('Cube', 2, Flynn.Colors.WHITE);
         this.meshes = [
             this.cube
         ];
-        for(i=1; i<10; i++){
+        for(i=1; i<80; i++){
             this.meshes.push(
                 new Flynn._3DMeshCube('Cube', 2, Flynn.Util.randomChoice(this.CUBE_COLORS))
             );
             this.meshes[i].Position = new BABYLON.Vector3(
                 Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE),
-                Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE),
+                Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE/2, this.CUBE_DISTANCE/2),
                 Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE)
                 );
             this.meshes[i].rot_speed_x = Flynn.Util.randomFromInterval(0, this.ROTATE_SPEED);
@@ -37,7 +41,7 @@ Game.State3D = Flynn.State.extend({
         this.camera = new Flynn._3DCamera();
         this.camera.Position =  new BABYLON.Vector3(0, 0, 10);
         this.camera.Target = new BABYLON.Vector3(0, 0, 0);
-        this.renderer = new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT);
+        this.renderer = new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, {near:70, far:100});
 
         this.cube.Position = new BABYLON.Vector3( 0,  0,  0);
         this.cube.rot_speed_x = 0;

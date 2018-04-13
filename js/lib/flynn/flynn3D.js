@@ -43,9 +43,10 @@ Flynn._3DMeshCube = Flynn._3DMesh.extend({
 Flynn._3DRenderer = Class.extend({
     DOT_SIZE: 4,
 
-    init: function(width, height){
+    init: function(width, height, fog_distance){
         this.width = width;
         this.height = height;
+        this.fog_distance = fog_distance;
     },
 
     project: function(coord, transMat) {
@@ -59,13 +60,18 @@ Flynn._3DRenderer = Class.extend({
     },
 
     render: function(ctx, camera, meshes){
+        var cMesh;
+
         var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
         var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(
                 0.78, this.width / this.height, 0.01, 1.0);
 
+        var color;
+        var visible;
+        var draw_list = [];
         for (var index = 0; index < meshes.length; index++) {
             // current mesh to work on
-            var cMesh = meshes[index];
+            cMesh = meshes[index];
             // Beware to apply rotation before translation
             var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
                 cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z)
@@ -86,15 +92,39 @@ Flynn._3DRenderer = Class.extend({
                 //     this.DOT_SIZE,
                 //     this.DOT_SIZE);
             }
+
+            visible = true;
+            color = cMesh.color;
+            var distance = 0;
+            if(this.fog_distance){
+                distance = BABYLON.Vector3.Distance(camera.Position, cMesh.Position);
+                if(distance > this.fog_distance.far){
+                    visible = false;
+                }
+                else if (distance > this.fog_distance.near){
+                    var dim_factor = -((distance - this.fog_distance.near) / 
+                        (this.fog_distance.far - this.fog_distance.near));
+                    color = Flynn.Util.shadeColor(cMesh.color, dim_factor);
+                }
+            }
+            if(visible){
+                draw_list.push({mesh_index:index, distance:distance, color:color});
+            }
+        }
+
+        // Sort draw order by distance
+        draw_list.sort(function(a,b){return b.distance - a.distance;});
+
+        for(var i=0; i<draw_list.length; i++){
+            var target = draw_list[i];
+            cMesh = meshes[target.mesh_index];
             var lines = cMesh.Lines;
             var verts = cMesh.ProjectedVertices;
             for(var indexLines = 0; indexLines < cMesh.Lines.length; indexLines++){
-                ctx.vectorStart(cMesh.color, false, false);
+                ctx.vectorStart(target.color, false, false);
                 ctx.vectorMoveTo(verts[lines[indexLines][0]].x, verts[lines[indexLines][0]].y);
                 ctx.vectorLineTo(verts[lines[indexLines][1]].x, verts[lines[indexLines][1]].y);
             }
-
-
         }
     },
 });
