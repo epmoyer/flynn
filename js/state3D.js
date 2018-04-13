@@ -20,6 +20,7 @@ Game.State3D = Flynn.State.extend({
     CUBE_DISTANCE: 15,
     CUBE_SIZE: 2,
     NUM_CUBES: 80,
+    RENDERER_CYCLE_TIME: 4 * 60,
 
     init: function() {
         var i, x, drone_type, info;
@@ -47,8 +48,18 @@ Game.State3D = Flynn.State.extend({
         this.camera = new Flynn._3DCamera();
         this.camera.Position =  new BABYLON.Vector3(0, 0, 10);
         this.camera.Target = new BABYLON.Vector3(0, 0, 0);
-        this.renderer = new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, {near:70, far:100});
         this.camera_angle = 0;
+
+        this.renderers = [
+            {   name:"DRAW ORDER", 
+                renderer: new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, null)},
+            {   name:"DRAW ORDER, FOG (RANGED)",
+                renderer: new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, {near:70, far:100})},
+            {   name:"DRAW ORDER, FOG (ABSOLUTE CUTOFF)",
+                renderer: new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, {near:82, far:82})},
+        ];
+        this.index_renderer = 0;
+        this.counter_rendeder = 0;
 
         // Spin the center cube a bit
         this.meshes[0].Rotation.x = Math.PI/8;
@@ -62,6 +73,16 @@ Game.State3D = Flynn.State.extend({
     update: function(elapsed_ticks) {
         var i;
         this.camera_angle += this.CAMERA_SPEED * elapsed_ticks;
+
+        // Cycle renderers
+        this.counter_rendeder += elapsed_ticks;
+        if(this.counter_rendeder > this.RENDERER_CYCLE_TIME){
+            this.counter_rendeder = 0;
+            this.index_renderer += 1;
+            if(this.index_renderer == this.renderers.length){
+                this.index_renderer = 0;
+            }
+        }
         this.camera.Position =  new BABYLON.Vector3(
             Math.sin(this.camera_angle) * this.CAMERA_DISTANCE,
             0,
@@ -72,6 +93,7 @@ Game.State3D = Flynn.State.extend({
             mesh.Rotation.x += mesh.rot_speed_x * elapsed_ticks;
             mesh.Rotation.y += mesh.rot_speed_y * elapsed_ticks;
         }
+
     }, 
 
     render: function(ctx){
@@ -80,11 +102,11 @@ Game.State3D = Flynn.State.extend({
         var heading_color = Flynn.Colors.YELLOW;
 
         Game.render_page_frame(ctx);
-        // ctx.vectorText(
-        //     '3D RENDERING', 
-        //     scale, null, Game.BOUNDS.bottom - 18, null, heading_color);
 
-        this.renderer.render(ctx, this.camera, this.meshes);
+        ctx.vectorText(
+            'RENDERER OPTIONS: ' + this.renderers[this.index_renderer].name, 
+            scale, null, Game.BOUNDS.bottom - 18, null, heading_color);
+        this.renderers[this.index_renderer].renderer.render(ctx, this.camera, this.meshes);
     },
 });
 
