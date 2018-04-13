@@ -8,12 +8,12 @@ Flynn._3DCamera = Class.extend({
 });
 
 Flynn._3DMesh = Class.extend({
-    init: function(name, verticesCount, lineCount, color){
+    init: function(name, vertices, lines, color){
         this.name = name;
         this.color = color;
-        this.Vertices = new Array(verticesCount);
-        this.ProjectedVertices = new Array(verticesCount);
-        this.Lines = new Array(lineCount);
+        this.Vertices = vertices;
+        this.ProjectedVertices = new Array(vertices.length);
+        this.Lines = lines;
         this.Rotation = BABYLON.Vector3.Zero();
         this.Position = BABYLON.Vector3.Zero();
     },
@@ -21,22 +21,31 @@ Flynn._3DMesh = Class.extend({
 
 Flynn._3DMeshCube = Flynn._3DMesh.extend({
     init: function(name, size, color){
-        this._super(name, 8, 12, color);
         var loc = size/2;
-        this.Vertices[0] = new BABYLON.Vector3( loc,  loc,  loc);
-        this.Vertices[1] = new BABYLON.Vector3(-loc,  loc,  loc);
-        this.Vertices[2] = new BABYLON.Vector3(-loc, -loc,  loc);
-        this.Vertices[3] = new BABYLON.Vector3( loc, -loc,  loc);
-        this.Vertices[4] = new BABYLON.Vector3( loc,  loc, -loc);
-        this.Vertices[5] = new BABYLON.Vector3(-loc,  loc, -loc);
-        this.Vertices[6] = new BABYLON.Vector3(-loc, -loc, -loc);
-        this.Vertices[7] = new BABYLON.Vector3( loc, -loc, -loc);
-
-        this.Lines =[
-          [0, 1], [1, 2], [2, 3], [3, 0],
-          [0, 4], [4, 5], [5, 6], [6, 7],
-          [7, 4], [1, 5], [2, 6], [3, 7],
+        var vertices = [
+            new BABYLON.Vector3( loc,  loc,  loc),
+            new BABYLON.Vector3(-loc,  loc,  loc),
+            new BABYLON.Vector3(-loc, -loc,  loc),
+            new BABYLON.Vector3( loc, -loc,  loc),
+            new BABYLON.Vector3( loc,  loc, -loc),
+            new BABYLON.Vector3(-loc,  loc, -loc),
+            new BABYLON.Vector3(-loc, -loc, -loc),
+            new BABYLON.Vector3( loc, -loc, -loc)
         ];
+
+        var lines =[
+          0, 1, 2, 3, 0,  // Top
+          4,              // Side 1
+          5, 6, 7, 4,     // Bottom
+          Flynn.PEN_UP,
+          1, 5,           // Side 2
+          Flynn.PEN_UP,
+          2, 6,           // Side 3
+          Flynn.PEN_UP,
+          3, 7            // Side 4
+        ];
+
+        this._super(name, vertices, lines, color);
     },
 });
 
@@ -84,8 +93,9 @@ Flynn._3DRenderer = Class.extend({
                 // First, we project the 3D coordinates into the 2D space
                 var projectedPoint = this.project(cMesh.Vertices[indexVertices], transformMatrix);
                 cMesh.ProjectedVertices[indexVertices] = projectedPoint;
+
+                // Draw vertices
                 //ctx.fillStyle=cMesh.color;
-                // Then we can draw on screen
                 // ctx.fillRect(
                 //     projectedPoint.x,
                 //     projectedPoint.y,
@@ -119,11 +129,23 @@ Flynn._3DRenderer = Class.extend({
             var target = draw_list[i];
             cMesh = meshes[target.mesh_index];
             var lines = cMesh.Lines;
-            var verts = cMesh.ProjectedVertices;
-            for(var indexLines = 0; indexLines < cMesh.Lines.length; indexLines++){
-                ctx.vectorStart(target.color, false, false);
-                ctx.vectorMoveTo(verts[lines[indexLines][0]].x, verts[lines[indexLines][0]].y);
-                ctx.vectorLineTo(verts[lines[indexLines][1]].x, verts[lines[indexLines][1]].y);
+            var vertices = cMesh.ProjectedVertices;
+            var pen_up = true;
+            for(var index_lines = 0; index_lines < lines.length; index_lines++){
+                var index_vertex = lines[index_lines];
+                if (index_vertex == Flynn.PEN_UP){
+                    pen_up = true;
+                    continue;
+                }
+                var vertex = vertices[index_vertex];
+                if(pen_up){
+                    ctx.vectorStart(target.color, false, false);
+                    ctx.vectorMoveTo(vertex.x, vertex.y);
+                    pen_up = false;
+                }
+                else{
+                    ctx.vectorLineTo(vertex.x, vertex.y);
+                }
             }
         }
     },
