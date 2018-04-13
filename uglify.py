@@ -19,7 +19,7 @@ def main():
         if 'flynnMain.js' in filename:
             filenames.remove(filename)
             filenames.insert(0, filename)
-            break 
+            break
 
     #---------------------------
     # Build flynn.min.js
@@ -37,7 +37,7 @@ def main():
     print('The following files will be removed from the core build:')
     print(Fore.YELLOW + pp.pformat(dropped_filenames))
     uglify(core_filenames, 'flynn.core.min.js')
-    
+
 def uglify(filenames, out_filename):
     command = 'uglifyjs'
     for filename in filenames:
