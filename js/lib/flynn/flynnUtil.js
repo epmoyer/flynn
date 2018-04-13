@@ -108,8 +108,19 @@ Flynn.Util = {
     minMaxBound: function(value, min, max){
         if (value<min){
             return min;
-        } else if (value>max){
+        }
+        if (value>max){
             return max;
+        }
+        return value;
+    },
+
+    minMaxBoundWrap: function(value, min, max){
+        if (value<min){
+            return max;
+        }
+        if (value>max){
+            return min;
         }
         return value;
     },

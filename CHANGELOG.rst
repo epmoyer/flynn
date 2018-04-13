@@ -13,8 +13,11 @@ Unreleased
 
 (None)
 
-3.7.3 - 2018-X-XX
+3.8.0 - 2018-X-XX
 -----------------
+
+Added
+^^^^^
 
 - Engine
 
@@ -23,6 +26,13 @@ Unreleased
 - Test Application
 
   - 3D Tab
+
+Changed
+^^^^^^^
+
+- Engine
+
+  - Improve shape of ")" and "(" in main vector font.
 
 3.7.3 - 2018-4-10
 -----------------

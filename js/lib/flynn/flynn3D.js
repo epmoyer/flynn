@@ -63,8 +63,10 @@ Flynn._3DRenderer = Class.extend({
         // The transformed coordinates will be based on coordinate system
         // starting on the center of the screen. But drawing on screen normally starts
         // from top left. We then need to transform them again to have x:0, y:0 on top left.
-        var x = point.x * this.width + this.width / 2.0 >> 0;
-        var y = -point.y * this.height + this.height / 2.0 >> 0;
+        // var x = point.x * this.width + this.width / 2.0 >> 0;
+        // var y = -point.y * this.height + this.height / 2.0 >> 0;
+        var x = point.x * this.width + this.width / 2.0;
+        var y = -point.y * this.height + this.height / 2.0;
         return (new BABYLON.Vector2(x, y));
     },
 
@@ -131,9 +133,11 @@ Flynn._3DRenderer = Class.extend({
             var lines = cMesh.Lines;
             var vertices = cMesh.ProjectedVertices;
             var pen_up = true;
+            var started = false;
             for(var index_lines = 0; index_lines < lines.length; index_lines++){
                 var index_vertex = lines[index_lines];
                 if (index_vertex == Flynn.PEN_UP){
+                    ctx.vectorEnd();
                     pen_up = true;
                     continue;
                 }
@@ -142,10 +146,14 @@ Flynn._3DRenderer = Class.extend({
                     ctx.vectorStart(target.color, false, false);
                     ctx.vectorMoveTo(vertex.x, vertex.y);
                     pen_up = false;
+                    started = true;
                 }
                 else{
                     ctx.vectorLineTo(vertex.x, vertex.y);
                 }
+            }
+            if(started){
+                ctx.vectorEnd();
             }
         }
     },

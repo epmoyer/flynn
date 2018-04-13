@@ -3,7 +3,6 @@ var Game = Game || {}; // Create namespace
 (function () { "use strict";
 
 Game.State3D = Flynn.State.extend({
-    ROTATE_SPEED: Math.PI/(60 * 6),
     CAMERA_DISTANCE: 80,
     CAMERA_SPEED: Math.PI/(60 * 8),
     CUBE_COLORS:[
@@ -20,7 +19,6 @@ Game.State3D = Flynn.State.extend({
     CUBE_DISTANCE: 15,
     CUBE_SIZE: 2,
     NUM_CUBES: 80,
-    RENDERER_CYCLE_TIME: 4 * 60,
 
     init: function() {
         var i, x, drone_type, info;
@@ -41,8 +39,8 @@ Game.State3D = Flynn.State.extend({
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE/2, this.CUBE_DISTANCE/2),
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE,   this.CUBE_DISTANCE)
                     );
-                mesh.rot_speed_x = Flynn.Util.randomFromInterval(0, this.ROTATE_SPEED);
-                mesh.rot_speed_y = Flynn.Util.randomFromInterval(0, this.ROTATE_SPEED);
+                mesh.Rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
+                mesh.Rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
             }
         }
         this.camera = new Flynn._3DCamera();
@@ -51,15 +49,14 @@ Game.State3D = Flynn.State.extend({
         this.camera_angle = 0;
 
         this.renderers = [
-            {   name:"DRAW ORDER", 
-                renderer: new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, null)},
             {   name:"DRAW ORDER, FOG (RANGED)",
                 renderer: new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, {near:70, far:100})},
             {   name:"DRAW ORDER, FOG (ABSOLUTE CUTOFF)",
                 renderer: new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, {near:82, far:82})},
+            {   name:"DRAW ORDER", 
+                renderer: new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, null)},
         ];
         this.index_renderer = 0;
-        this.counter_rendeder = 0;
 
         // Spin the center cube a bit
         this.meshes[0].Rotation.x = Math.PI/8;
@@ -68,45 +65,55 @@ Game.State3D = Flynn.State.extend({
 
     handleInputs: function(input, elapsed_ticks) {
         Game.handleInputs_common(input);
+
+        if (input.virtualButtonWasPressed("up")){
+            this.index_renderer = Flynn.Util.minMaxBoundWrap(
+                this.index_renderer - 1, 0, this.renderers.length - 1);
+        }
+        if (input.virtualButtonWasPressed("down")){
+            this.index_renderer = Flynn.Util.minMaxBoundWrap(
+                this.index_renderer + 1, 0, this.renderers.length - 1);
+        }
     },
 
     update: function(elapsed_ticks) {
         var i;
         this.camera_angle += this.CAMERA_SPEED * elapsed_ticks;
-
-        // Cycle renderers
-        this.counter_rendeder += elapsed_ticks;
-        if(this.counter_rendeder > this.RENDERER_CYCLE_TIME){
-            this.counter_rendeder = 0;
-            this.index_renderer += 1;
-            if(this.index_renderer == this.renderers.length){
-                this.index_renderer = 0;
-            }
-        }
         this.camera.Position =  new BABYLON.Vector3(
             Math.sin(this.camera_angle) * this.CAMERA_DISTANCE,
             0,
             Math.cos(this.camera_angle) * this.CAMERA_DISTANCE);
-
-        for(i=0; i<this.meshes.length; i++){
-            var mesh = this.meshes[i];
-            mesh.Rotation.x += mesh.rot_speed_x * elapsed_ticks;
-            mesh.Rotation.y += mesh.rot_speed_y * elapsed_ticks;
-        }
-
     }, 
 
     render: function(ctx){
         var i;
-        var left_margin = 8, scale = 1.5, top_margin = 5;
+        var left_margin = 8, scale = 1.5, top_margin = 5, text_step = 14;
         var heading_color = Flynn.Colors.YELLOW;
+
+        // Do 3D Rendering
+        this.renderers[this.index_renderer].renderer.render(ctx, this.camera, this.meshes);
 
         Game.render_page_frame(ctx);
 
+        var input = Flynn.mcp.input;
         ctx.vectorText(
-            'RENDERER OPTIONS: ' + this.renderers[this.index_renderer].name, 
+            'USE UP (' +
+            input.getVirtualButtonBoundKeyName('up') +
+            ') / DOWN (' +
+            input.getVirtualButtonBoundKeyName('down') +
+            ') TO SELECT A RENDERER', 
             scale, null, Game.BOUNDS.bottom - 18, null, heading_color);
-        this.renderers[this.index_renderer].renderer.render(ctx, this.camera, this.meshes);
+
+        // List all 3D renderers
+        var text_x = left_margin;
+        var text_y = Game.BOUNDS.top + top_margin;
+        for(i=0; i<this.renderers.length; i++){
+            var color = i == this.index_renderer ? Flynn.Colors.YELLOW : Flynn.Colors.GRAY_DK;
+            ctx.vectorText(
+                this.renderers[i].name, 
+                scale, text_x, text_y, "left", color);
+            text_y += text_step;
+        }
     },
 });
 
