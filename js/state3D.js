@@ -18,36 +18,41 @@ Game.State3D = Flynn.State.extend({
         // Flynn.Colors.ORANGE,
     ],
     CUBE_DISTANCE: 15,
+    CUBE_SIZE: 2,
+    NUM_CUBES: 80,
 
     init: function() {
         var i, x, drone_type, info;
         this._super();
-        this.cube = new Flynn._3DMeshCube('Cube', 2, Flynn.Colors.WHITE);
-        this.meshes = [
-            this.cube
-        ];
-        for(i=1; i<80; i++){
-            this.meshes.push(
-                new Flynn._3DMeshCube('Cube', 2, Flynn.Util.randomChoice(this.CUBE_COLORS))
-            );
-            this.meshes[i].Position = new BABYLON.Vector3(
-                Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE),
-                Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE/2, this.CUBE_DISTANCE/2),
-                Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE)
-                );
-            this.meshes[i].rot_speed_x = Flynn.Util.randomFromInterval(0, this.ROTATE_SPEED);
-            this.meshes[i].rot_speed_y = Flynn.Util.randomFromInterval(0, this.ROTATE_SPEED);
+        this.meshes = [];
+        for(i=0; i<this.NUM_CUBES; i++){
+            var color = i == 0 ? Flynn.Colors.WHITE :  Flynn.Util.randomChoice(this.CUBE_COLORS);
+            var mesh = new Flynn._3DMeshCube('Cube', this.CUBE_SIZE, color);
+            this.meshes.push(mesh);
+
+            // Add rotational speed properties to the mesh
+            mesh.rot_speed_x = 0;
+            mesh.rot_speed_y = 0;
+
+            if(i!=0){
+                mesh.Position = new BABYLON.Vector3(
+                    Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE,   this.CUBE_DISTANCE),
+                    Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE/2, this.CUBE_DISTANCE/2),
+                    Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE,   this.CUBE_DISTANCE)
+                    );
+                mesh.rot_speed_x = Flynn.Util.randomFromInterval(0, this.ROTATE_SPEED);
+                mesh.rot_speed_y = Flynn.Util.randomFromInterval(0, this.ROTATE_SPEED);
+            }
         }
         this.camera = new Flynn._3DCamera();
         this.camera.Position =  new BABYLON.Vector3(0, 0, 10);
         this.camera.Target = new BABYLON.Vector3(0, 0, 0);
         this.renderer = new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, {near:70, far:100});
-
-        this.cube.Position = new BABYLON.Vector3( 0,  0,  0);
-        this.cube.rot_speed_x = 0;
-        this.cube.rot_speed_y = 0;
-
         this.camera_angle = 0;
+
+        // Spin the center cube a bit
+        this.meshes[0].Rotation.x = Math.PI/8;
+        this.meshes[0].Rotation.y = Math.PI/8;
     },
 
     handleInputs: function(input, elapsed_ticks) {
@@ -67,9 +72,6 @@ Game.State3D = Flynn.State.extend({
             mesh.Rotation.x += mesh.rot_speed_x * elapsed_ticks;
             mesh.Rotation.y += mesh.rot_speed_y * elapsed_ticks;
         }
-        //this.cube.Rotation.x += this.ROTATE_SPEED;
-        //this.cube.Rotation.y += this.ROTATE_SPEED;
-
     }, 
 
     render: function(ctx){
