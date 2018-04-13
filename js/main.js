@@ -34,10 +34,11 @@ Game.States = {
     FONT:        6,
     UTIL:        7,
     PACING:      8,
-    PERFORMANCE: 9,
-    INFO:        10,
+    _3D:         9,
+    PERFORMANCE: 10,
+    INFO:        11,
 
-    LAST_PAGE: 10, // Match highest page above (used for navigation)
+    LAST_PAGE: 11, // Match highest page above (used for navigation)
 
     END:       90,
     CONFIG:    91,
@@ -48,6 +49,7 @@ Game.Main = Class.extend({
     init: function() {
 
         var self = this;
+        var i;
         
         Flynn.init(
             Game.CANVAS_WIDTH,
@@ -72,6 +74,8 @@ Game.Main = Class.extend({
                         return new Game.StateUtil();
                     case Game.States.PACING:
                         return new Game.StatePacing();
+                    case Game.States._3D:
+                        return new Game.State3D();
                     case Game.States.PERFORMANCE:
                         return new Game.StatePerformance();
                     case Game.States.INFO:
@@ -98,7 +102,19 @@ Game.Main = Class.extend({
                 }
             }
         );
-        Flynn.mcp.changeState(Game.States.HOME);
+
+        // Set initial tab.
+        // For development, can pass a flag of the form 'tab:{pagename}' in the URL to 
+        // start on a particular tab.  For example "http://myserver.index.html?tab:PACING"
+        var initial_state = "HOME";
+        var state_keys = Object.keys(Game.States);
+        for(i=1; i<Game.States.LAST_PAGE; i++){
+            if(Flynn.Util.getUrlFlag('tab:' + state_keys[i])){
+                initial_state = state_keys[i];
+                break;
+            }
+        }
+        Flynn.mcp.changeState(Game.States[initial_state]);
 
         Game.config = {};
         Game.config.score = 500000;

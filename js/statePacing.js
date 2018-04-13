@@ -59,6 +59,28 @@ Game.StatePacing = Flynn.State.extend({
         }
     },
 
+    format_float: function(value, pad_minus){
+        var decimal_places = 2;
+        var text = value.toFixed(decimal_places);
+        if(text == '-0.00'){
+            value = 0;
+            text = '0.00';
+        }
+        if(value<0 || !pad_minus){
+            return(text);
+        }
+        return(' ' + text);
+    },
+
+    sum_array: function(array){
+        // Add the elements of an array, return the sum
+        return array.reduce(this.add, 0);
+    },
+
+    add: function(a, b){
+        return a + b;
+    },
+
     handleInputs: function(input, elapsed_ticks) {
         Game.handleInputs_common(input);
     },
@@ -81,7 +103,7 @@ Game.StatePacing = Flynn.State.extend({
         var elapsed_ticks_20fps = null;
         this.historic_elapsed_ticks.push(elapsed_ticks);
         if(this.historic_elapsed_ticks.length == this.TICKS_PER_20FPS){
-            elapsed_ticks_20fps = sum_array(this.historic_elapsed_ticks);
+            elapsed_ticks_20fps = this.sum_array(this.historic_elapsed_ticks);
             this.historic_elapsed_ticks = [];
         }
 
@@ -163,7 +185,7 @@ Game.StatePacing = Flynn.State.extend({
                 var text_color = Math.abs(drone.error) < 5.0 ? Flynn.Colors.GRAY : Flynn.Colors.RED;
                 var text_y = this.region_info[(i-1)/2].bounds.top + top_margin;
                 var text_x = Game.BOUNDS.right - 145;
-                ctx.vectorText('ERROR: ' + format_float(drone.error, true), scale, text_x, text_y, 'left', text_color);
+                ctx.vectorText('ERROR: ' + this.format_float(drone.error, true), scale, text_x, text_y, 'left', text_color);
             }
         }
 
@@ -174,7 +196,7 @@ Game.StatePacing = Flynn.State.extend({
         for(i=0; i<this.counters.length; i++){
             var counter = this.counters[i];
 
-            ctx.vectorText(counter.name + ': ' + format_float(counter.value, false), scale, Game.BOUNDS.left + left_margin, pos_y, 'left', counter.color);
+            ctx.vectorText(counter.name + ': ' + this.format_float(counter.value, false), scale, Game.BOUNDS.left + left_margin, pos_y, 'left', counter.color);
             pos_y += line_height;
         }
 
@@ -260,27 +282,5 @@ Game.Drone = Flynn.Polygon.extend({
         }
     },
 });
-
-function format_float(value, pad_minus){
-    var decimal_places = 2;
-    var text = value.toFixed(decimal_places);
-    if(text == '-0.00'){
-        value = 0;
-        text = '0.00';
-    }
-    if(value<0 || !pad_minus){
-        return(text);
-    }
-    return(' ' + text);
-}
-
-function sum_array(array){
-    // Add the elements of an array, return the sum
-    return array.reduce(add, 0);
-}
-
-function add(a, b){
-    return a + b;
-}
 
 }()); // "use strict" wrapper
