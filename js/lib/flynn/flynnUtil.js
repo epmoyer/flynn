@@ -38,6 +38,28 @@ Flynn.Util = {
         return hex.length == 1 ? "0" + hex : hex;
     },
 
+    defaultTrue: function(value){
+        // For use in parsing default arguments.
+        // The pattern..
+        //    mufunc(ops){
+        //       opts       = opts     || {};
+        //       this.foo   = opts.foo || true;
+        //       this.bar   = opts.bar || false;
+        //    }
+        // ..works for this.bar but not for this.foo.  If you try to pass
+        // false to foo, it will become true.  Instead, use defaultTrue() for
+        // arguments which should default to true like..
+        //    mufunc(ops){
+        //       opts       = opts     || {};
+        //       this.foo   = Flynn.Util.defaultTrue(opts.foo);
+        //       this.bar   = opts.bar || false;
+        //    }
+        if(typeof value == 'undefined'){
+            return true;
+        }
+        return(value);
+    },
+
     rgbToHex: function(r, g, b) {
         // Convert color from r, g, b components to hex string of the form "#RRGGBB"
         // Arguments:

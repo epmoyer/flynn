@@ -50,12 +50,16 @@ Flynn._3DMeshCube = Flynn._3DMesh.extend({
 });
 
 Flynn._3DRenderer = Class.extend({
-    DOT_SIZE: 4,
+    VERTEX_SIZE: 2,
 
-    init: function(width, height, fog_distance){
-        this.width = width;
-        this.height = height;
-        this.fog_distance = fog_distance;
+    init: function(opts){
+        opts                   = opts                    || {};
+        this.width             = opts.width              || Flynn.mcp.canvasWidth;
+        this.height            = opts.height             || Flynn.mcp.canvasHeight;
+        this.fog_distance      = opts.fog_distance       || null;
+        this.enable_vertices   = opts.enable_vertices    || false;
+        this.enable_lines      = Flynn.Util.defaultTrue(opts.enable_lines);
+        this.enable_draw_order = Flynn.Util.defaultTrue(opts.enable_lines);
     },
 
     project: function(coord, transMat) {
@@ -83,28 +87,10 @@ Flynn._3DRenderer = Class.extend({
         for (var index = 0; index < meshes.length; index++) {
             // current mesh to work on
             cMesh = meshes[index];
-            // Beware to apply rotation before translation
-            var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
-                cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z)
-                 .multiply(BABYLON.Matrix.Translation(
-                   cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
 
-            var transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
-
-            for (var indexVertices = 0; indexVertices < cMesh.Vertices.length; indexVertices++) {
-                // First, we project the 3D coordinates into the 2D space
-                var projectedPoint = this.project(cMesh.Vertices[indexVertices], transformMatrix);
-                cMesh.ProjectedVertices[indexVertices] = projectedPoint;
-
-                // Draw vertices
-                //ctx.fillStyle=cMesh.color;
-                // ctx.fillRect(
-                //     projectedPoint.x,
-                //     projectedPoint.y,
-                //     this.DOT_SIZE,
-                //     this.DOT_SIZE);
-            }
-
+            //------------------------
+            // Distance fogging
+            //------------------------
             visible = true;
             color = cMesh.color;
             var distance = 0;
@@ -119,41 +105,72 @@ Flynn._3DRenderer = Class.extend({
                     color = Flynn.Util.shadeColor(cMesh.color, dim_factor);
                 }
             }
+
+            
             if(visible){
+                //------------------------------
+                // Project vertices to screen
+                //------------------------------
+                // Apply rotation before translation
+                var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
+                    cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z)
+                     .multiply(BABYLON.Matrix.Translation(
+                       cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
+
+                var transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
+
+                for (var indexVertices = 0; indexVertices < cMesh.Vertices.length; indexVertices++) {
+                    // First, we project the 3D coordinates into the 2D space
+                    var projectedPoint = this.project(cMesh.Vertices[indexVertices], transformMatrix);
+                    cMesh.ProjectedVertices[indexVertices] = projectedPoint;
+                    if(this.enable_vertices){
+                        // Draw vertices
+                        ctx.fillStyle=color;
+                        ctx.fillRect(
+                            projectedPoint.x - this.VERTEX_SIZE/2,
+                            projectedPoint.y - this.VERTEX_SIZE/2,
+                            this.VERTEX_SIZE,
+                            this.VERTEX_SIZE);
+                    }
+                }
                 draw_list.push({mesh_index:index, distance:distance, color:color});
             }
         }
 
         // Sort draw order by distance
-        draw_list.sort(function(a,b){return b.distance - a.distance;});
+        if(this.enable_draw_order){
+            draw_list.sort(function(a,b){return b.distance - a.distance;});
+        }
 
-        for(var i=0; i<draw_list.length; i++){
-            var target = draw_list[i];
-            cMesh = meshes[target.mesh_index];
-            var lines = cMesh.Lines;
-            var vertices = cMesh.ProjectedVertices;
-            var pen_up = true;
-            var started = false;
-            for(var index_lines = 0; index_lines < lines.length; index_lines++){
-                var index_vertex = lines[index_lines];
-                if (index_vertex == Flynn.PEN_UP){
+        if(this.enable_lines){
+            for(var i=0; i<draw_list.length; i++){
+                var target = draw_list[i];
+                cMesh = meshes[target.mesh_index];
+                var lines = cMesh.Lines;
+                var vertices = cMesh.ProjectedVertices;
+                var pen_up = true;
+                var started = false;
+                for(var index_lines = 0; index_lines < lines.length; index_lines++){
+                    var index_vertex = lines[index_lines];
+                    if (index_vertex == Flynn.PEN_UP){
+                        ctx.vectorEnd();
+                        pen_up = true;
+                        continue;
+                    }
+                    var vertex = vertices[index_vertex];
+                    if(pen_up){
+                        ctx.vectorStart(target.color, false, false);
+                        ctx.vectorMoveTo(vertex.x, vertex.y);
+                        pen_up = false;
+                        started = true;
+                    }
+                    else{
+                        ctx.vectorLineTo(vertex.x, vertex.y);
+                    }
+                }
+                if(started){
                     ctx.vectorEnd();
-                    pen_up = true;
-                    continue;
                 }
-                var vertex = vertices[index_vertex];
-                if(pen_up){
-                    ctx.vectorStart(target.color, false, false);
-                    ctx.vectorMoveTo(vertex.x, vertex.y);
-                    pen_up = false;
-                    started = true;
-                }
-                else{
-                    ctx.vectorLineTo(vertex.x, vertex.y);
-                }
-            }
-            if(started){
-                ctx.vectorEnd();
             }
         }
     },

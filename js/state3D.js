@@ -49,12 +49,16 @@ Game.State3D = Flynn.State.extend({
         this.camera_angle = 0;
 
         this.renderers = [
-            {   name:"DRAW ORDER, FOG (RANGED)",
-                renderer: new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, {near:70, far:100})},
+            {   name:"{fog_distance:{near:70, far:100}",
+                renderer: new Flynn._3DRenderer({fog_distance:{near:70, far:100}})},
             {   name:"DRAW ORDER, FOG (ABSOLUTE CUTOFF)",
-                renderer: new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, {near:82, far:82})},
+                renderer: new Flynn._3DRenderer({fog_distance:{near:82, far:82}})},
             {   name:"DRAW ORDER", 
-                renderer: new Flynn._3DRenderer(Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT, null)},
+                renderer: new Flynn._3DRenderer()},
+            {   name:"VERTICES", 
+                renderer: new Flynn._3DRenderer({enable_lines:false, enable_vertices:true})},
+            {   name:"VERTICES, FOG (RANGED)", 
+                renderer: new Flynn._3DRenderer({enable_lines:false, enable_vertices:true, fog_distance:{near:70, far:100}})},
         ];
         this.index_renderer = 0;
 
