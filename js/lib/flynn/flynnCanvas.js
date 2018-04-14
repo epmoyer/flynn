@@ -173,6 +173,7 @@ Flynn.Canvas = Class.extend({
             ctx.ACCENTCODE = '`'.charCodeAt(0);
             ctx.LOWERCASE_A = 'a'.charCodeAt(0);
             ctx.LOWERCASE_Z = 'z'.charCodeAt(0);
+            ctx.TILDE = '~'.charCodeAt(0);
             ctx.UPPER_TO_LOWER = 0x20;
 
             ctx.world_wrap_enabled = false;
@@ -383,11 +384,14 @@ Flynn.Canvas = Class.extend({
 
             ctx.charToPolygon = function(ch, font){
                 var p;
-                if ((ch >= this.EXCLAMATIONCODE) && (ch <= this.LOWERCASE_Z)){
-                    if(ch >= this.LOWERCASE_A){
+                if ((ch >= this.EXCLAMATIONCODE) && (ch <= this.TILDE)){
+                    if(ch >= this.LOWERCASE_A && ch <= this.LOWERCASE_Z){
                         ch -= this.UPPER_TO_LOWER;
                     }
                     p = font.Points.ASCII[ch - this.EXCLAMATIONCODE];
+                    if(p==null){
+                        p = font.Points.UNIMPLEMENTED_CHAR;
+                    }
                 }
                 else{
                     p = font.Points.UNIMPLEMENTED_CHAR;

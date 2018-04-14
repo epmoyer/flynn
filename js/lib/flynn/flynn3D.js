@@ -53,13 +53,13 @@ Flynn._3DRenderer = Class.extend({
     VERTEX_SIZE: 2,
 
     init: function(opts){
-        opts                   = opts                    || {};
-        this.width             = opts.width              || Flynn.mcp.canvasWidth;
-        this.height            = opts.height             || Flynn.mcp.canvasHeight;
-        this.fog_distance      = opts.fog_distance       || null;
-        this.enable_vertices   = opts.enable_vertices    || false;
-        this.enable_lines      = Flynn.Util.defaultTrue(opts.enable_lines);
-        this.enable_draw_order = Flynn.Util.defaultTrue(opts.enable_lines);
+        opts                       = opts                    || {};
+        this.width                 = opts.width              || Flynn.mcp.canvasWidth;
+        this.height                = opts.height             || Flynn.mcp.canvasHeight;
+        this.fog_distance          = opts.fog_distance       || null;
+        this.enable_vertices       = opts.enable_vertices    || false;
+        this.enable_lines          = Flynn.Util.defaultTrue(opts.enable_lines);
+        this.enable_distance_order = Flynn.Util.defaultTrue(opts.enable_distance_order);
     },
 
     project: function(coord, transMat) {
@@ -89,13 +89,19 @@ Flynn._3DRenderer = Class.extend({
             cMesh = meshes[index];
 
             //------------------------
+            // Find distance to mesh
+            //------------------------
+            var distance = 0;
+            if(this.fog_distance || this.enable_distance_order){
+                distance = BABYLON.Vector3.Distance(camera.Position, cMesh.Position);
+            }
+
+            //------------------------
             // Distance fogging
             //------------------------
             visible = true;
             color = cMesh.color;
-            var distance = 0;
             if(this.fog_distance){
-                distance = BABYLON.Vector3.Distance(camera.Position, cMesh.Position);
                 if(distance > this.fog_distance.far){
                     visible = false;
                 }
@@ -138,7 +144,7 @@ Flynn._3DRenderer = Class.extend({
         }
 
         // Sort draw order by distance
-        if(this.enable_draw_order){
+        if(this.enable_distance_order){
             draw_list.sort(function(a,b){return b.distance - a.distance;});
         }
 

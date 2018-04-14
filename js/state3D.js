@@ -49,15 +49,17 @@ Game.State3D = Flynn.State.extend({
         this.camera_angle = 0;
 
         this.renderers = [
-            {   name:"{fog_distance:{near:70, far:100}",
+            {   name:"FOG (GRADUAL)",
                 renderer: new Flynn._3DRenderer({fog_distance:{near:70, far:100}})},
-            {   name:"DRAW ORDER, FOG (ABSOLUTE CUTOFF)",
+            {   name:"FOG (GRADUAL), DISABLE DISTANCE ORDERING",
+                renderer: new Flynn._3DRenderer({fog_distance:{near:70, far:100}, enable_distance_order:false})},
+            {   name:"FOG (HARD CUTOFF)",
                 renderer: new Flynn._3DRenderer({fog_distance:{near:82, far:82}})},
-            {   name:"DRAW ORDER", 
+            {   name:"(DEFAULTS)", 
                 renderer: new Flynn._3DRenderer()},
             {   name:"VERTICES", 
                 renderer: new Flynn._3DRenderer({enable_lines:false, enable_vertices:true})},
-            {   name:"VERTICES, FOG (RANGED)", 
+            {   name:"VERTICES, WITH FOG", 
                 renderer: new Flynn._3DRenderer({enable_lines:false, enable_vertices:true, fog_distance:{near:70, far:100}})},
         ];
         this.index_renderer = 0;
@@ -91,7 +93,7 @@ Game.State3D = Flynn.State.extend({
 
     render: function(ctx){
         var i;
-        var left_margin = 8, scale = 1.5, top_margin = 5, text_step = 14;
+        var left_margin = 8, scale = 1.5, top_margin = 5, text_step = 16;
         var heading_color = Flynn.Colors.YELLOW;
 
         // Do 3D Rendering

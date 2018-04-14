@@ -275,6 +275,15 @@ Flynn.Font.Normal = {
             [1,1,2,0,3,1],                                                       // ^ 
             [0,6,4,6],                                                           // _
             [1.5,0,2.5,1],                                                       // `
+
+            null, null, null, null, null, null, null, null, null, null,          // a-z
+            null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null,
+
+            [3,0,2,0,2,2.5,1,3,2,3.5,2,6,3,6],                                   // {
+            [2,0,2,6],                                                           // |     
+            [1,0,2,0,2,2.5,3,3,2,3.5,2,6,1,6],                                   // }
+            [0.5,3.5,1.5,2.5,2.5,3.5,3.5,2.5],                                   // ~
         ],
     }
 };
@@ -352,6 +361,18 @@ Flynn.Font.Block.Points.ASCII = [
     Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR,      // ^ 
     Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR,      // _
     Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR,      // `
+
+    null, null, null, null, null, null, null, null, null, null,          // a-z
+    null, null, null, null, null, null, null, null, null, null,
+    null, null, null, null, null, null,
+
+    null,                                            // {
+    null,                                            // |     
+    null,                                            // }
+    null,                                            // ~
+
+
+
 ];
 
 
