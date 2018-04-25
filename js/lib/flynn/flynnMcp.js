@@ -147,8 +147,8 @@ Flynn.Mcp = Class.extend({
             };
 
             // Determine game size
-            var targetWidth = 1024;
-            var targetHeight = 768;
+            var targetWidth = self.canvasWidth;
+            var targetHeight = self.canvasHeight;
             var multiplier = Math.min((viewport.height / targetHeight), (viewport.width / targetWidth));
             var actualCanvasWidth;
             var actualCanvasHeight;

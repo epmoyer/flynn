@@ -35,6 +35,13 @@ Changed
   - Improve shape of ")" and "(" in main vector font.
   - Add characters to main vector font: "{}|~"
 
+Fixed
+^^^^^
+
+- Engine
+
+  - Support aspect ratios & resolutions other that 1024 x 768
+
 3.7.3 - 2018-4-10
 -----------------
 
