@@ -22,6 +22,7 @@ Added
 - Engine
 
   - flynn3D.js library (3D wireframes)
+  - Flynn.devlog().  Logs text/objects to console when in development mode.
 
 - Test Application
 

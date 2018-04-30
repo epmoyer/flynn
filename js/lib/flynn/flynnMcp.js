@@ -318,4 +318,18 @@ Flynn.Mcp = Class.extend({
 
 });
 
+
+Flynn.devlog = function(object){
+    // Logs text or objects to the console only when in development mode.
+    
+    if(Flynn.mcp.developerModeEnabled){
+        if(typeof(object) == "string"){
+            console.log('DEV: ' + object);
+        }
+        else{
+            console.log(object);
+        }
+    }
+};
+
 }()); // "use strict" wrapper
