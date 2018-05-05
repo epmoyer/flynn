@@ -132,6 +132,25 @@ Flynn._3DRenderer = Class.extend({
         return (new BABYLON.Vector2(x, y));
     },
 
+    prepare: function(ctx, camera){
+        // Prepare a transformation matrix for future point rendering using .render_point()
+        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
+        var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(
+                0.78, this.width / this.height, 0.01, 1.0);
+        this.pointTransformMatrix = viewMatrix.multiply(projectionMatrix);
+    },
+
+    render_point: function(ctx, location_v, size, color){
+        // Must call .prepare() before using .rending_point()
+        var projectedPoint = this.project(location_v, this.pointTransformMatrix);
+        ctx.fillStyle=color;
+        ctx.fillRect(
+            projectedPoint.x - size/2,
+            projectedPoint.y - size/2,
+            size,
+            size);
+    },
+
     render: function(ctx, camera, meshes){
         var cMesh;
 
