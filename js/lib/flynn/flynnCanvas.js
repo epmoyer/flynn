@@ -54,7 +54,7 @@ Flynn.Canvas = Class.extend({
         
         this.canvas.width = width;
         this.canvas.height = height;
-        this.previousTimestamp = 0;
+        this.previousTimestamp = 0; 
         this.constrained = false;
 
         this.devLowFpsElapsedTicks = 0;
@@ -344,9 +344,12 @@ Flynn.Canvas = Class.extend({
                 );
             };
 
-            ctx.fillRect = function(x, y, width, height){
+            ctx.fillRect = function(x, y, width, height, alpha){
+                if(alpha == undefined){
+                    alpha = 1;
+                }
                 this.graphics.lineStyle();
-                this.graphics.beginFill(Flynn.Util.parseColor(ctx.fillStyle, true));
+                this.graphics.beginFill(Flynn.Util.parseColor(ctx.fillStyle, true), alpha);
                 this.graphics.drawRect(x,  y, width, height);
                 this.graphics.endFill();
             };
