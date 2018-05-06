@@ -23,6 +23,7 @@ Added
 
   - flynn3D.js library (3D wireframes)
   - Flynn.devlog().  Logs text/objects to console when in development mode.
+  - aspect_ratio argument to ctx.vectorText
 
 - Test Application
 
@@ -33,7 +34,7 @@ Changed
 
 - Engine
 
-  - Improve shape of ")" and "(" in main vector font.
+  - Improve shape of ")", "(", and 'B' in main vector font.
   - Add characters to main vector font: "{}|~"
 
 Fixed

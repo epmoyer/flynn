@@ -426,7 +426,7 @@ Flynn.Canvas = Class.extend({
                 this.vectorEnd();
             };
 
-            ctx.vectorText = function(text, scale, x, y, justify, color, is_world, font, angle){
+            ctx.vectorText = function(text, scale, x, y, justify, color, is_world, font, angle, aspect_ratio){
                 // text: String (the text to display)
                 // scale: float, scales the size (1.0 is no scaling)
                 // x: number or null
@@ -464,6 +464,9 @@ Flynn.Canvas = Class.extend({
                 }
                 else{
                     var rot_v = new Victor(Math.cos(angle), Math.sin(angle));
+                }
+                if(aspect_ratio == undefined){
+                    aspect_ratio = 1.0;
                 }
 
                 var step = scale*font.CharacterSpacing;
@@ -522,11 +525,11 @@ Flynn.Canvas = Class.extend({
                             }
                             else{
                                 if(j===0 || pen_up){
-                                    this.vectorMoveTo(p[j]*scale+x, p[j+1]*scale +y);
+                                    this.vectorMoveTo(p[j]*scale+x, p[j+1]*scale/aspect_ratio +y);
                                     pen_up = false;
                                 }
                                 else{
-                                    this.vectorLineTo(p[j]*scale+x, p[j+1]*scale +y);
+                                    this.vectorLineTo(p[j]*scale+x, p[j+1]*scale/aspect_ratio +y);
                                 }
                             }
                         }
@@ -554,7 +557,7 @@ Flynn.Canvas = Class.extend({
                     // Move to start of text
                     var start_v = new Victor(
                         -(text.length*step-(font.CharacterGap*scale))/2,
-                        -(scale * font.CharacterHeight)/2
+                        -(scale / aspect_ratio * font.CharacterHeight)/2
                     );
                     start_v.rotate(angle);
                     pen_v.add(start_v);
@@ -577,7 +580,7 @@ Flynn.Canvas = Class.extend({
                             else{
                                 var draw_v = pen_v.clone();
                                 draw_v.add(unit_x_v.clone().multiplyScalar(p[j]*scale));
-                                draw_v.add(unit_y_v.clone().multiplyScalar(p[j+1]*scale));
+                                draw_v.add(unit_y_v.clone().multiplyScalar(p[j+1]*scale / aspect_ratio));
                                 if(j===0 || pen_up){
                                     this.vectorMoveTo(draw_v.x, draw_v.y);
                                     pen_up = false;
