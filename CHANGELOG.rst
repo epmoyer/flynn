@@ -24,6 +24,7 @@ Added
   - flynn3D.js library (3D wireframes)
   - Flynn.devlog().  Logs text/objects to console when in development mode.
   - aspect_ratio argument to ctx.vectorText
+  - .applyAspectRatio() to Flynn.Polygon
 
 - Test Application
 
