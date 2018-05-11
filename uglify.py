@@ -11,7 +11,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 def main():
     os.chdir(os.path.join('js', 'lib', 'flynn'))
-    filenames = glob.glob('flynn[A-Z]*.js')
+    filenames = glob.glob('flynn[A-Z,0-9]*.js')
 
     # Sort and them move flynnMain first
     filenames.sort()
