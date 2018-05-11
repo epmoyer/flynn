@@ -92,7 +92,7 @@ Game.StateWorld = Flynn.State.extend({
             4,    // density
             false // realistic_colors
             );
-        this.viewport_sweep_angle = 0;
+        this.viewport_sweep_angle = 3 * Math.PI/2;
 
         this.viewport_sweep_radius = Flynn.mcp.canvasHeight / 2;
 
