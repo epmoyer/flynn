@@ -54,7 +54,7 @@ Flynn.Canvas = Class.extend({
         
         this.canvas.width = width;
         this.canvas.height = height;
-        this.previousTimestamp = 0;
+        this.previousTimestamp = 0; 
         this.constrained = false;
 
         this.devLowFpsElapsedTicks = 0;
@@ -160,11 +160,14 @@ Flynn.Canvas = Class.extend({
             ctx.fpsFrameAverage = 10; // Number of frames to average over
             ctx.fpsFrameCount = 0;
             ctx.fpsMsecCount = 0;
-            ctx.vectorVericies = [];
             ctx.ticks = 0;
             ctx.is_world = false;
             ctx.lineSize = 1;
             ctx.vertexSize = 1;
+
+            ctx.MAX_VERTICIES_x2 = 200;
+            ctx.vector_vertices = new Array(ctx.MAX_VERTICIES_x2);
+            ctx.index_vector_vertex = 0;
 
             ctx.ACODE = "A".charCodeAt(0);
             ctx.ZEROCODE = "0".charCodeAt(0);
@@ -173,6 +176,7 @@ Flynn.Canvas = Class.extend({
             ctx.ACCENTCODE = '`'.charCodeAt(0);
             ctx.LOWERCASE_A = 'a'.charCodeAt(0);
             ctx.LOWERCASE_Z = 'z'.charCodeAt(0);
+            ctx.TILDE = '~'.charCodeAt(0);
             ctx.UPPER_TO_LOWER = 0x20;
 
             ctx.world_wrap_enabled = false;
@@ -234,9 +238,8 @@ Flynn.Canvas = Class.extend({
                         break;
                 }
                 var line_color = Flynn.Util.shadeColor(color, config.lineBrightness)
-                // this.vectorVertexColor = Flynn.Util.shadeColor(color, config.vertexBrightness);
                 this.vectorVertexColor = Flynn.Util.colorOverdrive(color, config.vertexBrightness);
-                this.vectorVericies = [];
+                this.index_vector_vertex = 0;
                 this.lineSize = config.lineSize;
                 this.vertexSize = config.vertexSize;
                 this.graphics.lineStyle(
@@ -264,7 +267,10 @@ Flynn.Canvas = Class.extend({
                     x = world.x;
                     y = world.y;
                 }
-                this.vectorVericies.push(x, y);
+                if(this.index_vector_vertex < ctx.MAX_VERTICIES_x2){
+                    this.vector_vertices[this.index_vector_vertex++] = x;
+                    this.vector_vertices[this.index_vector_vertex++] = y;
+                }
                 this.graphics.lineTo(x+0.5, y+0.5);
                 // This "moveTo" keeps PixiJS from drawing ugly long un-mitered corners
                 // for vertices with very acute angles.
@@ -282,7 +288,10 @@ Flynn.Canvas = Class.extend({
                     x = world.x;
                     y = world.y;
                 }
-                this.vectorVericies.push(x, y);
+                if(this.index_vector_vertex < ctx.MAX_VERTICIES_x2){
+                    this.vector_vertices[this.index_vector_vertex++] = x;
+                    this.vector_vertices[this.index_vector_vertex++] = y;
+                }
                 this.graphics.moveTo(x+0.5, y+0.5);
             };
 
@@ -291,10 +300,10 @@ Flynn.Canvas = Class.extend({
                 var offset = this.vertexSize / 2;
                 this.graphics.lineStyle();
                 this.graphics.beginFill(Flynn.Util.parseColor(this.vectorVertexColor, true));
-                for(var i=0, len=this.vectorVericies.length; i<len; i+=2) {
+                for(var i=0; i<this.index_vector_vertex; i+=2) {
                     this.graphics.drawRect(
-                        this.vectorVericies[i] - offset + 0.5,
-                        this.vectorVericies[i + 1] - offset + 0.5,
+                        this.vector_vertices[i] - offset + 0.5,
+                        this.vector_vertices[i + 1] - offset + 0.5,
                         this.vertexSize,
                         this.vertexSize);
                 }
@@ -335,9 +344,12 @@ Flynn.Canvas = Class.extend({
                 );
             };
 
-            ctx.fillRect = function(x, y, width, height){
+            ctx.fillRect = function(x, y, width, height, alpha){
+                if(alpha == undefined){
+                    alpha = 1;
+                }
                 this.graphics.lineStyle();
-                this.graphics.beginFill(Flynn.Util.parseColor(ctx.fillStyle, true));
+                this.graphics.beginFill(Flynn.Util.parseColor(ctx.fillStyle, true), alpha);
                 this.graphics.drawRect(x,  y, width, height);
                 this.graphics.endFill();
             };
@@ -383,11 +395,14 @@ Flynn.Canvas = Class.extend({
 
             ctx.charToPolygon = function(ch, font){
                 var p;
-                if ((ch >= this.EXCLAMATIONCODE) && (ch <= this.LOWERCASE_Z)){
-                    if(ch >= this.LOWERCASE_A){
+                if ((ch >= this.EXCLAMATIONCODE) && (ch <= this.TILDE)){
+                    if(ch >= this.LOWERCASE_A && ch <= this.LOWERCASE_Z){
                         ch -= this.UPPER_TO_LOWER;
                     }
                     p = font.Points.ASCII[ch - this.EXCLAMATIONCODE];
+                    if(p==null){
+                        p = font.Points.UNIMPLEMENTED_CHAR;
+                    }
                 }
                 else{
                     p = font.Points.UNIMPLEMENTED_CHAR;
@@ -411,7 +426,7 @@ Flynn.Canvas = Class.extend({
                 this.vectorEnd();
             };
 
-            ctx.vectorText = function(text, scale, x, y, justify, color, is_world, font, angle){
+            ctx.vectorText = function(text, scale, x, y, justify, color, is_world, font, angle, aspect_ratio){
                 // text: String (the text to display)
                 // scale: float, scales the size (1.0 is no scaling)
                 // x: number or null
@@ -449,6 +464,9 @@ Flynn.Canvas = Class.extend({
                 }
                 else{
                     var rot_v = new Victor(Math.cos(angle), Math.sin(angle));
+                }
+                if(aspect_ratio == undefined){
+                    aspect_ratio = 1.0;
                 }
 
                 var step = scale*font.CharacterSpacing;
@@ -507,11 +525,11 @@ Flynn.Canvas = Class.extend({
                             }
                             else{
                                 if(j===0 || pen_up){
-                                    this.vectorMoveTo(p[j]*scale+x, p[j+1]*scale +y);
+                                    this.vectorMoveTo(p[j]*scale+x, p[j+1]*scale/aspect_ratio +y);
                                     pen_up = false;
                                 }
                                 else{
-                                    this.vectorLineTo(p[j]*scale+x, p[j+1]*scale +y);
+                                    this.vectorLineTo(p[j]*scale+x, p[j+1]*scale/aspect_ratio +y);
                                 }
                             }
                         }
@@ -539,7 +557,7 @@ Flynn.Canvas = Class.extend({
                     // Move to start of text
                     var start_v = new Victor(
                         -(text.length*step-(font.CharacterGap*scale))/2,
-                        -(scale * font.CharacterHeight)/2
+                        -(scale / aspect_ratio * font.CharacterHeight)/2
                     );
                     start_v.rotate(angle);
                     pen_v.add(start_v);
@@ -562,7 +580,7 @@ Flynn.Canvas = Class.extend({
                             else{
                                 var draw_v = pen_v.clone();
                                 draw_v.add(unit_x_v.clone().multiplyScalar(p[j]*scale));
-                                draw_v.add(unit_y_v.clone().multiplyScalar(p[j+1]*scale));
+                                draw_v.add(unit_y_v.clone().multiplyScalar(p[j+1]*scale / aspect_ratio));
                                 if(j===0 || pen_up){
                                     this.vectorMoveTo(draw_v.x, draw_v.y);
                                     pen_up = false;

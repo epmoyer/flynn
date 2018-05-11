@@ -148,8 +148,8 @@ Flynn.Mcp = Class.extend({
             };
 
             // Determine game size
-            var targetWidth = 1024;
-            var targetHeight = 768;
+            var targetWidth = self.canvasWidth;
+            var targetHeight = self.canvasHeight;
             var multiplier = Math.min((viewport.height / targetHeight), (viewport.width / targetWidth));
             var actualCanvasWidth;
             var actualCanvasHeight;
@@ -327,5 +327,19 @@ Flynn.Mcp = Class.extend({
     },
 
 });
+
+
+Flynn.devlog = function(object){
+    // Logs text or objects to the console only when in development mode.
+    
+    if(Flynn.mcp.developerModeEnabled){
+        if(typeof(object) == "string"){
+            console.log('DEV: ' + object);
+        }
+        else{
+            console.log(object);
+        }
+    }
+};
 
 }()); // "use strict" wrapper

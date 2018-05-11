@@ -6,7 +6,7 @@ var Flynn = Flynn || {}; // Create namespace
 
 (function () { "use strict"; 
 
-Flynn.VERSION = "3.9.0";
+Flynn.VERSION = "3.10.0";
  
 Flynn.init = function(
     canvasWidth,
@@ -218,8 +218,8 @@ Flynn.Font.Normal = {
             [0,6,4,0,9000,7000,2,5,2,1,0,1,0,3,4,3,4,5,2,5],                     // %  
             [4,6,1,2,1,1,2,0,3,1,3,2,0,4,0,5,1,6,2,6,4,4],                       // &  
             [2,0,2,1,2,0],                                                       // '  
-            [4,6,3,6,2,5,2,1,3,0,4,0],                                           // (  
-            [1,0,2,0,3,1,3,5,2,6,1,6],                                           // )  
+            [3,6,2,4,2,2,3,0],                                                   // ( 
+            [1,0,2,2,2,4,1,6],                                                   // )  
             [0,1,4,5,9000,7000,2,5,2,1,9000,7000,4,3,0,3,9000,7000,0,5,4,1],     // *  
             [2,5,2,1,9000,7000,0,3,4,3],                                         // +  
             [2,5,1,6,2,5],                                                       // ,  
@@ -244,7 +244,7 @@ Flynn.Font.Normal = {
             [0,2,0,1,1,0,3,0,4,1,4,2,2,3,2,6,2,3,4,2,4,1,3,0,1,0,0,1,0,2],       // ?  
             [3,4,3,2,1,2,1,4,4,4,4,2,3,1,1,1,0,2,0,4,1,5,3,5],                   // @
             [0,6,0,2,2,0,4,2,4,6,9000,7000,0,4,4,4],                             // A
-            [2,3,3,4,3,5,2,6,0,6,0,0,2,0,3,1,3,2,2,3,0,3],                       // B
+            [3,3,4,4,4,5,3,6,0,6,0,0,3,0,4,1,4,2,3,3,0,3],                       // B
             [4,0,0,0,0,6,4,6],                                                   // C
             [0,0,0,6,2,6,4,4,4,2,2,0,0,0],                                       // D
             [4,0,0,0,0,6,4,6,9000,7000,0,3,4,3],                                 // E
@@ -275,6 +275,15 @@ Flynn.Font.Normal = {
             [1,1,2,0,3,1],                                                       // ^ 
             [0,6,4,6],                                                           // _
             [1.5,0,2.5,1],                                                       // `
+
+            null, null, null, null, null, null, null, null, null, null,          // a-z
+            null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null,
+
+            [3,0,2,0,2,2.5,1,3,2,3.5,2,6,3,6],                                   // {
+            [2,0,2,6],                                                           // |     
+            [1,0,2,0,2,2.5,3,3,2,3.5,2,6,1,6],                                   // }
+            [0.5,3.5,1.5,2.5,2.5,3.5,3.5,2.5],                                   // ~
         ],
     }
 };
@@ -352,6 +361,18 @@ Flynn.Font.Block.Points.ASCII = [
     Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR,      // ^ 
     Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR,      // _
     Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR,      // `
+
+    null, null, null, null, null, null, null, null, null, null,          // a-z
+    null, null, null, null, null, null, null, null, null, null,
+    null, null, null, null, null, null,
+
+    null,                                            // {
+    null,                                            // |     
+    null,                                            // }
+    null,                                            // ~
+
+
+
 ];
 
 

@@ -102,6 +102,19 @@ Flynn.Polygon = Class.extend({
         return(span);
     },
 
+    applyAspectRatio: function(aspect_ratio){
+        for(var i=0, len=this.pointsMaster.length; i<len; i+=2){
+            var x = this.pointsMaster[i];
+            var y = this.pointsMaster[i+1];
+            // Preserve pen commands
+            if(x!=Flynn.PEN_COMMAND){
+                // Apply aspect ratio to y coordinates
+                this.pointsMaster[i+1] = y/aspect_ratio;
+            }
+            
+        }
+    },
+
     setScale: function(c){
         this.scale = c;
         this.setAngle(this.angle);

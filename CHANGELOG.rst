@@ -13,6 +13,38 @@ Unreleased
 
 (None)
 
+3.10.0 - 2018-X-XX
+------------------
+
+Added
+^^^^^
+
+- Engine
+
+  - flynn3D.js library (3D wireframes)
+  - Flynn.devlog().  Logs text/objects to console when in development mode.
+  - aspect_ratio argument to ctx.vectorText
+  - .applyAspectRatio() to Flynn.Polygon
+
+- Test Application
+
+  - 3D Tab
+
+Changed
+^^^^^^^
+
+- Engine
+
+  - Improve shape of ")", "(", and 'B' in main vector font.
+  - Add characters to main vector font: "{}|~"
+
+Fixed
+^^^^^
+
+- Engine
+
+  - Support aspect ratios & resolutions other that 1024 x 768
+
 3.9.0 - 2018-5-10
 -----------------
 
