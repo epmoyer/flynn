@@ -205,16 +205,19 @@ Game.StateWorld = Flynn.State.extend({
         
         // Swirl the viewport around the world center
         this.viewport_sweep_angle += this.VIEWPORT_SWEEP_ANGLE_SPEED * elapsed_ticks;
-        Flynn.mcp.viewport.x = (
-              this.world_rect.center_x 
-            + Math.cos(this.viewport_sweep_angle) * this.viewport_sweep_radius
-            - Flynn.mcp.canvasWidth / 2 
+
+        var camera_zoom = 0.9 + 2.0 * ((Math.sin(this.viewport_sweep_angle)+1)/2);
+        // The point (in the world) to look at
+        var camera_v = new Victor(
+            this.world_rect.center_x + Math.cos(this.viewport_sweep_angle) * this.viewport_sweep_radius,
+            this.world_rect.center_y + Math.sin(this.viewport_sweep_angle) * this.viewport_sweep_radius
             );
-        Flynn.mcp.viewport.y = (
-              this.world_rect.center_y 
-            + Math.sin(this.viewport_sweep_angle) * this.viewport_sweep_radius
-            - Flynn.mcp.canvasHeight / 2 
+        // Where the point at camera_v should show up on the screen
+        var screen_target_v = new Victor(
+            Flynn.mcp.canvasWidth / 2,
+            Flynn.mcp.canvasHeight / 2
             );
+        Flynn.mcp.setViewport(camera_v, screen_target_v, camera_zoom);
 
         // Rotate polygons
         for (i=0,len=this.polygons.length; i<len; i++){
@@ -256,7 +259,6 @@ Game.StateWorld = Flynn.State.extend({
                         }
                     }
                 }
-                console.log(closest_v);
                 this.projectiles.add(
                     this.drones[i].position,
                     closest_v.normalize().multiplyScalar(this.BULLET_SPEED),
@@ -309,10 +311,10 @@ Game.StateWorld = Flynn.State.extend({
 
         // World boundary
         ctx.vectorRect(
-            this.world_rect.left - Math.floor(Flynn.mcp.viewport.x),
-            this.world_rect.top - Math.floor(Flynn.mcp.viewport.y),
-            this.world_rect.width,
-            this.world_rect.height,
+            (this.world_rect.left - Flynn.mcp.viewport.x) * Flynn.mcp.viewportZoom,
+            (this.world_rect.top - Flynn.mcp.viewport.y) * Flynn.mcp.viewportZoom,
+            this.world_rect.width * Flynn.mcp.viewportZoom,
+            this.world_rect.height * Flynn.mcp.viewportZoom,
             Flynn.Colors.GRAY_DK,
             null,   // fill_color
             false   // is_world

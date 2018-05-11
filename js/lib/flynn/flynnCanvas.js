@@ -303,35 +303,35 @@ Flynn.Canvas = Class.extend({
 
             ctx.worldToScreen = function(x, y, preserve){
                 // Convert a location from world coordinates to screen coordinates
-                x -= Math.floor(Flynn.mcp.viewport.x);
-                y -= Math.floor(Flynn.mcp.viewport.y);
+                x = (x - Flynn.mcp.viewport.x) * Flynn.mcp.viewportZoom;
+                y =(y - Flynn.mcp.viewport.y) * Flynn.mcp.viewportZoom;
                 if(!this.world_wrap_enabled){
-                    return new Victor(x, y);
+                    return new Victor(x,y);
                 }
                 var wrap_margin = 40;
                 if(!preserve){
                     if(x < -wrap_margin){
-                        this.world_wrap_offset_x = this.world_bounds.width; 
+                        this.world_wrap_offset_x = this.world_bounds.width * Flynn.mcp.viewportZoom; 
                     }
                     else if(x > this.width + wrap_margin){
-                        this.world_wrap_offset_x = -this.world_bounds.width; 
+                        this.world_wrap_offset_x = -this.world_bounds.width * Flynn.mcp.viewportZoom; 
                     }
                     else{
                         this.world_wrap_offset_x = 0;
                     }
                     if(y < -wrap_margin){
-                        this.world_wrap_offset_y = this.world_bounds.height; 
+                        this.world_wrap_offset_y = this.world_bounds.height * Flynn.mcp.viewportZoom; 
                     }
                     else if(y > this.height + wrap_margin){
-                        this.world_wrap_offset_y = -this.world_bounds.height; 
+                        this.world_wrap_offset_y = -this.world_bounds.height * Flynn.mcp.viewportZoom; 
                     }
                     else{
                         this.world_wrap_offset_y = 0;
                     }
                 }
                 return new Victor( 
-                    x + this.world_wrap_offset_x, 
-                    y + this.world_wrap_offset_y
+                    (x + this.world_wrap_offset_x), 
+                    (y + this.world_wrap_offset_y)
                 );
             };
 

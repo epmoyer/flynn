@@ -13,6 +13,21 @@ Unreleased
 
 (None)
 
+3.8.0 - 2018-5-10
+-----------------
+
+Added
+^^^^^
+
+- Engine
+
+  - Viewport (rendering of world coordinates) now supports zoom via Flynn.mcp.viewportZoom
+  - Pan/zoom helper function Flynn.mcp.setViewport()
+
+- Test Application
+
+  - Pan/zoom demo on WORLD tab.
+
 3.7.3 - 2018-4-10
 -----------------
 

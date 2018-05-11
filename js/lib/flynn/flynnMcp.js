@@ -40,7 +40,8 @@ Flynn.Mcp = Class.extend({
 
         this.devPacingMode = Flynn.DevPacingMode.NORMAL;
 
-        this.viewport = {x:0, y:0};
+        this.viewport = {x:0, y:0};   // Viewport Pan
+        this.viewportZoom = 1.0;      // Viewport Zoom
 
         this.resizeFunc = null;
         this.slowMoDebug = false;
@@ -181,6 +182,15 @@ Flynn.Mcp = Class.extend({
             self.input.updateVisibilityAllControls();
         };
         window.addEventListener("resize", this.resize);
+    },
+
+    setViewport: function(world_v, screen_v, zoom){
+        // Set the viewport pan & zoom such that point at world_v (in world coordinates)
+        // is displayed at location screen_v (in screen coordinates), at the specified
+        // zoom level.
+        this.viewport.x = world_v.x - (screen_v.x / zoom);
+        this.viewport.y = world_v.y - (screen_v.y / zoom);
+        this.viewportZoom = zoom;
     },
 
     setTouchControlCanvas: function(canvas){
