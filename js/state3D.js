@@ -120,6 +120,14 @@ Game.State3D = Flynn.State.extend({
                 scale, text_x, text_y, "left", color);
             text_y += text_step;
         }
+
+        ctx.vectorText(
+            '3D API IS STILL IN BETA AND MAY CHANGE', 
+            scale,
+            Game.BOUNDS.right - left_margin,
+            Game.BOUNDS.top + top_margin,
+            'right',
+            Flynn.Colors.RED);
     },
 });
 
