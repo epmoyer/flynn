@@ -60,6 +60,23 @@ Flynn.Util = {
         return(value);
     },
 
+    defaultText: function(value, default_text){
+        // For use in parsing default arguments.
+        // The pattern..
+        //    mufunc(ops){
+        //       opts       = opts.text || "default text"
+        // ..would replace a blank value of opts.text with the default.
+        //   instead we only wish to replace the text if null or undefined.
+        //   using...
+        //    mufunc(ops){
+        //       this.text   = Flynn.Util.defaultText(opts.text, "default text");
+        //    }
+        if(value == undefined || value == null){
+            return(default_text);
+        }
+        return(value);
+    },
+
     rgbToHex: function(r, g, b) {
         // Convert color from r, g, b components to hex string of the form "#RRGGBB"
         // Arguments:

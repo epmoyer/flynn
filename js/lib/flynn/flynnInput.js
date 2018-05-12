@@ -206,21 +206,6 @@ Flynn.InputHandler = Class.extend({
                             var event_caught = self.handleTouchStart(x, y, self.MOUSE_IDENTIFIER);
                             if(!event_caught){
                                 console.log("mousedown not caught");
-                            //     var i;
-                            //     for(i=0; i<self.touchable_elements.length; i++){
-                            //         var element = self.touchable_elements[i];
-                            //         element = document.getElementById("info");
-                            //         Flynn.Util.event_simulator.simulate(
-                            //             element,
-                            //             "mousedown",
-                            //             { pointerX: event.clientX, pointerY: event.clientY }
-                            //             );
-                            //         Flynn.Util.event_simulator.simulate(
-                            //             element,
-                            //             "mouseup",
-                            //             { pointerX: event.clientX, pointerY: event.clientY }
-                            //             );
-                            //     }
                             }
                             else {
                                 event.preventDefault();
@@ -396,7 +381,7 @@ Flynn.InputHandler = Class.extend({
             ){
             this.captured_text += String.fromCharCode(key_code);
         }
-        console.log('processTextCapture():Key Code:'+key_code+' String:'+this.captured_text);
+        // console.log('processTextCapture():Key Code:'+key_code+' String:'+this.captured_text);
     },
 
     addTouchableElement: function(element){

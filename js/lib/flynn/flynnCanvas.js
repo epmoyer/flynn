@@ -153,6 +153,7 @@ Flynn.Canvas = Class.extend({
             ctx.stage.addChild(ctx.graphics);
 
             ctx.clearAll_deprecation_error_reported = false;
+            ctx.vectorText_deprecation_error_reported = false;
 
             ctx.width = canvas.width;
             ctx.height = canvas.height;
@@ -425,116 +426,115 @@ Flynn.Canvas = Class.extend({
                 }
                 this.vectorEnd();
             };
+            ctx.vectorText2 = function(opts){
+                // Options:
+                //    text: String (the text to display)
+                //    scale: float, scales the size (1.0 is no scaling)
+                //    x: number or null
+                //       number: The x location to display the text
+                //       null: Center text horizontally on screen
+                //    y: number or null
+                //       number: The y location to display the text
+                //       null: Center text vertically on screen
+                //    justify: String.  'left', 'right', or 'center'
+                //       If x is null, then justify can be null (it is ignored)
+                //    color: String.  Text color.
+                //    is_world: Boolean
+                //       true: Use world coordinates
+                //       false: Use screen coordinates
+                //    font: Flynn font object (Flynn.Font.Normal, Flynn.Font.Block, etc.)
+                //    angle: Rotation angle (radians).  Set null (or do not pass it) for 
+                //       unrotated text.  Rotated text does not support justification.
+                //       Note: Unrotated text has better rendering performance than text with
+                //       an angle of "0", so pass null (or do not pass) for unrotated use.
+                //    asepct_ratio: Stretches the font height. Value is width/height, so 
+                //        1.0 causes no stretching, 0.5 doubles the height, 2.0 halves the
+                //        height, etc. 
+                //        Tip: An aspect_ratio of 0.75 mimics most old-school vector games.
+                //
+                opts              = opts              || {};
+                opts.text         = Flynn.Util.defaultText(opts.text, '<TEXT>');
+                opts.scale        = opts.scale        || 1.0;
+                opts.x            = opts.x            || null;
+                opts.y            = opts.y            || null;
+                opts.justify      = opts.justify      || 'left';
+                opts.color        = opts.color        || Flynn.Colors.WHITE;
+                opts.is_world     = opts.is_world     || false;
+                opts.font         = opts.font         || Flynn.Font.Normal;
+                opts.angle        = opts.angle        || null;
+                opts.aspect_ratio = opts.aspect_ratio || 1.0;
 
-            ctx.vectorText = function(text, scale, x, y, justify, color, is_world, font, angle, aspect_ratio){
-                // text: String (the text to display)
-                // scale: float, scales the size (1.0 is no scaling)
-                // x: number or null
-                //    number: The x location to display the text
-                //    null: Center text horizontally on screen
-                // y: number or null
-                //    number: The y location to display the text
-                //    null: Center text vertically on screen
-                // justify: String.  'left', 'right', or 'center'
-                //    If x is null, then justify can be null (it is ignored)
-                // color: String.  Text color.
-                // is_world: Boolean
-                //    true: Use world coordinates
-                //    false: Use screen coordinates
-                // font: Flynn font object (Flynn.Font.Normal, Flynn.Font.Block, etc.)
-                // angle: Rotation angle (radians).  Set null (or do not pass it) for 
-                //    unrotated text.  Rotated text does not support justification.
-                //    Note: Unrotated text has better rendering performance than text with
-                //    an angle of "0", so pass null (or do not pass) for unrotated use.
-                var i, len, ch, p, pen_up;
+                var i, len, j, len2, character, polygon, pen_up;
+                var draw_x = opts.x;
+                var draw_y = opts.y;
 
-                text = String(text);
-                if(typeof(color)==='undefined'){
-                    console.log("ctx.vectorText(): default color deprecated.  Please pass a color.  Text:" + text );
-                    color = Flynn.Colors.WHITE;
-                }
-                if(typeof(is_world)==='undefined'){
-                    is_world = false;
-                }
-                if(typeof(font)==='undefined'){
-                    font = Flynn.Font.Normal;
-                }
-                if(typeof(angle)==='undefined'){
-                    angle = null;
-                }
-                else{
-                    var rot_v = new Victor(Math.cos(angle), Math.sin(angle));
-                }
-                if(aspect_ratio == undefined){
-                    aspect_ratio = 1.0;
-                }
+                var step = opts.scale * opts.font.CharacterSpacing;
 
-                var step = scale*font.CharacterSpacing;
-
-                if (angle == null){
+                if (opts.angle == null){
                     //----------------------------
                     // Non-rotated text
                     //----------------------------
 
-                    // add offset if specified
-                    if (typeof justify === "number") {
-                        throw '5th parameter is now "justify" (was "offset").  Pass "left", "right", or "center".';
-                    }
-                    else{
-                        switch(justify){
-                            case 'right':
-                                x -= step * text.length - scale * font.CharacterGap;
-                                break;
-                            case 'center':
-                                x -= step * text.length / 2 - scale * font.CharacterGap / 2;
-                                break;
-                            case 'left':
-                                break;
-                            default:
-                                // If x is null, will center horizontally on screen.
-                                // If x is a number, then a justification must be specified
-                                if(typeof x == "number"){
-                                    throw '5th parameter is now "justify" (was "offset").  Pass "left", "right", or "center".';
-                                }
-                                break;
-                        }
-                    }
-
                     // Center x/y if they are not numbers
-                    if (typeof x !== "number"){
-                        x = Math.round((this.width - (text.length*step-(font.CharacterGap*scale)))/2);
+                    if (draw_x == null){
+                        draw_x = Math.round((this.width - (opts.text.length*step-(opts.font.CharacterGap*opts.scale)))/2);
                     }
-                    if (typeof y !== "number"){
-                        y = Math.round((this.height - step)/2);
+                    if (draw_y == null){
+                        draw_y = Math.round((this.height - step)/2);
                     }
 
-                    for(i = 0, len = text.length; i<len; i++){
-                        ch = text.charCodeAt(i);
+                    // Justification
+                    switch(opts.justify){
+                        case 'right':
+                            draw_x -= step * opts.text.length - opts.scale * opts.font.CharacterGap;
+                            break;
+                        case 'center':
+                            draw_x -= step * opts.text.length / 2 - opts.scale * opts.font.CharacterGap / 2;
+                            break;
+                        case 'left':
+                            break;
+                        case null:
+                            break;
+                        default:
+                            throw 'opts.justify must be one of null, "left", "right", or "center".';
+                    }
 
-                        if (ch === this.SPACECODE){
-                            x += step;
+                    for(i = 0, len = opts.text.length; i<len; i++){
+                        character = opts.text.charCodeAt(i);
+
+                        if (character === this.SPACECODE){
+                            draw_x += step;
                             continue;
                         }
-                        p = this.charToPolygon(ch, font);
+                        polygon = this.charToPolygon(character, opts.font);
 
                         pen_up = false;
-                        this.vectorStart(color, is_world, true);
-                        for (var j=0, len2=p.length; j<len2; j+=2){
-                            if(p[j]==Flynn.PEN_COMMAND){
+                        this.vectorStart(
+                            opts.color,
+                            opts.is_world,
+                            true // Unrotated text is always constrained
+                            );
+
+                        for (j=0, len2=polygon.length; j<len2; j+=2){
+                            if(polygon[j]==Flynn.PEN_COMMAND){
                                 pen_up = true;
                             }
                             else{
                                 if(j===0 || pen_up){
-                                    this.vectorMoveTo(p[j]*scale+x, p[j+1]*scale/aspect_ratio +y);
+                                    this.vectorMoveTo(
+                                        polygon[j]*opts.scale+draw_x,
+                                        polygon[j+1]*opts.scale/opts.aspect_ratio + draw_y);
                                     pen_up = false;
                                 }
                                 else{
-                                    this.vectorLineTo(p[j]*scale+x, p[j+1]*scale/aspect_ratio +y);
+                                    this.vectorLineTo(
+                                        polygon[j]*opts.scale+draw_x,
+                                        polygon[j+1]*opts.scale/opts.aspect_ratio + draw_y);
                                 }
                             }
                         }
                         this.vectorEnd();
-                        x += step;
+                        draw_x += step;
                     }
                 }
                 else{
@@ -543,44 +543,48 @@ Flynn.Canvas = Class.extend({
                     //----------------------
 
                     // Center x or y is they are not numbers
-                    if (typeof x !== "number"){
-                        x = Math.round(this.width);
+                    if (draw_x == null){
+                        draw_x = Math.round(this.width);
                     }
-                    if (typeof y !== "number"){
-                        y = Math.round(this.height);
+                    if (draw_y == null){
+                        draw_y = Math.round(this.height);
                     }
 
-                    var pen_v = new Victor(x, y);
-                    var unit_x_v = new Victor(1, 0).rotate(angle);
-                    var unit_y_v = new Victor(0, 1).rotate(angle);
+                    var pen_v = new Victor(draw_x, draw_y);
+                    var unit_x_v = new Victor(1, 0).rotate(opts.angle);
+                    var unit_y_v = new Victor(0, 1).rotate(opts.angle);
 
                     // Move to start of text
                     var start_v = new Victor(
-                        -(text.length*step-(font.CharacterGap*scale))/2,
-                        -(scale / aspect_ratio * font.CharacterHeight)/2
+                        -(opts.text.length*step-(opts.font.CharacterGap*opts.scale))/2,
+                        -(opts.scale / opts.aspect_ratio * opts.font.CharacterHeight)/2
                     );
-                    start_v.rotate(angle);
+                    start_v.rotate(opts.angle);
                     pen_v.add(start_v);
 
-                    for(i = 0, len = text.length; i<len; i++){
-                        ch = text.charCodeAt(i);
+                    for(i = 0, len = opts.text.length; i<len; i++){
+                        character = opts.text.charCodeAt(i);
 
-                        if (ch === this.SPACECODE){
-                            pen_v.add(unit_x_v.clone().multiplyScalar(scale*font.CharacterSpacing));
+                        if (character === this.SPACECODE){
+                            pen_v.add(unit_x_v.clone().multiplyScalar(opts.scale*opts.font.CharacterSpacing));
                             continue;
                         }
-                        p = this.charToPolygon(ch, font);
+                        polygon = this.charToPolygon(character, opts.font);
 
                         pen_up = false;
-                        this.vectorStart(color, is_world, false);
-                        for (var j=0, len2=p.length; j<len2; j+=2){
-                            if(p[j]==Flynn.PEN_COMMAND){
+                        this.vectorStart(
+                            opts.color,
+                            opts.is_world,
+                            false // Unconstrained
+                            );
+                        for (j=0, len2=polygon.length; j<len2; j+=2){
+                            if(polygon[j]==Flynn.PEN_COMMAND){
                                 pen_up = true;
                             }
                             else{
                                 var draw_v = pen_v.clone();
-                                draw_v.add(unit_x_v.clone().multiplyScalar(p[j]*scale));
-                                draw_v.add(unit_y_v.clone().multiplyScalar(p[j+1]*scale / aspect_ratio));
+                                draw_v.add(unit_x_v.clone().multiplyScalar(polygon[j]*opts.scale));
+                                draw_v.add(unit_y_v.clone().multiplyScalar(polygon[j+1]*opts.scale / opts.aspect_ratio));
                                 if(j===0 || pen_up){
                                     this.vectorMoveTo(draw_v.x, draw_v.y);
                                     pen_up = false;
@@ -591,9 +595,35 @@ Flynn.Canvas = Class.extend({
                             }
                         }
                         this.vectorEnd();
-                        pen_v.add(unit_x_v.clone().multiplyScalar(scale*font.CharacterSpacing));
+                        pen_v.add(unit_x_v.clone().multiplyScalar(opts.scale*opts.font.CharacterSpacing));
                     }
                 }
+            };
+
+            ctx.vectorText = function(text, scale, x, y, justify, color, is_world, font, angle, aspect_ratio){
+                // ************************************************
+                // *** Deprecated.  Use .vectorText2() instead. ***
+                // ************************************************
+                if(!this.vectorText_deprecation_error_reported){
+                    this.vectorText_deprecation_error_reported = true;
+                    console.error('ctx.vectorText() has been deprecated. Use ctx.vectortText2() instead.');
+                }
+
+                ctx.vectorText2(
+                    {
+                        text: text,
+                        scale: scale,
+                        x: x,
+                        y: y,
+                        justify: justify,
+                        color: color,
+                        is_world: is_world,
+                        font: font,
+                        angle: angle,
+                        aspect_ratio: aspect_ratio
+                    }
+                );
+                return;
             };
 
             ctx.vectorTextArc = function(text, scale, center_x, center_y, angle, radius, color, is_centered, is_reversed, is_world, font, stretch){

@@ -13,7 +13,19 @@ Unreleased
 
 (None)
 
-3.10.0 - 2018-X-XX
+3.11.0 - 2018-6-10
+------------------
+
+Added
+^^^^^
+
+- Engine
+
+- Add ctx.vectorText2(), which takes an options object.
+- Deprecate ctx.vectorText().
+
+
+3.10.0 - 2018-5-10
 ------------------
 
 Added
