@@ -83,22 +83,72 @@ Flynn.StateEnd = Flynn.State.extend({
 
     render: function(ctx) {
         if (this.hasEnteredName) {
-            ctx.vectorText(this.title, 4, null, 130, null, this.color);
+            ctx.vectorText2({
+                text: this.title, 
+                scale: 4,
+                y: 130,
+                color: this.color
+            });
             for (var i = 0, len = this.leaderboard.leaderList.length; i < len; i++) {
                 var leader = this.leaderboard.leaderList[i];
-                ctx.vectorText(leader['name'], 2, Flynn.mcp.canvasWidth/2 - 152, 200+25*i, 'left', this.color);
-                ctx.vectorText(this.scoreToString(leader['score']), 2, Flynn.mcp.canvasWidth/2 + 148, 200+25*i,'right', this.color);
+                ctx.vectorText2({
+                    text: leader['name'],
+                    scale: 2,
+                    x: Flynn.mcp.canvasWidth/2 - 152,
+                    y: 200+25*i,
+                    color: this.color
+                });
+                ctx.vectorText2({
+                    text: this.scoreToString(leader['score']),
+                    scale: 2,
+                    x: Flynn.mcp.canvasWidth/2 + 148,
+                    y: 200+25*i,
+                    justify: 'right',
+                    color: this.color
+                });
             }
-            ctx.vectorText("PRESS <ENTER> TO CONTINUE", 2, null, 450, null, this.color);
+            ctx.vectorText2({
+                text: "PRESS <ENTER> TO CONTINUE",
+                scale: 2,
+                y: 450,
+                color: this.color
+            });
         } else {
-            ctx.vectorText(this.prompt, 4, null, 100, null, this.color);
-            ctx.vectorText("TYPE YOUR NAME AND PRESS ENTER", 2, null, 180, null, this.color);
+            ctx.vectorText2({
+                text: this.prompt,
+                scale: 4,
+                y: 100,
+                justify: null,
+                color: this.color
+            });
+            ctx.vectorText2({
+                text: "TYPE YOUR NAME AND PRESS ENTER",
+                scale: 2,
+                y: 180,
+                color: this.color
+            });
             if(this.cursorBlinkTimer%2 > 1){
-                ctx.vectorText(" " + this.nickname + "_", 3, null, 220, null, this.color);
+                ctx.vectorText2({
+                    text: " " + this.nickname + "_",
+                    scale: 3,
+                    y: 220,
+                    justify: null,
+                    color: this.color
+                });
             } else{
-                ctx.vectorText(this.nickname, 3, null, 220, null, this.color);
+                ctx.vectorText2({
+                    text: this.nickname,
+                    scale: 3,
+                    y: 220,
+                    color: this.color
+                });
             }
-            ctx.vectorText(this.scoreToString(this.score), 3, null, 300, null, this.color);
+            ctx.vectorText2({
+                text: this.scoreToString(this.score),
+                scale: 3,
+                y: 300,
+                color: this.color
+            });
         }
     }
 });

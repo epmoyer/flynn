@@ -62,7 +62,7 @@ Game.StatePerformance = Flynn.State.extend({
         // console.log(elapsed_ticks);
 
         if(elapsed_ticks > 1.06){
-            this.num_spirals -= 1;
+            this.num_spirals = Math.max(this.num_spirals-1, 1);
         }
         else{
             this.num_spirals += 0.05;
@@ -158,18 +158,14 @@ Game.StatePerformance = Flynn.State.extend({
         // var median_polygons_per_frame = this.median(this.polygons_per_frame_samples);
 
         Game.render_page_frame(ctx);
-        // ctx.vectorText(
-        //     "POLYGONS PER FRAME: " + Math.floor(median_polygons_per_frame),
-        //     Game.FONT_SCALE, 
-        //     Game.BOUNDS.left + Game.FONT_MARGIN_LEFT,
-        //     Game.BOUNDS.top + Game.FONT_MARGIN_TOP, 
-        //     'left', Flynn.Colors.YELLOW);
-        ctx.vectorText(
-            "NUM POLYGONS: " + Math.floor(this.num_spirals),
-            Game.FONT_SCALE, 
-            Game.BOUNDS.left + Game.FONT_MARGIN_LEFT,
-            Game.BOUNDS.top + Game.FONT_MARGIN_TOP, 
-            'left', Flynn.Colors.YELLOW);
+
+        ctx.vectorText2({
+            text: "NUM POLYGONS: " + Math.floor(this.num_spirals),
+            scale: Game.FONT_SCALE, 
+            x: Game.BOUNDS.left + Game.FONT_MARGIN_LEFT,
+            y: Game.BOUNDS.top + Game.FONT_MARGIN_TOP, 
+            color: Flynn.Colors.YELLOW
+        });
     }
 });
 

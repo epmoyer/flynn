@@ -235,21 +235,63 @@ Game.StateUtil = Flynn.State.extend({
             curret_y = bounds.top + top_margin;
             switch(set){
                 case 0:
-                    ctx.vectorText("is_colliding()", scale, left_x, curret_y, 'left', heading_color);
+                    ctx.vectorText2({
+                        text: "is_colliding()",
+                        scale: scale,
+                        x: left_x,
+                        y: curret_y,
+                        color: heading_color
+                    });
                     curret_y += line_step_y;
-                    ctx.vectorText("resolve_collision()", scale, left_x, curret_y, 'left', heading_color);
+                    ctx.vectorText2({
+                        text: "resolve_collision()",
+                        scale: scale,
+                        x: left_x,
+                        y: curret_y,
+                        color: heading_color
+                    });
                     curret_y += line_step_y;
-                    ctx.vectorText("doBoundsBounce()", scale, left_x, curret_y, 'left', heading_color);
+                    ctx.vectorText2({
+                        text: "doBoundsBounce()",
+                        scale: scale,
+                        x: left_x,
+                        y: curret_y,
+                        color: heading_color
+                    });
                     curret_y += line_step_y;
-                    ctx.vectorText("FRICTION", scale, left_x, curret_y, 'left', heading_color);
+                    ctx.vectorText2({
+                        text: "FRICTION",
+                        scale: scale,
+                        x: left_x,
+                        y: curret_y,
+                        color: heading_color
+                    });
                     break;
 
                 case 1:
-                    ctx.vectorText("doBoundsWrap()", scale, left_x, curret_y, 'left', heading_color);
+                    ctx.vectorText2({
+                        text: "doBoundsWrap()",
+                        scale: scale,
+                        x: left_x,
+                        y: curret_y,
+                        color: heading_color
+                    });
                     curret_y += line_step_y;
-                    ctx.vectorText("NO COLLISION", scale, left_x, curret_y, 'left', heading_color);
+                    ctx.vectorText2({
+                        text: "NO COLLISION",
+                        scale: scale,
+                        x: left_x,
+                        y: curret_y,
+                        color: heading_color
+                    });
                     curret_y += line_step_y;
-                    ctx.vectorText("NO FRICTION", scale, left_x, curret_y, 'left', heading_color);
+                    ctx.vectorText2({
+                        text: "NO FRICTION",
+                        scale: scale,
+                        x: left_x,
+                        y: curret_y,
+                        color: heading_color
+                    });
                     break;
             }
         }
@@ -259,7 +301,13 @@ Game.StateUtil = Flynn.State.extend({
         //--------------------
         curret_y = Game.BOUNDS.center_y + top_margin;
         left_x = Game.BOUNDS.left + left_margin;
-        ctx.vectorText("CONSTRAINED VS. UNCONSTRAINED", scale, left_x, curret_y, 'left', heading_color);
+        ctx.vectorText2({
+            text: "CONSTRAINED VS. UNCONSTRAINED",
+            scale: scale,
+            x: left_x,
+            y: curret_y,
+            color: heading_color
+        });
 
         var draw_position = new Victor(
             Game.BOUNDS.left + 20,
@@ -277,10 +325,16 @@ Game.StateUtil = Flynn.State.extend({
         // polygon.getSpan() testing
         //--------------------
         left_x = Game.BOUNDS.center_x;
-        ctx.vectorText("SPAN", scale, left_x, curret_y, 'left', heading_color);
+        ctx.vectorText2({
+            text: "SPAN",
+            scale: scale,
+            x: left_x,
+            y: curret_y,
+            color: heading_color
+        });
         var length = 45;
         for (i=0; i<this.span_polygons.length; i++){
-            var polygon = this.span_polygons[i]
+            polygon = this.span_polygons[i]
             var span = polygon.getSpan();
             ctx.vectorLine(
                 polygon.position.x - span.left, 
@@ -330,7 +384,13 @@ Game.StateUtil = Flynn.State.extend({
             );
         curret_y = Game.BOUNDS.center_y + top_margin + 55;
         left_x = Game.BOUNDS.left + left_margin;
-        ctx.vectorText("POYGON SHATTER (PARTICLES)", scale, left_x, curret_y, 'left', heading_color);
+        ctx.vectorText2({
+            text: "POYGON SHATTER (PARTICLES)",
+            scale: scale,
+            x: left_x,
+            y: curret_y,
+            color: heading_color
+        });
         for(i = 0; i < this.shatter_polygons.length; i++){
             this.shatter_polygons[i].render(ctx);
         }

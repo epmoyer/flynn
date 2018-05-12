@@ -155,14 +155,23 @@ Game.StatePacing = Flynn.State.extend({
         var heading_color = Flynn.Colors.YELLOW;
 
         Game.render_page_frame (ctx);
-        ctx.vectorText(
-            'GREEN ITEMS ARE UPDATED AT 60FPS. MAGENTA AT 20FPS.', 
-            scale, null, Game.BOUNDS.bottom - 18, null, heading_color);
+        ctx.vectorText2({
+            text: 'GREEN ITEMS ARE UPDATED AT 60FPS. MAGENTA AT 20FPS.',
+            scale: scale,
+            y: Game.BOUNDS.bottom - 18,
+            color: heading_color
+        });
 
         // Regions
         for(i=0; i<this.region_info.length; i++){
             var info = this.region_info[i];
-            ctx.vectorText(info.name, scale, info.bounds.left + left_margin, info.bounds.top + top_margin, 'left', heading_color);
+            ctx.vectorText2({
+                text: info.name,
+                scale: scale,
+                x: info.bounds.left + left_margin,
+                y: info.bounds.top + top_margin,
+                color: heading_color
+            });
             ctx.vectorRectR(info.bounds, Flynn.Colors.GREEN);
         }
 
@@ -185,7 +194,13 @@ Game.StatePacing = Flynn.State.extend({
                 var text_color = Math.abs(drone.error) < 5.0 ? Flynn.Colors.GRAY : Flynn.Colors.RED;
                 var text_y = this.region_info[(i-1)/2].bounds.top + top_margin;
                 var text_x = Game.BOUNDS.right - 145;
-                ctx.vectorText('ERROR: ' + this.format_float(drone.error, true), scale, text_x, text_y, 'left', text_color);
+                ctx.vectorText2({
+                    text: 'ERROR: ' + this.format_float(drone.error, true),
+                    scale: scale,
+                    x: text_x,
+                    y: text_y,
+                    color: text_color
+                });
             }
         }
 
@@ -196,7 +211,13 @@ Game.StatePacing = Flynn.State.extend({
         for(i=0; i<this.counters.length; i++){
             var counter = this.counters[i];
 
-            ctx.vectorText(counter.name + ': ' + this.format_float(counter.value, false), scale, Game.BOUNDS.left + left_margin, pos_y, 'left', counter.color);
+            ctx.vectorText2({
+                text: counter.name + ': ' + this.format_float(counter.value, false),
+                scale: scale,
+                x: Game.BOUNDS.left + left_margin,
+                y: pos_y,
+                color: counter.color
+            });
             pos_y += line_height;
         }
 

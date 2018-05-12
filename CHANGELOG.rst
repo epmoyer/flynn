@@ -21,8 +21,10 @@ Added
 
 - Engine
 
-- Add ctx.vectorText2(), which takes an options object.
-- Deprecate ctx.vectorText().
+  - Add ctx.vectorText2(), which takes an options object.
+  - Deprecate ctx.vectorText().
+  - Add ctx.vectorTextArc2(), which takes an options object.
+  - Deprecate ctx.vectorTextArc().
 
 
 3.10.0 - 2018-5-10

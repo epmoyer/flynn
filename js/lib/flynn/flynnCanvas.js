@@ -152,8 +152,10 @@ Flynn.Canvas = Class.extend({
             ctx.graphics = new PIXI.Graphics();
             ctx.stage.addChild(ctx.graphics);
 
+            // Deprecation warnings
             ctx.clearAll_deprecation_error_reported = false;
             ctx.vectorText_deprecation_error_reported = false;
+            ctx.vectorTextArc_deprecation_error_reported = false;
 
             ctx.width = canvas.width;
             ctx.height = canvas.height;
@@ -626,100 +628,113 @@ Flynn.Canvas = Class.extend({
                 return;
             };
 
-            ctx.vectorTextArc = function(text, scale, center_x, center_y, angle, radius, color, is_centered, is_reversed, is_world, font, stretch){
+            ctx.vectorTextArc2 = function(opts){
+                // Options:
+                //    text: String (the text to display)
+                //    scale: float, scales the size (1.0 is no scaling)
+                //    center_x: X axis center of the arc.
+                //    center_y: Y axis center of the arc.
+                //    angle: Angle at which to draw the text.
+                //    radius: Radius of the text arc along which to draw.
+                //    color: String.  Text color.
+                //    is_centered: If true then center the text at angle. Else
+                //       left justify the text at angle.
+                //    is_reversed: If true then the bottom of the characters will
+                //       face outward from the center.  Used when text is at the
+                //       bottom of an arc and needs to appear "right side up".
+                //    is_world: Boolean
+                //       true: Use world coordinates
+                //       false: Use screen coordinates
+                //    font: Flynn font object (Flynn.Font.Normal, Flynn.Font.Block, etc.)
+                //    stretch: Value by which to vertically stretch the font, else null
+                //       for no stretching.
+                opts              = opts              || {};
+                opts.text         = Flynn.Util.defaultText(opts.text, '<TEXT>');
+                opts.scale        = opts.scale        || 1.0;
+                opts.center_x     = opts.center_x     || this.width/2;
+                opts.center_y     = opts.center_y     || this.height/2;
+                opts.angle        = opts.angle        || 0.0;
+                opts.radius       = opts.radius       || 100;
+                opts.color        = opts.color        || Flynn.Colors.WHITE;
+                opts.is_centered  = Flynn.Util.defaultTrue(opts.is_centered);
+                opts.is_reversed  = opts.is_reversed  || false;
+                opts.is_world     = opts.is_world     || false;
+                opts.font         = opts.font         || Flynn.Font.Normal;
+                opts.stretch      = opts.stretch      || null;
+
                 var draw_x, draw_y;
+                var text = String(opts.text);
+                var render_angle = opts.angle;
+                var render_angle_step = Math.asin(opts.font.CharacterSpacing * opts.scale / opts.radius);
 
-                text = String(text);
-
-                if(typeof(color)==='undefined'){
-                    color = Flynn.Colors.GREEN;
-                }
-                if(typeof(is_centered)==='undefined'){
-                    is_centered = false;
-                }
-                if(typeof(is_reversed)==='undefined'){
-                    is_reversed = false;
-                }
-                if(typeof(is_world)==='undefined'){
-                    is_world = false;
-                }
-                if(typeof(font)==='undefined'){
-                    font = Flynn.Font.Normal;
-                }
-                if(typeof(stretch)==='undefined'){
-                    stretch = null;
-                }
-
-                var render_angle = angle;
-                var render_angle_step = Math.asin(font.CharacterSpacing*scale/radius);
-                if(stretch){
+                if(opts.stretch){
                     render_angle_step *= 1.4;
                 }
                 var renderAngleOffset = 0;
-                if (is_centered){
+                if (opts.is_centered){
                     renderAngleOffset = render_angle_step * (text.length / 2 - 0.5);
-                    if(is_reversed){
+                    if(opts.is_reversed){
                         renderAngleOffset = -renderAngleOffset;
                     }
                 }
                 render_angle -= renderAngleOffset;
                 var character_angle = render_angle + Math.PI/2;
-                if(is_reversed){
+                if(opts.is_reversed){
                     character_angle += Math.PI;
                     render_angle_step = - render_angle_step;
                 }
 
                 for(var i = 0, len = text.length; i<len; i++){
-                    this.vectorStart(color, is_world, false);
-                    var ch = text.charCodeAt(i);
+                    this.vectorStart(opts.color, opts.is_world, false);
+                    var character = text.charCodeAt(i);
 
-                    if (ch === this.SPACECODE){
+                    if (character === this.SPACECODE){
                         render_angle += render_angle_step;
                         character_angle += render_angle_step;
                         continue;
                     }
 
                     // Get the character vector points
-                    var p = this.charToPolygon(ch, font);
+                    var polygon = this.charToPolygon(character, opts.font);
 
                     // Render character
                     var pen_up = false;
-                    for (var j=0, len2=p.length; j<len2; j+=2){
-                        if(p[j]==Flynn.PEN_COMMAND){
+                    for (var j=0, len2=polygon.length; j<len2; j+=2){
+                        if(polygon[j]==Flynn.PEN_COMMAND){
                             pen_up = true;
                         }
                         else{
-                            if(stretch){
+                            if(opts.stretch){
                                 var sign = 1;
-                                if (is_reversed){
+                                if (opts.is_reversed){
                                     sign = -sign;
                                 }
                                 
                                 // Remap x coordinate onto a logarithmic scale
-                                var character_x = p[j+1];
-                                if (!is_reversed){
-                                    character_x = font.CharacterHeight - character_x;
+                                var character_x = polygon[j+1];
+                                if (!opts.is_reversed){
+                                    character_x = opts.font.CharacterHeight - character_x;
                                 }
                                 var x_log = Flynn.Util.logish(
                                     character_x, 
-                                    0,                      // min
-                                    font.CharacterHeight,   // max
-                                    1.2                     // power
+                                    0,                         // min
+                                    opts.font.CharacterHeight, // max
+                                    1.2                        // power
                                     );
                                 
-                                var draw_radius = radius + (x_log - font.CharacterHeight/2) * scale * stretch;
+                                var draw_radius = opts.radius + (x_log - opts.font.CharacterHeight/2) * opts.scale * opts.stretch;
                                 var draw_angle = render_angle +
-                                    sign * (p[j] - font.CharacterWidth/2) * font.CharacterSpacing * scale / (font.CharacterWidth * radius);
-                                draw_x = Math.cos(draw_angle) * draw_radius + center_x;
-                                draw_y = Math.sin(draw_angle) * draw_radius + center_y;
+                                    sign * (polygon[j] - opts.font.CharacterWidth/2) * opts.font.CharacterSpacing * opts.scale / (opts.font.CharacterWidth * opts.radius);
+                                draw_x = Math.cos(draw_angle) * draw_radius + opts.center_x;
+                                draw_y = Math.sin(draw_angle) * draw_radius + opts.center_y;
                             }
                             else{
-                                var x = p[j] - font.CharacterWidth/2;
-                                var y = p[j+1] - font.CharacterHeight/2;
+                                var x = polygon[j] - opts.font.CharacterWidth/2;
+                                var y = polygon[j+1] - opts.font.CharacterHeight/2;
                                 var c = Math.cos(character_angle);
                                 var s = Math.sin(character_angle);
-                                draw_x = (c*x - s*y) * scale + Math.cos(render_angle) * radius + center_x;
-                                draw_y = (s*x + c*y) * scale + Math.sin(render_angle) * radius + center_y;
+                                draw_x = (c*x - s*y) * opts.scale + Math.cos(render_angle) * opts.radius + opts.center_x;
+                                draw_y = (s*x + c*y) * opts.scale + Math.sin(render_angle) * opts.radius + opts.center_y;
                             }
                             if(j===0 || pen_up){
                                 this.vectorMoveTo(draw_x, draw_y);
@@ -735,6 +750,33 @@ Flynn.Canvas = Class.extend({
                     render_angle += render_angle_step;
                     character_angle += render_angle_step;
                 }
+            };
+
+            ctx.vectorTextArc = function(text, scale, center_x, center_y, angle, radius, color, is_centered, is_reversed, is_world, font, stretch){
+                // ***************************************************
+                // *** Deprecated.  Use .vectorTextArc2() instead. ***
+                // ***************************************************
+                if(!this.vectorTextArc_deprecation_error_reported){
+                    this.vectorTextArc_deprecation_error_reported = true;
+                    console.error('ctx.vectorTextArc() has been deprecated. Use ctx.vectortTextArc2() instead.');
+                }
+                ctx.vectorTextArc2(
+                    {
+                        text: text,
+                        scale: scale,
+                        center_x: center_x,
+                        center_y: center_y,
+                        angle: angle,
+                        radius: radius,
+                        color: color,
+                        is_centered: is_centered,
+                        is_reversed: is_reversed,
+                        is_world: is_world,
+                        font: font,
+                        is_stretched: stretch
+                    }
+                );
+                return;
             };
 
             ctx.clearAll = function(){
@@ -851,7 +893,13 @@ Flynn.Canvas = Class.extend({
                 animation_callback_f(elapsed_ticks);
 
                 if(label){
-                    self.ctx.vectorText(label, 1.5, 10, self.canvas.height-20, 'left', Flynn.Colors.RED);
+                    self.ctx.vectorText2({
+                        text:label,
+                        scale: 1.5,
+                        x: 10,
+                        y: self.canvas.height-20, 
+                        color:Flynn.Colors.RED
+                    });
                 }
                 
                 if (self.showMetrics){

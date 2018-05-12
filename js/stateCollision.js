@@ -216,9 +216,21 @@ Game.StateCollision = Flynn.State.extend({
         
         Game.render_page_frame (ctx);
 
-        ctx.vectorText("POINT COLLISION", 1.5, left_x, curret_y, 'left', heading_color);
+        ctx.vectorText2({
+            text: "POINT COLLISION",
+            scale: 1.5,
+            x: left_x,
+            y: curret_y,
+            color: heading_color
+        });
         curret_y += 175;
-        ctx.vectorText("POINT COLLISION WITH BOUNDING POLYGON", 1.5, left_x, curret_y, 'left', heading_color);
+        ctx.vectorText2({
+            text: "POINT COLLISION WITH BOUNDING POLYGON",
+            scale: 1.5,
+            x: left_x,
+            y: curret_y,
+            color: heading_color
+        });
         for(i=0; i<this.collision_rects.length; i++){
             ctx.vectorRect(
                 this.collision_rects[i].left, 
@@ -227,18 +239,20 @@ Game.StateCollision = Flynn.State.extend({
                 this.collision_rects[i].height,
                 Flynn.Colors.DODGERBLUE);
         }
-        ctx.vectorText("HIDDEN", 
-            1.5, 
-            this.collision_rects[1].left + 8, 
-            this.collision_rects[1].top + 8,
-            'left', 
-            Flynn.Colors.YELLOW);
-        ctx.vectorText("VISIBLE", 
-            1.5, 
-            this.collision_rects[2].left + 8, 
-            this.collision_rects[2].top + 8,
-            'left', 
-            Flynn.Colors.YELLOW);
+        ctx.vectorText2({
+            text: "HIDDEN", 
+            scale: 1.5, 
+            x: this.collision_rects[1].left + 8, 
+            y: this.collision_rects[1].top + 8,
+            color: Flynn.Colors.YELLOW
+        });
+        ctx.vectorText2({
+            text: "VISIBLE", 
+            scale: 1.5, 
+            x: this.collision_rects[2].left + 8, 
+            y: this.collision_rects[2].top + 8,
+            color: Flynn.Colors.YELLOW
+        });
 
         ctx.fillStyle=Flynn.Colors.YELLOW;
         ctx.fillRect(
@@ -267,7 +281,13 @@ Game.StateCollision = Flynn.State.extend({
             this.bullet.size);
 
         curret_y = this.collision_rects[1].bottom + 10;
-        ctx.vectorText("LOSSY POLYGON COLLISION", 1.5, left_x, curret_y, 'left', heading_color);
+        ctx.vectorText2({
+            text: "LOSSY POLYGON COLLISION",
+            scale: 1.5,
+            x: left_x,
+            y: curret_y,
+            color: heading_color
+        });
 
         for (i=0; i<this.polygons.length; i++){
             this.polygons[i].render(ctx);
@@ -284,7 +304,13 @@ Game.StateCollision = Flynn.State.extend({
 
         left_x = 450;
         curret_y = 42;
-        ctx.vectorText("BUTTONS", 1.5, left_x, curret_y, 'left', heading_color);
+        ctx.vectorText2({
+            text: "BUTTONS",
+            scale: 1.5,
+            x: left_x,
+            y: curret_y,
+            color: heading_color
+        });
         for (i=0; i<button_list.length; i++){
             name = button_list[i];
             if(Flynn.mcp.input.virtualButtonIsDown(name)){
@@ -294,7 +320,13 @@ Game.StateCollision = Flynn.State.extend({
                 color = Flynn.Colors.GRAY;
             }
             curret_y += 20;
-            ctx.vectorText(name, 1.5, left_x + indent, curret_y, 'left', color);
+            ctx.vectorText2({
+                text: name,
+                scale: 1.5,
+                x: left_x + indent,
+                y: curret_y,
+                color: color
+            });
         }
 
         ctx.vectorRect(

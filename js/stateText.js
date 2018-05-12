@@ -55,79 +55,162 @@ Game.StateText = Flynn.State.extend({
             var current_y = 42;
             var indent = 20;
             var line_step = 15;
-            ctx.vectorText("LEFT JUSTIFY", 1.5, left_x, current_y, 'left', heading_color);
+            ctx.vectorText2({
+                text: "LEFT JUSTIFY",
+                scale: 1.5,
+                x: left_x,
+                y: current_y,
+                color: heading_color
+            });
             var strings = ["A", "AB", "ABC"];
             var num_strings = strings.length;
             var text_x = left_x + indent;
             current_y += 20;
             ctx.vectorLine(text_x, current_y, text_x, current_y+num_strings*line_step, Flynn.Colors.GREEN);
             for(i=0; i<strings.length; i++){
-                ctx.vectorText(strings[i], 1.5, left_x + indent, current_y + i*line_step, 'left', Flynn.Colors.WHITE);
+                ctx.vectorText2({
+                    text: strings[i],
+                    scale: 1.5,
+                    x: left_x + indent,
+                    y: current_y + i*line_step,
+                    color: Flynn.Colors.WHITE
+                });
             }
-
+ 
             current_y += 4*line_step;
-            ctx.vectorText("RIGHT JUSTIFY", 1.5, left_x, current_y, 'left', heading_color);
+            ctx.vectorText2({
+                text: "RIGHT JUSTIFY", 
+                scale: 1.5, 
+                x: left_x, 
+                y: current_y,  
+                color: heading_color
+            });
             current_y += 20;
             text_x = left_x + indent + 80;
             ctx.vectorLine(text_x, current_y, text_x, current_y+num_strings*line_step, Flynn.Colors.GREEN);
             for(i=0; i<strings.length; i++){
-                ctx.vectorText(strings[i], 1.5, text_x, current_y + i*15, 'right', Flynn.Colors.WHITE);
+                ctx.vectorText2({
+                    text: strings[i],
+                    scale: 1.5,
+                    x: text_x,
+                    y: current_y + i*15,
+                    justify: 'right',
+                    color: Flynn.Colors.WHITE
+                });
             }
 
             current_y += 4*line_step;
-            ctx.vectorText("CENTER JUSTIFY", 1.5, left_x, current_y, 'left', heading_color);
+            ctx.vectorText2({
+                text: "CENTER JUSTIFY",
+                scale: 1.5,
+                x: left_x,
+                y: current_y,
+                color: heading_color
+            });
             current_y += 20;
             text_x = left_x + indent + 40;
             strings = ["OO", "A_OO_B", "ABC_O_DEF"];
             num_strings = strings.length;
             ctx.vectorLine(text_x, current_y, text_x, current_y+num_strings*line_step, Flynn.Colors.GREEN);
             for(i=0; i<strings.length; i++){
-                ctx.vectorText(strings[i], 1.5, text_x, current_y + i*15, 'center', Flynn.Colors.WHITE);
+                ctx.vectorText2({
+                    text: strings[i],
+                    scale: 1.5,
+                    x: text_x,
+                    y: current_y + i*15,
+                    justify: 'center',
+                    color: Flynn.Colors.WHITE
+                });
             }
 
             current_y += 4*line_step;
-            ctx.vectorText("SCALING", 1.5, left_x, current_y, 'left', heading_color);
+            ctx.vectorText2({
+                text: "SCALING",
+                scale: 1.5,
+                x: left_x,
+                y: current_y,
+                color: heading_color
+            });
             text_x = left_x + indent;
             current_y += 20;
             ctx.vectorLine(text_x, current_y, text_x, current_y+360, Flynn.Colors.GREEN);
             for(i=0; i<15; i++){
                 var scale = 1.0 + 0.25*i;
-                ctx.vectorText("SCALE = " + scale.toFixed(2), scale, text_x, current_y, 'left', Flynn.Colors.WHITE);
+                ctx.vectorText2({
+                    text: "SCALE = " + scale.toFixed(2),
+                    scale: scale,
+                    x: text_x,
+                    y: current_y,
+                    color: Flynn.Colors.WHITE
+                });
                 current_y += scale * Flynn.Font.Normal.CharacterHeight + 8;
             }
 
-            ctx.vectorText("HORIZONTAL CENTERING", 1.5, null, 50, null, Flynn.Colors.WHITE);
-            ctx.vectorText("VERTICAL CENTERING", 1.5, Flynn.mcp.canvasWidth-20, null, 'right', Flynn.Colors.WHITE);
-            ctx.vectorText("HORIZONTAL & VERTICAL CENTERING", 1.5, null, null, null, Flynn.Colors.WHITE);
+            ctx.vectorText2({
+                text: "HORIZONTAL CENTERING",
+                scale: 1.5,
+                y: 50,
+                color: Flynn.Colors.WHITE
+            });
+            ctx.vectorText2({
+                text: "VERTICAL CENTERING",
+                scale: 1.5,
+                x: Flynn.mcp.canvasWidth-20,
+                justify: 'right',
+                color: Flynn.Colors.WHITE
+            });
+            ctx.vectorText2({
+                text: "HORIZONTAL & VERTICAL CENTERING",
+                scale: 1.5,
+                color: Flynn.Colors.WHITE
+            });
 
-            ctx.vectorTextArc(
-                "ARC TEXT WITH REVERSE ENABLED", 3.0, 
-                Flynn.mcp.canvasWidth/2, Flynn.mcp.canvasHeight/2, 
-                Math.PI/2, 
-                170, Flynn.Colors.MAGENTA, true, true);
+            ctx.vectorTextArc2({
+                text:"ARC TEXT WITH REVERSE ENABLED",
+                scale: 3.0,
+                center_x: Flynn.mcp.canvasWidth/2,
+                center_y: Flynn.mcp.canvasHeight/2,
+                angle: Math.PI/2, 
+                radius: 170,
+                color: Flynn.Colors.MAGENTA,
+                is_centered: true,
+                is_reversed: true
+            });
 
-            ctx.vectorTextArc(
-                "ARC TEXT AT -90 DEGREES WITHOUT CENTERING", 3.0, 
-                Flynn.mcp.canvasWidth/2, Flynn.mcp.canvasHeight/2, 
-                -Math.PI/2, 
-                200, Flynn.Colors.DODGERBLUE, false, false);
+            ctx.vectorTextArc2({
+                text:"ARC TEXT AT -90 DEGREES WITHOUT CENTERING",
+                scale: 3.0,
+                center_x: Flynn.mcp.canvasWidth/2,
+                center_y: Flynn.mcp.canvasHeight/2,
+                angle: -Math.PI/2, 
+                radius: 200,
+                color: Flynn.Colors.DODGERBLUE,
+                is_centered: false,
+                is_reversed: false
+            });
 
-            ctx.vectorTextArc(
-                "ARC TEXT AT -90 DEGREES WITH CENTERING", 3.0, 
-                Flynn.mcp.canvasWidth/2, Flynn.mcp.canvasHeight/2, 
-                -Math.PI/2, 
-                230, Flynn.Colors.CYAN, true, false);
+            ctx.vectorTextArc2({
+                text:"ARC TEXT AT -90 DEGREES WITH CENTERING",
+                scale: 3.0,
+                center_x: Flynn.mcp.canvasWidth/2,
+                center_y: Flynn.mcp.canvasHeight/2,
+                angle: -Math.PI/2, 
+                radius: 230,
+                color: Flynn.Colors.CYAN,
+                is_centered: true,
+                is_reversed: false
+            });
 
-            ctx.vectorText(
-                "ROTATION",
-                2.5,
-                Flynn.mcp.canvasWidth * 0.9,
-                Flynn.mcp.canvasHeight * 0.15,
-                'center',
-                Flynn.Colors.CYAN,
-                false,
-                Flynn.Font.Normal,
-                this.rotate_angle);
+            ctx.vectorText2({
+                text: "ROTATION",
+                scale: 2.5,
+                x: Flynn.mcp.canvasWidth * 0.9,
+                y: Flynn.mcp.canvasHeight * 0.15,
+                justify: 'center',
+                color: Flynn.Colors.CYAN,
+                font: Flynn.Font.Normal,
+                angle: this.rotate_angle
+            });
         }
     }
 });

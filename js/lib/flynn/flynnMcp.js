@@ -226,7 +226,11 @@ Flynn.Mcp = Class.extend({
         ctx.vectorRect(box_x, box_y, box_width, box_height, 
             Flynn.Colors.CYAN,
             Flynn.Colors.BLACK);
-        ctx.vectorText("MCP HALTED.  CLICK TO RESUME.", 4.0, null, null, null, Flynn.Colors.WHITE);
+        ctx.vectorText2({
+            text: "MCP HALTED.  CLICK TO RESUME.",
+            scale: 4.0,
+            color: Flynn.Colors.WHITE
+        });
 
         Howler.mute(true);
     },
@@ -276,14 +280,14 @@ Flynn.Mcp = Class.extend({
             this.flynn_logo.position = position;
         }
         this.flynn_logo.render(ctx);
-        ctx.vectorText(
-            Flynn.VERSION,
-            1.5,
-            this.flynn_logo.position.x,
-            this.flynn_logo.position.y + 23,
-            'center',
-            Flynn.Colors.GRAY
-            );
+        ctx.vectorText2({
+            text: Flynn.VERSION,
+            scale: 1.5,
+            x: this.flynn_logo.position.x,
+            y: this.flynn_logo.position.y + 23,
+            justify: 'center',
+            color: Flynn.Colors.GRAY
+        });
     },
 
     run: function(){

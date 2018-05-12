@@ -289,25 +289,31 @@ Game.StateWorld = Flynn.State.extend({
         var heading_color = Flynn.Colors.YELLOW;
         var curret_y = 42;
 
-        ctx.vectorText("SCREEN COORDINATES VS. WORLD COORDINATES", 1.5, left_x, curret_y, 'left', heading_color);
+        ctx.vectorText2({
+            text: "SCREEN COORDINATES VS. WORLD COORDINATES",
+            scale: 1.5,
+            x: left_x,
+            y: curret_y,
+            color: heading_color
+        });
         
         this.starfield.render(ctx);
         for (i=0,len=this.polygons.length; i<len; i++){
             this.polygons[i].render(ctx);
             // Render text in world coordinates
-            ctx.vectorText(
-                "SHIP "+i, 
-                1.5, // scale
-                this.polygons[i].position.x, 
-                this.polygons[i].position.y+30, 
-                'center',
-                Flynn.Colors.YELLOW,
-                true // is_world
-                );
-            }
+            ctx.vectorText2({
+                text: "SHIP "+i, 
+                scale: 1.5, 
+                x: this.polygons[i].position.x, 
+                y: this.polygons[i].position.y+30, 
+                justify: 'center',
+                color: Flynn.Colors.YELLOW,
+                is_world: true 
+            });
+        }
         for (i=0,len=this.drones.length; i<len; i++){
             this.drones[i].render(ctx);
-            }
+        }
 
         // World boundary
         ctx.vectorRect(
@@ -320,18 +326,18 @@ Game.StateWorld = Flynn.State.extend({
             false   // is_world
             );
 
-        ctx.vectorTextArc(
-            "ARC TEXT IN WORLD COORDINATES",
-            2.0, 
-            this.world_rect.center_x, 
-            this.world_rect.center_y, 
-            -Math.PI/2, 
-            100,   // radius
-            Flynn.Colors.CYAN,
-            true,  // is_centered
-            false, // is_reversed
-            true   // is_world
-            );
+        ctx.vectorTextArc2({
+            text: "ARC TEXT IN WORLD COORDINATES",
+            scale: 2.0, 
+            center_x: this.world_rect.center_x, 
+            center_y: this.world_rect.center_y, 
+            angle: -Math.PI/2, 
+            radius: 100,
+            color: Flynn.Colors.CYAN,
+            is_centered: true,
+            is_reversed: false,
+            is_world: true
+        });
 
         var box_size = 80;
         ctx.vectorRect(
@@ -343,7 +349,6 @@ Game.StateWorld = Flynn.State.extend({
             null,   // fill_color
             true    // is_world
             );
-
 
         Game.render_page_frame (ctx);
 

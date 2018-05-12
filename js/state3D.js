@@ -102,32 +102,40 @@ Game.State3D = Flynn.State.extend({
         Game.render_page_frame(ctx);
 
         var input = Flynn.mcp.input;
-        ctx.vectorText(
-            'USE UP (' +
-            input.getVirtualButtonBoundKeyName('up') +
-            ') / DOWN (' +
-            input.getVirtualButtonBoundKeyName('down') +
-            ') TO SELECT A RENDERER', 
-            scale, null, Game.BOUNDS.bottom - 18, null, heading_color);
+        ctx.vectorText2({
+            text: 'USE UP (' +
+                input.getVirtualButtonBoundKeyName('up') +
+                ') / DOWN (' +
+                input.getVirtualButtonBoundKeyName('down') +
+                ') TO SELECT A RENDERER', 
+            scale: scale,
+            y: Game.BOUNDS.bottom - 18,
+            color: heading_color
+        });
 
         // List all 3D renderers
         var text_x = left_margin;
         var text_y = Game.BOUNDS.top + top_margin;
         for(i=0; i<this.renderers.length; i++){
             var color = i == this.index_renderer ? Flynn.Colors.YELLOW : Flynn.Colors.GRAY_DK;
-            ctx.vectorText(
-                this.renderers[i].name, 
-                scale, text_x, text_y, "left", color);
+            ctx.vectorText2({
+                text: this.renderers[i].name, 
+                scale: scale,
+                x: text_x,
+                y: text_y,
+                color: color
+            });
             text_y += text_step;
         }
 
-        ctx.vectorText(
-            '3D API IS STILL IN BETA AND MAY CHANGE', 
-            scale,
-            Game.BOUNDS.right - left_margin,
-            Game.BOUNDS.top + top_margin,
-            'right',
-            Flynn.Colors.RED);
+        ctx.vectorText2({
+            text: '3D API IS STILL IN BETA AND MAY CHANGE', 
+            scale: scale,
+            x: Game.BOUNDS.right - left_margin,
+            y: Game.BOUNDS.top + top_margin,
+            justify: 'right',
+            color: Flynn.Colors.RED
+        });
     },
 });
 

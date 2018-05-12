@@ -44,7 +44,12 @@ Game.StateInfo = Flynn.State.extend({
                 line_color = Flynn.Colors.ORANGE;
                 line_text = line_text.substring(1);
             }
-            ctx.vectorText(line_text, 2, null, y_text + y_step*i, null, line_color);
+            ctx.vectorText2({
+                text: line_text,
+                scale: 2,
+                y: y_text + y_step*i,
+                color: line_color
+            });
         }
       
     }

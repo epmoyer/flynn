@@ -219,35 +219,33 @@ Flynn.VALogo = Class.extend({
         }
 
         this.flask.render(ctx);
-        ctx.vectorTextArc(
-            "VECTOR", 
-            this.scale * text_scale,
-            this.position.x,
-            this.position.y, 
-            -Math.PI/2 + this.angle, 
-            this.scale * radius_scale, 
-            this.text_color, 
-            true,  // is_centered
-            false, // is_reversed
-            false, // is_world
-            Flynn.Font.Block,
-            stretch
-            );
+        ctx.vectorTextArc2({
+            text: "VECTOR", 
+            scale: this.scale * text_scale,
+            center_x: this.position.x,
+            center_y: this.position.y, 
+            angle: -Math.PI/2 + this.angle, 
+            radius: this.scale * radius_scale, 
+            color: this.text_color, 
+            is_centered: true,
+            is_reversed: false,
+            font: Flynn.Font.Block,
+            stretch: stretch
+        });
 
-        ctx.vectorTextArc(
-            "ALCHEMY", 
-            this.scale * text_scale,
-            this.position.x,
-            this.position.y, 
-            Math.PI/2 + this.angle, 
-            this.scale * radius_scale, 
-            this.text_color, 
-            true,  // is_centered
-            true,  // is_reversed 
-            false, // is_world
-            Flynn.Font.Block,
-            stretch
-            );
+        ctx.vectorTextArc2({
+            text: "ALCHEMY", 
+            scale: this.scale * text_scale,
+            center_x: this.position.x,
+            center_y: this.position.y, 
+            angle: Math.PI/2 + this.angle, 
+            radius: this.scale * radius_scale, 
+            color: this.text_color, 
+            is_centered: true,
+            is_reversed: true,
+            font: Flynn.Font.Block,
+            stretch: stretch
+        });
     }
 });
 
