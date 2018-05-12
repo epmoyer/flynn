@@ -26,6 +26,9 @@ Added
   - Add ctx.vectorTextArc2(), which takes an options object.
   - Deprecate ctx.vectorTextArc().
 
+- Test Application
+
+  - Adopt ctx.vectorText2() and ctx.vectorTextArc2()
 
 3.10.0 - 2018-5-10
 ------------------
