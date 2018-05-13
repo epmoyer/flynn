@@ -11,7 +11,12 @@ The format is based on `Keep a Changelog`_ and this project adheres to `Semantic
 Unreleased
 ----------
 
-(None)
+Added
+^^^^^
+
+- Engine
+
+  - Add .spacing option to .vectorText2
 
 3.11.0 - 2018-6-10
 ------------------

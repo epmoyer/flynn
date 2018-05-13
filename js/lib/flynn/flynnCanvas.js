@@ -453,6 +453,7 @@ Flynn.Canvas = Class.extend({
                 //        1.0 causes no stretching, 0.5 doubles the height, 2.0 halves the
                 //        height, etc. 
                 //        Tip: An aspect_ratio of 0.75 mimics most old-school vector games.
+                //    spacing: scale the inter-character spacing.  1.0 = normal spacing.
                 //
                 opts              = opts              || {};
                 opts.text         = Flynn.Util.defaultText(opts.text, '<TEXT>');
@@ -465,12 +466,13 @@ Flynn.Canvas = Class.extend({
                 opts.font         = opts.font         || Flynn.Font.Normal;
                 opts.angle        = opts.angle        || null;
                 opts.aspect_ratio = opts.aspect_ratio || 1.0;
+                opts.spacing      = opts.spacing      || 1.0;
 
                 var i, len, j, len2, character, polygon, pen_up;
                 var draw_x = opts.x;
                 var draw_y = opts.y;
 
-                var step = opts.scale * opts.font.CharacterSpacing;
+                var step = opts.scale * opts.font.CharacterSpacing * opts.spacing;
 
                 if (opts.angle == null){
                     //----------------------------
