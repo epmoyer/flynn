@@ -133,16 +133,16 @@ Flynn._3DRenderer = Class.extend({
         return (new BABYLON.Vector3(x, y, point.z));
     },
 
-    prepare: function(ctx, camera){
-        // Prepare a transformation matrix for future point rendering using .render_point()
+    prepare: function(camera){
+        // Prepare a transformation matrix for future point rendering using .renderPoint()
         var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
         var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(
                 0.78, this.width / this.height, 0.01, 1.0);
         this.pointTransformMatrix = viewMatrix.multiply(projectionMatrix);
     },
 
-    render_point: function(ctx, location_v, size, color, alpha){
-        // Must call .prepare() before using .rending_point()
+    renderPoint: function(ctx, location_v, size, color, alpha){
+        // Must call .prepare() before calling this method
         var projectedPoint = this.project(location_v, this.pointTransformMatrix);
         ctx.fillStyle=color;
         ctx.fillRect(
@@ -151,6 +151,11 @@ Flynn._3DRenderer = Class.extend({
             size,
             size,
             alpha);
+    },
+
+    projectPoint: function(location_v){
+        // Must call .prepare() before calling this method
+        return(this.project(location_v, this.pointTransformMatrix));
     },
 
     render: function(ctx, camera, meshes){

@@ -11,12 +11,28 @@ The format is based on `Keep a Changelog`_ and this project adheres to `Semantic
 Unreleased
 ----------
 
+(None)
+
+3.12.0 - 2018-X-XX
+------------------
+
 Added
 ^^^^^
 
 - Engine
 
   - Add .spacing option to .vectorText2
+  - Improve shape of "E" in main vector font.
+  - Add _3DRenderer.projectPoint()
+
+
+Changed
+^^^^^^^
+
+- Engine
+
+  - _3DRenderer.render_point() became .renderPoint()
+  - _3DRenderer.prepare() API change
 
 3.11.0 - 2018-6-10
 ------------------
@@ -57,7 +73,7 @@ Changed
 
 - Engine
 
-  - Improve shape of ")", "(", and 'B' in main vector font.
+  - Improve shape of ")", "(", and "B" in main vector font.
   - Add characters to main vector font: "{}|~"
 
 Fixed
