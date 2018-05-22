@@ -51,7 +51,6 @@ Game.StateInfo = Flynn.State.extend({
                 color: line_color
             });
         }
-      
     }
 });
 

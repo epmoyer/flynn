@@ -13,8 +13,15 @@ Unreleased
 
 (None)
 
-3.12.0 - 2018-X-XX
+3.12.1 - 2018-5-21
 ------------------
+
+Fixed
+^^^^^
+
+- Engine
+
+  - Correct the default value logic for several arguments to .vectorText2() & .vectorTextArc2() (and by association to .vectorText() and .vectorTextArc() ) so that passing a value of 0 does not (incorrectly) default to null.
 
 Added
 ^^^^^
@@ -24,6 +31,7 @@ Added
   - Add .spacing option to .vectorText2
   - Improve shape of "E" in main vector font.
   - Add _3DRenderer.projectPoint()
+  - Add Flynn.Polygon.normalizeScale()
 
 
 Changed

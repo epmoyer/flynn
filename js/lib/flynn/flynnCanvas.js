@@ -458,13 +458,13 @@ Flynn.Canvas = Class.extend({
                 opts              = opts              || {};
                 opts.text         = Flynn.Util.defaultText(opts.text, '<TEXT>');
                 opts.scale        = opts.scale        || 1.0;
-                opts.x            = opts.x            || null;
-                opts.y            = opts.y            || null;
+                opts.x            = Flynn.Util.defaultArg(opts.x, null);
+                opts.y            = Flynn.Util.defaultArg(opts.y, null);
                 opts.justify      = opts.justify      || 'left';
                 opts.color        = opts.color        || Flynn.Colors.WHITE;
                 opts.is_world     = opts.is_world     || false;
                 opts.font         = opts.font         || Flynn.Font.Normal;
-                opts.angle        = opts.angle        || null;
+                opts.angle        = Flynn.Util.defaultArg(opts.angle, null);
                 opts.aspect_ratio = opts.aspect_ratio || 1.0;
                 opts.spacing      = opts.spacing      || 1.0;
 
@@ -662,7 +662,7 @@ Flynn.Canvas = Class.extend({
                 opts.is_reversed  = opts.is_reversed  || false;
                 opts.is_world     = opts.is_world     || false;
                 opts.font         = opts.font         || Flynn.Font.Normal;
-                opts.stretch      = opts.stretch      || null;
+                opts.stretch      = Flynn.Util.defaultArg(opts.stretch, null);
 
                 var draw_x, draw_y;
                 var text = String(opts.text);

@@ -121,6 +121,51 @@ Flynn.Polygon = Class.extend({
         this.points_bounding_dirty = true;
     },
 
+    normalizeScale: function(recenter){
+        // Resize the points associated with the polygon such that the "size" of the
+        // unscaled polygon is exactly 1.0 in either the x or the y direction
+        // (whichever is the larger of the two)
+        //
+        // If recenter is true, then the points will be shifted such that (0, 0) is
+        // at the center of the X span and of the Y span.
+        var i, len, x_max, x_min, y_max, y_min, x, y, first, span_x, span_y, span_max, pan_x, pan_y;
+        first = true;
+        for(var i=0, len=this.pointsMaster.length; i<len; i+=2){
+            x = this.pointsMaster[i];
+            y = this.pointsMaster[i+1];
+            // Ignore pen commands
+            if(x!=Flynn.PEN_COMMAND){
+                if(first){
+                    first = false;
+                    x_max = x;
+                    x_min = x;
+                    y_max = y;
+                    y_min = y;
+                    continue;
+                }
+                x_max = Math.max(x_max, x);
+                x_min = Math.min(x_min, x);
+                y_max = Math.max(y_max, y);
+                y_min = Math.min(y_min, y);
+            }
+        }
+        span_x = x_max - x_min;
+        span_y = y_max - y_min;
+        span_max = Math.max(span_x, span_y);
+        pan_x = recenter ? -x_min - span_x/2 : 0;
+        pan_y = recenter ? -y_min - span_y/2 : 0;
+        for(i=0, len=this.pointsMaster.length; i<len; i+=2){
+            x = this.pointsMaster[i];
+            y = this.pointsMaster[i+1];
+            // Preserve pen commands
+            if(x!=Flynn.PEN_COMMAND){
+                this.pointsMaster[i] = (x + pan_x) / span_x;
+                this.pointsMaster[i+1] = (y + pan_y) / span_y;
+            }
+        }
+        this.points = this.pointsMaster.slice(0);
+    },
+
     updateBoundingPoly: function(){
         if(this.points_bounding_dirty){
             this.points_bounding_dirty = false;

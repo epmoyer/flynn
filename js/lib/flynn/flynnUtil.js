@@ -60,6 +60,11 @@ Flynn.Util = {
         return(value);
     },
 
+    defaultArg: function(value, default_value){
+        // For use in parsing default arguments.
+        return value == undefined ? default_value : value;
+    },
+
     defaultText: function(value, default_text){
         // For use in parsing default arguments.
         // The pattern..
@@ -204,7 +209,7 @@ Flynn.Util = {
         // Set vi to ui (for clarity)
         var vi_v = ui_v.clone();
 
-        // Caclulate the magnitude of vj
+        // Calculate the magnitude of vj
         var vi_magnitude = vi_v.magnitude();
         var vj_magnitude_squared = gun_velocity * gun_velocity - vi_magnitude * vi_magnitude;
         var vj_magnitude = 0;

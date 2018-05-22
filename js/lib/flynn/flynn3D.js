@@ -300,6 +300,99 @@ Flynn._3DRenderer = Class.extend({
             }
         }
     },
+
+    renderToPolygon: function(camera, meshes){
+        // Given a camera and a list of meshes, return a Flynn.Polygon containing the rendered lines.
+        // 
+        // Note:
+        // * Polygons do not (yet) support custom palettes, so this method always renders a 
+        //   monochromatic polygon.
+        // * This method does no distance ordering or fogging.
+        //
+        var cMesh;
+
+        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
+        var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(
+                0.78, this.width / this.height, 0.01, 1.0);
+
+        var color;
+        var points = [];
+        var pending_disconnect = false
+        for (var index = 0; index < meshes.length; index++) {
+
+            // If polygon points exist (from a previous mesh), append a 
+            // PEN_UP command do disconnect the previous mesh from the next.
+            pending_disconnect = points.length == 0 ? false : true;
+
+            // current mesh to work on
+            cMesh = meshes[index];
+
+            //------------------------------
+            // Project vertices to screen
+            //------------------------------
+            // Apply rotation before translation
+            var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
+                cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z)
+                 .multiply(BABYLON.Matrix.Translation(
+                   cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
+
+            var transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
+            // Transform for checking whether vertices are behind camera
+            var transformCheckMatrix = worldMatrix.multiply(viewMatrix);
+
+            for (var indexVertices = 0; indexVertices < cMesh.Vertices.length; indexVertices++) {
+                // First, we project the 3D coordinates into the 2D space
+                var projectedPoint = this.project(cMesh.Vertices[indexVertices], transformMatrix);
+                cMesh.ProjectedVertices[indexVertices] = projectedPoint;
+            }            
+
+            //------------------------
+            // Compose vectors
+            //------------------------
+            var lines = cMesh.Lines;
+            var vertices = cMesh.ProjectedVertices;
+            var pen_up = true;
+            var started = false;
+            for(var index_lines = 0; index_lines < lines.length; index_lines++){
+                var index_vertex = lines[index_lines];
+                if (index_vertex == Flynn.PEN_UP){
+                    // Pen up
+                    points.push(Flynn.PEN_COMMAND);
+                    points.push(Flynn.PEN_UP);
+                    pen_up = true;
+                    continue;
+                }
+                if (index_vertex >= Flynn.PEN_COLOR0){
+                    // Switch colors
+                    points.push(Flynn.PEN_COMMAND);
+                    points.push(Flynn.PEN_UP);
+                    pen_up = true;
+                    continue;
+                }
+
+                // Push new vertex
+                if(pending_disconnect){
+                    pending_disconnect = false;
+                    points.push(Flynn.PEN_COMMAND);
+                    points.push(Flynn.PEN_UP);
+                }
+                var vertex = vertices[index_vertex];
+                points.push(vertex.x);
+                points.push(vertex.y);
+            }
+        }
+
+        return(
+            new Flynn.Polygon(
+                points,
+                Flynn.Colors.WHITE,
+                1.0, // scale
+                new Victor(0,0),
+                false, // constrained
+                false  // is_world
+            )
+        );
+    },
 });
 
 }()); // "use strict" wrapper
