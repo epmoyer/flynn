@@ -13,6 +13,17 @@ Unreleased
 
 (None)
 
+3.13.0 - 2018-10-09
+-------------------
+
+Changed
+^^^^^^^
+
+- Engine
+
+  - Polygon's .getSpan method now returns min and max of each coordinate (e.g. .up is now the min of all y coordinates, .down is the max of all y).  This fixes a bug where if all coordinates in either axis were positive or negative then one of the return metrics (.up, .down, .left, .right) would return -1000.
+
+
 3.12.1 - 2018-5-21
 ------------------
 

@@ -77,25 +77,27 @@ Flynn.Polygon = Class.extend({
         // (this.position) to the farthest vertex (at the current scale) in the given
         // cardinal direction.
         // 
-        var span = {left:-1000, right:-1000, up:-1000, down:-1000}
-
+        var span = {left: null, right: null, up: null, down: null};
+        var first_point = true;
 
         for(var i=0, len=this.pointsMaster.length; i<len; i+=2){
             var x = this.points[i];
             var y = this.points[i+1];
 
             if(x != Flynn.PEN_COMMAND){
-                if(x > 0){
-                    span.right = Math.max(span.right, x)
+                if(first_point){
+                    span.right = x;
+                    span.left = x;
+                    span.up = y;
+                    span.down = y;
+
+                    first_point = false;
                 }
                 else{
-                    span.left = Math.max(span.left, -x)
-                }
-                if(y > 0){
-                    span.down = Math.max(span.down, y)
-                }
-                else{
-                    span.up = Math.max(span.up, -y)
+                    span.right = Math.max(span.right, x);
+                    span.left  = Math.min(span.left,  x);
+                    span.up    = Math.min(span.up,    y);
+                    span.down  = Math.max(span.down,  y);
                 }
             }
         }

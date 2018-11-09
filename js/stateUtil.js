@@ -337,9 +337,9 @@ Game.StateUtil = Flynn.State.extend({
             polygon = this.span_polygons[i]
             var span = polygon.getSpan();
             ctx.vectorLine(
-                polygon.position.x - span.left, 
+                polygon.position.x + span.left, 
                 polygon.position.y - length/2, 
-                polygon.position.x - span.left, 
+                polygon.position.x + span.left, 
                 polygon.position.y + length/2, 
                 Flynn.Colors.GRAY);
             ctx.vectorLine(
@@ -350,9 +350,9 @@ Game.StateUtil = Flynn.State.extend({
                 Flynn.Colors.GRAY);
             ctx.vectorLine(
                 polygon.position.x - length/2, 
-                polygon.position.y - span.up, 
+                polygon.position.y + span.up, 
                 polygon.position.x + length/2, 
-                polygon.position.y - span.up, 
+                polygon.position.y + span.up, 
                 Flynn.Colors.GRAY);
             ctx.vectorLine(
                 polygon.position.x - length/2, 
