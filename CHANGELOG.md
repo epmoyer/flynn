@@ -6,6 +6,9 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+(None)
+
+## (3.14.0 Candidate)
 ### Added
 - Engine 
   - Flynn._3DMesh now has .PreRotation
@@ -156,5 +159,5 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - Test Application
   -  Performance test now iteratively adds/removes polygons to achieve 60 FPS.
 
-# Fixed
+### Fixed
 - "20 FPS" mode is now really 20 FPS (was 12 FPS)

@@ -215,6 +215,14 @@ Flynn.Canvas = Class.extend({
             // Vector graphic simulation
             //-----------------------------
             ctx.vectorStart = function(color, is_world, constrained, alpha){
+
+                var length = color.length;
+                if(length == 9){
+                    // Color is '#RRGGBBAA
+                    alpha = parseInt(color.substring(7), 16)/255;
+                    color = color.substring(0, 7);
+                }
+
                 if(typeof(is_world)==='undefined'){
                     this.is_world = false;
                 }
@@ -365,19 +373,17 @@ Flynn.Canvas = Class.extend({
                     color, fill_color, is_world);
             };
 
-            ctx.vectorRect = function(x, y, width, height, color, fill_color, is_world){
+            ctx.vectorRect = function(x, y, width, height, color, fill_color, is_world, alpha){
                 
                 if(typeof(fill_color)!=='undefined' && fill_color){
                     this.fillStyle = fill_color;
                     this.fillRect(x, y, width, height);
                 }
-
-                if(typeof(is_world)==='undefined'){
-                    is_world = false;
-                }
+                is_world = is_world == undefined ? false: is_world;
+                alpha = alpha == undefined ? 1.0 : alpha;
 
                 // Draw a rect using vectors
-                this.vectorStart(color, is_world);
+                this.vectorStart(color, is_world, false, alpha);
                 this.vectorMoveTo(x, y);
                 this.vectorLineTo(x+width-1, y);
                 this.vectorLineTo(x+width-1, y+height-1);
@@ -386,13 +392,14 @@ Flynn.Canvas = Class.extend({
                 this.vectorEnd();
             };
 
-            ctx.vectorLine = function(x1, y1, x2, y2, color, is_world){
+            ctx.vectorLine = function(x1, y1, x2, y2, color, is_world, alpha){
                 if(typeof(is_world)==='undefined'){
                     is_world = false;
                 }
+                alpha = alpha == undefined ? 1.0 : alpha;
 
                 // Draw a vector line
-                this.vectorStart(color, is_world);
+                this.vectorStart(color, is_world, false, alpha);
                 this.vectorMoveTo(x1, y1);
                 this.vectorLineTo(x2, y2);
                 this.vectorEnd();

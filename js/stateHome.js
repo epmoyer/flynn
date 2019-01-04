@@ -553,6 +553,37 @@ Game.StateHome = Flynn.State.extend({
         var center_x = Game.BOUNDS.right - 70;
         var center_y = Game.BOUNDS.bottom - 70;
         var color = Flynn.Colors.RED;
+        var alpha = 1.0;
+        for (var size = 100; size >= 10; size-=10){
+            ctx.vectorRect(center_x - size/2, center_y - size/2, size, size, color, null, false, alpha);
+            alpha *= 0.80;
+            // color = Flynn.Util.shadeColor(color, -0.2);
+        }
+
+        // Test vertex brightness across full vector brightness range, fading
+        // to full black, for multiple color component distributions
+        var brightness = Math.floor(255 * ((Math.sin(this.fade_angle) + 1)/2));
+        var variants = [
+            '#FF0000',
+            '#00FF00',
+            '#0000FF'
+        ];
+        for(i=0; i<variants.length; i++){
+            this.fade_polygon.position = new Victor(
+                Game.BOUNDS.right - 115 + i * 45,
+                Game.BOUNDS.bottom - 150);
+            this.fade_polygon.color = variants[i] + Flynn.Util.componentToHex(brightness);
+            this.fade_polygon.setAngle(this.fade_angle);
+            this.fade_polygon.render(ctx);
+        }
+
+        //-----------------
+        // Vertex brightness test
+        //-----------------
+        var OFFSET = 135;
+        var center_x = Game.BOUNDS.right - 70 - OFFSET;
+        var center_y = Game.BOUNDS.bottom - 70;
+        var color = Flynn.Colors.RED;
         for (var size = 100; size >= 10; size-=10){
             ctx.vectorRect(center_x - size/2, center_y - size/2, size, size, color);
             color = Flynn.Util.shadeColor(color, -0.2);
@@ -568,7 +599,7 @@ Game.StateHome = Flynn.State.extend({
         ];
         for(i=0; i<variants.length; i++){
             this.fade_polygon.position = new Victor(
-                Game.BOUNDS.right - 115 + i * 45,
+                Game.BOUNDS.right - 115 + i * 45 - OFFSET,
                 Game.BOUNDS.bottom - 150);
             this.fade_polygon.color = Flynn.Util.rgbToHex(
                 variants[i].r, variants[i].g, variants[i].b);
