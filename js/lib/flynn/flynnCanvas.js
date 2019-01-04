@@ -215,14 +215,18 @@ Flynn.Canvas = Class.extend({
             // Vector graphic simulation
             //-----------------------------
             ctx.vectorStart = function(color, is_world, constrained, alpha){
-
-                var length = color.length;
-                if(length == 9){
-                    // Color is '#RRGGBBAA
-                    alpha = parseInt(color.substring(7), 16)/255;
-                    color = color.substring(0, 7);
-                }
-
+                // Args:
+                //    color:  A color string with any of the following forms:
+                //           '#RRGGBB', '#RRGGBBAA'
+                //    is_world: true if vector is using world (rather than screen) coordinates.
+                //    constrained:  If true, then x/y will be truncated to land on integer 
+                //           pixel locations.
+                //    alpha: Alpha transparency in range 1.0 (solid) to 0.0 (transparent)
+                //
+                //  If alpha is supplied as part of the color string and as a function
+                //  parameter then the two alphas will be multiplied.
+                // 
+                
                 if(typeof(is_world)==='undefined'){
                     this.is_world = false;
                 }
@@ -235,8 +239,18 @@ Flynn.Canvas = Class.extend({
                 else{
                     this.constrained = constrained;
                 }
-                alpha = alpha == undefined ? 1.0 : alpha;
 
+                // Extract alpha from color string (if present).
+                // If alpha is supplied in the color string AND as a function
+                // parameter then the two alphas are multiplied.
+                alpha = alpha == undefined ? 1.0 : alpha;
+                var length = color.length;
+                if(length == 9){
+                    // Color is '#RRGGBBAA
+                    alpha = alpha * parseInt(color.substring(7), 16)/255;
+                    color = color.substring(0, 7);
+                }
+                
                 var config;
                 switch(Flynn.mcp.options.vectorMode){
                     case Flynn.VectorMode.PLAIN:
@@ -251,7 +265,7 @@ Flynn.Canvas = Class.extend({
                 }
                 var line_color = Flynn.Util.shadeColor(color, config.lineBrightness)
                 this.vectorVertexColor = Flynn.Util.colorOverdrive(color, config.vertexBrightness);
-                this.vectorVertexAlpha = alpha;
+                this.vectorVertexAlpha = alpha * 0.7;
                 this.index_vector_vertex = 0;
                 this.lineSize = config.lineSize;
                 this.vertexSize = config.vertexSize;
