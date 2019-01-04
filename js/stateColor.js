@@ -22,7 +22,7 @@ Game.StateColor = Flynn.State.extend({
     },
 
     render: function(ctx){
-        var credit_text, y_step, y_text, x_text, line_text, line_color, i;
+        var y_step, y_text, x_text;
 
         Game.render_page_frame(ctx);
 
@@ -44,27 +44,6 @@ Game.StateColor = Flynn.State.extend({
             });
             y_text += y_step;
         }
-
-        // credit_text = [
-        //     'COLOR'
-        // ];
-        // y_step = 25;
-        // // y_text = Game.CANVAS_HEIGHT/2 - y_step*credit_text.length/2; 
-        // y_text = 100; 
-        // for(i=0; i<credit_text.length; i++){
-        //     line_text = credit_text[i];
-        //     line_color = Flynn.Colors.CYAN;
-        //     if(line_text.startsWith('*')){
-        //         line_color = Flynn.Colors.ORANGE;
-        //         line_text = line_text.substring(1);
-        //     }
-        //     ctx.vectorText2({
-        //         text: line_text,
-        //         scale: 2,
-        //         y: y_text + y_step*i,
-        //         color: line_color
-        //     });
-        // }
     }
 });
 
