@@ -5,7 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-(None)
+
+### Added
+- Engine 
+  - Flynn._3DMesh now has .PreRotation
+  - color alpha support
+    - Flynn._3DMesh.init() now accepts alpha (defaults to 1.0)
+    - ctx.vectoStart() now accepts alpha (defaults to 1.0)
 
 ## 3.13.1 - 2019-01-11
 ### Fixed
