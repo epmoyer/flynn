@@ -7,7 +7,7 @@ Game.render_page_frame = function(ctx){
 
     var i, text, color;
     var x=10;
-    var page_names = ["HOME", "TEXT", "BOX2D", "COLLISION", "WORLD", "FONT", "UTIL", "PACING", "3D", "PERFORMANCE", "INFO"];
+    var page_names = ["HOME", "TEXT", "COLOR", "BOX2D", "COLLISION", "WORLD", "FONT", "UTIL", "PACING", "3D", "PERFORMANCE", "INFO"];
     var page_id = Flynn.mcp.current_state_id;
 
     // Render frame box

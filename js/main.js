@@ -7,7 +7,7 @@ Game.CANVAS_WIDTH = 1024;
 Game.SPEED_FACTOR = 1.0;
 
 Game.BORDER_MARGIN = 3;
-Game.BANNER_FONT_SCALE = 2;
+Game.BANNER_FONT_SCALE = 1.9;
 Game.BANNER_HEIGHT = 28;
 
 // The primary page display bounds (excludes the banner)
@@ -28,17 +28,18 @@ Game.States = {
     
     HOME:        1,
     TEXT:        2,
-    BOX2D:       3,
-    COLLISION:   4,
-    WORLD:       5,
-    FONT:        6,
-    UTIL:        7,
-    PACING:      8,
-    _3D:         9,
-    PERFORMANCE: 10,
-    INFO:        11,
+    COLOR:       3,
+    BOX2D:       4,
+    COLLISION:   5,
+    WORLD:       6,
+    FONT:        7,
+    UTIL:        8,
+    PACING:      9,
+    _3D:         10,
+    PERFORMANCE: 11,
+    INFO:        12,
 
-    LAST_PAGE: 11, // Match highest page above (used for navigation)
+    LAST_PAGE: 12, // Match highest page above (used for navigation)
 
     END:       90,
     CONFIG:    91,
@@ -62,6 +63,8 @@ Game.Main = Class.extend({
                         return new Game.StateHome();
                     case Game.States.TEXT:
                         return new Game.StateText();
+                    case Game.States.COLOR:
+                        return new Game.StateColor();
                     case Game.States.BOX2D:
                         return new Game.StateBox2d();
                     case Game.States.COLLISION:

@@ -51,19 +51,22 @@ Flynn.DevPacingMode = {
 //------------
 Flynn.Colors = {
     BLACK:        "#000000",
-    BLUE:         "#2020FF",
     WHITE:        "#FFFFFF",
-    GREEN:        "#00FF00",
-    YELLOW:       "#FFFF00",
+    GRAY:         "#FFFFFF80",
+    GRAY_DK:      "#FFFFFF40",
+    
     RED:          "#FF0000",
+    GREEN:        "#00FF00",
+    BLUE:         "#2020FF",
+    
     CYAN:         "#00FFFF",
     MAGENTA:      "#FF00FF",
+    YELLOW:       "#FFFF00",
+    
     CYAN_DK:      "#00FFFF80",
     ORANGE:       "#E55300",
     BROWN:        "#8B4513",
-    YELLOW_DK:    "#807000",
-    GRAY:         "#FFFFFF80",
-    GRAY_DK:      "#FFFFFF40",
+    YELLOW_DK:    "#FFE00080",
     LIGHTSKYBLUE: "#87CEFA",
     DODGERBLUE:   "#1E90FF",
     LIGHTBLUE:    "#ADD8E6",
