@@ -33,7 +33,7 @@ Flynn.Config.VectorRender = {
         lineSize: 2.0,
         vertexSize: 2.0,
     },
-}
+};
 
 Flynn.Canvas = Class.extend({
 
@@ -214,7 +214,7 @@ Flynn.Canvas = Class.extend({
             //-----------------------------
             // Vector graphic simulation
             //-----------------------------
-            ctx.vectorStart = function(color, is_world, constrained){
+            ctx.vectorStart = function(color, is_world, constrained, alpha){
                 if(typeof(is_world)==='undefined'){
                     this.is_world = false;
                 }
@@ -227,6 +227,7 @@ Flynn.Canvas = Class.extend({
                 else{
                     this.constrained = constrained;
                 }
+                alpha = alpha == undefined ? 1.0 : alpha;
 
                 var config;
                 switch(Flynn.mcp.options.vectorMode){
@@ -242,13 +243,14 @@ Flynn.Canvas = Class.extend({
                 }
                 var line_color = Flynn.Util.shadeColor(color, config.lineBrightness)
                 this.vectorVertexColor = Flynn.Util.colorOverdrive(color, config.vertexBrightness);
+                this.vectorVertexAlpha = alpha;
                 this.index_vector_vertex = 0;
                 this.lineSize = config.lineSize;
                 this.vertexSize = config.vertexSize;
                 this.graphics.lineStyle(
                     config.lineSize,
                     Flynn.Util.parseColor(line_color, true),
-                    1);
+                    alpha);
             };
 
             ctx.vectorLineToUnconstrained = function(x, y){
@@ -302,7 +304,7 @@ Flynn.Canvas = Class.extend({
                 // Draw the (bright) vector vertex points
                 var offset = this.vertexSize / 2;
                 this.graphics.lineStyle();
-                this.graphics.beginFill(Flynn.Util.parseColor(this.vectorVertexColor, true));
+                this.graphics.beginFill(Flynn.Util.parseColor(this.vectorVertexColor, true), this.vectorVertexAlpha);
                 for(var i=0; i<this.index_vector_vertex; i+=2) {
                     this.graphics.drawRect(
                         this.vector_vertices[i] - offset + 0.5,
@@ -458,13 +460,13 @@ Flynn.Canvas = Class.extend({
                 opts              = opts              || {};
                 opts.text         = Flynn.Util.defaultText(opts.text, '<TEXT>');
                 opts.scale        = opts.scale        || 1.0;
-                opts.x            = Flynn.Util.defaultArg(opts.x, null);
-                opts.y            = Flynn.Util.defaultArg(opts.y, null);
+                opts.x            = opts.x            || null;
+                opts.y            = opts.y            || null;
                 opts.justify      = opts.justify      || 'left';
                 opts.color        = opts.color        || Flynn.Colors.WHITE;
                 opts.is_world     = opts.is_world     || false;
                 opts.font         = opts.font         || Flynn.Font.Normal;
-                opts.angle        = Flynn.Util.defaultArg(opts.angle, null);
+                opts.angle        = opts.angle        || null;
                 opts.aspect_ratio = opts.aspect_ratio || 1.0;
                 opts.spacing      = opts.spacing      || 1.0;
 
@@ -665,7 +667,7 @@ Flynn.Canvas = Class.extend({
                 opts.is_reversed  = opts.is_reversed  || false;
                 opts.is_world     = opts.is_world     || false;
                 opts.font         = opts.font         || Flynn.Font.Normal;
-                opts.stretch      = Flynn.Util.defaultArg(opts.stretch, null);
+                opts.stretch      = opts.stretch      || null;
 
                 var draw_x, draw_y;
                 var text = String(opts.text);

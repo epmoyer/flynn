@@ -8,15 +8,17 @@ Flynn._3DCamera = Class.extend({
 });
 
 Flynn._3DMesh = Class.extend({
-    init: function(name, vertices, lines, color, custom_palette){
+    init: function(name, vertices, lines, color, custom_palette, alpha){
         this.name = name;
         this.Vertices = vertices;
         this.Lines = lines;
         this.color = color;
         this.custom_palette = typeof(custom_palette)==='undefined' ? null : custom_palette;
+        this.alpha = alpha == undefined ? 1.0 : alpha;
 
         this.ProjectedVertices = new Array(vertices.length);
         this.CheckVertices = new Array(vertices.length);
+        this.PreRotation = null;
         this.Rotation = BABYLON.Vector3.Zero();
         this.Position = BABYLON.Vector3.Zero();
     },
@@ -203,10 +205,21 @@ Flynn._3DRenderer = Class.extend({
                 // Project vertices to screen
                 //------------------------------
                 // Apply rotation before translation
-                var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
-                    cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z)
-                     .multiply(BABYLON.Matrix.Translation(
-                       cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
+                var worldMatrix = null;
+                if(cMesh.PreRotation){
+                    worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
+                        cMesh.PreRotation.y, cMesh.PreRotation.x, cMesh.PreRotation.z)
+                        .multiply(BABYLON.Matrix.RotationYawPitchRoll(
+                            cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z))
+                        .multiply(BABYLON.Matrix.Translation(
+                            cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
+                }
+                else{
+                    worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
+                        cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z)
+                        .multiply(BABYLON.Matrix.Translation(
+                        cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
+                }
 
                 var transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
                 // Transform for checking whether vertices are behind camera
@@ -281,7 +294,7 @@ Flynn._3DRenderer = Class.extend({
                     if(pen_up){
                         // Start line if vertex in front of camera
                         if(cMesh.CheckVertices[index_vertex].z >0){
-                            ctx.vectorStart(color, false, false);
+                            ctx.vectorStart(color, false, false, cMesh.alpha);
                             ctx.vectorMoveTo(vertex.x, vertex.y);
                             pen_up = false;
                             started = true;
