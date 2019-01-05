@@ -63,10 +63,11 @@ Flynn.Colors = {
     MAGENTA:      "#FF00FF",
     YELLOW:       "#FFFF00",
     
-    CYAN_DK:      "#00FFFF80",
     ORANGE:       "#E55300",
-    BROWN:        "#8B4513",
+    // BROWN_OLD:    "#8B4513",
+    BROWN:        "#E56C0080",
     YELLOW_DK:    "#FFE00080",
+    CYAN_DK:      "#00FFFF80",
     LIGHTSKYBLUE: "#87CEFA",
     DODGERBLUE:   "#1E90FF",
     LIGHTBLUE:    "#ADD8E6",
