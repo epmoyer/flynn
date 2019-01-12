@@ -468,6 +468,9 @@ Flynn.Canvas = Class.extend({
                 opts.aspect_ratio = opts.aspect_ratio || 1.0;
                 opts.spacing      = opts.spacing      || 1.0;
 
+                // Force opts.text to be a string representation
+                opts.text = String(opts.text);
+
                 var i, len, j, len2, character, polygon, pen_up;
                 var draw_x = opts.x;
                 var draw_y = opts.y;
