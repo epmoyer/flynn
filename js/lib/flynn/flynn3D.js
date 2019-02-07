@@ -92,6 +92,63 @@ Flynn._3DMeshPlate = Flynn._3DMesh.extend({
     },
 });
 
+Flynn._3DMeshText = Flynn._3DMesh.extend({
+    // Make a (flat) 3d mesh containing text.
+    // The mesh will be created in the X/Z plane, and will be flat in Y.
+    // The text will be scaled to match the requested height (Z).
+    // The final width of the mesh (i.e. the largest X value) will be..
+    // ..governed by the width of the text.
+    // The mesh will be centered about the origin, (i.e. the..
+    // ..rendered text will be centered about the origin)
+    init: function(name, ctx, height, color, text, font){
+        var i, j, len, len2, character, polygon;
+        var draw_z = -height/2;
+        var vertices = [];
+        var lines = [];
+        var scale = height;
+        var step = scale * font.CharacterSpacing;
+        var draw_x = Math.round((-(text.length * step - (font.CharacterGap * scale))) / 2);
+
+        this._super(name, vertices, lines, color);
+        for(i=0, len=text.length; i < len; i++){
+            character = text.charCodeAt(i);
+
+            if (character === ctx.SPACECODE){
+                draw_x += step;
+                continue;
+            }
+            polygon = ctx.charToPolygon(character, font);
+
+            pen_up = false;
+            for (j=0, len2=polygon.length; j<len2; j+=2){
+                if(polygon[j]==Flynn.PEN_COMMAND){
+                    pen_up = true;
+                }
+                else{
+                    this.vertices.push(
+                        new BABYLON.Vector3(
+                            polygon[j] * opts.scale + draw_x,
+                            0,
+                            polygon[j + 1] * opts.scale / opts.aspect_ratio + draw_z)
+                    );
+                    if(j===0 || pen_up){
+                        pen_up = false;
+                    }
+                    else{
+                        this.lines.append(vertices.length - 1);
+                    }
+                }
+            }
+            // ????
+            this.lines.append(vertices.length - 1);
+            draw_x += step;
+        }
+
+
+
+    },
+});
+
 Flynn._3DRenderer = Class.extend({
     VERTEX_SIZE: 2,
 
