@@ -101,16 +101,21 @@ Flynn._3DMeshText = Flynn._3DMesh.extend({
     // The mesh will be centered about the origin, (i.e. the..
     // ..rendered text will be centered about the origin)
     init: function(name, ctx, height, color, text, font){
-        var i, j, len, len2, character, polygon;
+        var i, j, len, len2, character, polygon, pen_up;
         var draw_z = -height/2;
         var vertices = [];
         var lines = [];
         var scale = height;
         var step = scale * font.CharacterSpacing;
         var draw_x = Math.round((-(text.length * step - (font.CharacterGap * scale))) / 2);
+        var aspect_ratio = 1.0;
 
         this._super(name, vertices, lines, color);
         for(i=0, len=text.length; i < len; i++){
+            if(i>0){
+                // lift pen between characters
+                lines.push(Flynn.PEN_UP);
+            }
             character = text.charCodeAt(i);
 
             if (character === ctx.SPACECODE){
@@ -123,29 +128,24 @@ Flynn._3DMeshText = Flynn._3DMesh.extend({
             for (j=0, len2=polygon.length; j<len2; j+=2){
                 if(polygon[j]==Flynn.PEN_COMMAND){
                     pen_up = true;
+                    lines.push(Flynn.PEN_UP);
                 }
                 else{
-                    this.vertices.push(
+                    vertices.push(
                         new BABYLON.Vector3(
-                            polygon[j] * opts.scale + draw_x,
+                            polygon[j] * scale + draw_x,
                             0,
-                            polygon[j + 1] * opts.scale / opts.aspect_ratio + draw_z)
+                            polygon[j + 1] * scale / aspect_ratio + draw_z)
                     );
                     if(j===0 || pen_up){
                         pen_up = false;
                     }
-                    else{
-                        this.lines.append(vertices.length - 1);
-                    }
+                    lines.push(vertices.length - 1);
                 }
             }
-            // ????
-            this.lines.append(vertices.length - 1);
             draw_x += step;
         }
-
-
-
+        this._super(name, vertices, lines, color);
     },
 });
 
