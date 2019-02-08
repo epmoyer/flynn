@@ -7,6 +7,13 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## Unreleased
 (None)
 
+## 3.14.0 - 2019-02-08
+### Added
+- Engine
+  - Flynn._3DMeshText() renders text to a 3D mesh object.
+- Test Application
+  - Add text meshes to 3D demo panel.
+
 ## 3.13.1 - 2019-01-11
 ### Fixed
 - Engine
