@@ -10,19 +10,20 @@ Game.State3D = Flynn.State.extend({
         Flynn.Colors.GREEN,
         Flynn.Colors.BLUE,
         Flynn.Colors.RED,
-        // Flynn.Colors.MAGENTA,
-        // Flynn.Colors.DODGERBLUE,
-        // Flynn.Colors.CYAN,
-        // Flynn.Colors.LIGHTBLUE,
-        // Flynn.Colors.ORANGE,
     ],
     CUBE_DISTANCE: 15,
     CUBE_SIZE: 2,
-    NUM_CUBES: 80,
+    NUM_CUBES: 40,
+
+    // Text meshes
+    NUM_TEXTS: 40,
+    TEXT_SIZE: 0.25,
+    TEXT_DISTANCE: 15,
 
     init: function() {
         var i, x, drone_type, info;
         this._super();
+
         this.meshes = [];
         for(i=0; i<this.NUM_CUBES; i++){
             var color = i == 0 ? Flynn.Colors.WHITE :  Flynn.Util.randomChoice(this.CUBE_COLORS);
@@ -43,6 +44,28 @@ Game.State3D = Flynn.State.extend({
                 mesh.Rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
             }
         }
+
+        // this.text_meshes = [];
+        for(i=0; i<this.NUM_TEXTS; i++){
+            var color = i == 0 ? Flynn.Colors.WHITE :  Flynn.Util.randomChoice(this.CUBE_COLORS);
+            var mesh = new Flynn._3DMeshText('Text', Flynn.mcp.canvas.ctx, this.TEXT_SIZE, color, "TEXT", Flynn.Font.Normal );
+            this.meshes.push(mesh);
+
+            // Add rotational speed properties to the mesh
+            mesh.rot_speed_x = 0;
+            mesh.rot_speed_y = 0;
+
+            if(i!=0){
+                mesh.Position = new BABYLON.Vector3(
+                    Flynn.Util.randomFromInterval(-this.TEXT_DISTANCE,   this.TEXT_DISTANCE),
+                    Flynn.Util.randomFromInterval(-this.TEXT_DISTANCE/2, this.TEXT_DISTANCE/2),
+                    Flynn.Util.randomFromInterval(-this.TEXT_DISTANCE,   this.TEXT_DISTANCE)
+                    );
+                mesh.Rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
+                mesh.Rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
+            }
+        }
+
         this.camera = new Flynn._3DCamera();
         this.camera.Position =  new BABYLON.Vector3(0, 0, 10);
         this.camera.Target = new BABYLON.Vector3(0, 0, 0);
