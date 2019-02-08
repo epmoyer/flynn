@@ -101,7 +101,8 @@ Flynn._3DMeshText = Flynn._3DMesh.extend({
     // The mesh will be centered about the origin, (i.e. the..
     // ..rendered text will be centered about the origin)
     init: function(name, ctx, height, color, text, font){
-        var i, j, len, len2, character, polygon, pen_up;
+        var i, j, len, len2, character, polygon;
+        // var pen_up;
         var draw_z = -height/2;
         var vertices = [];
         var lines = [];
@@ -124,10 +125,10 @@ Flynn._3DMeshText = Flynn._3DMesh.extend({
             }
             polygon = ctx.charToPolygon(character, font);
 
-            pen_up = false;
+            // pen_up = false;
             for (j=0, len2=polygon.length; j<len2; j+=2){
                 if(polygon[j]==Flynn.PEN_COMMAND){
-                    pen_up = true;
+                    // pen_up = true;
                     lines.push(Flynn.PEN_UP);
                 }
                 else{
@@ -137,9 +138,9 @@ Flynn._3DMeshText = Flynn._3DMesh.extend({
                             0,
                             polygon[j + 1] * scale / aspect_ratio + draw_z)
                     );
-                    if(j===0 || pen_up){
-                        pen_up = false;
-                    }
+                    // if(j===0 || pen_up){
+                    //     pen_up = false;
+                    // }
                     lines.push(vertices.length - 1);
                 }
             }

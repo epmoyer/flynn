@@ -13,11 +13,10 @@ Game.State3D = Flynn.State.extend({
     ],
     CUBE_DISTANCE: 15,
     CUBE_SIZE: 2,
-    // NUM_CUBES: 80,
-    NUM_CUBES: 2,
+    NUM_CUBES: 40,
 
     // Text meshes
-    NUM_TEXTS: 20,
+    NUM_TEXTS: 40,
     TEXT_SIZE: 0.25,
     TEXT_DISTANCE: 15,
 
@@ -49,7 +48,7 @@ Game.State3D = Flynn.State.extend({
         // this.text_meshes = [];
         for(i=0; i<this.NUM_TEXTS; i++){
             var color = i == 0 ? Flynn.Colors.WHITE :  Flynn.Util.randomChoice(this.CUBE_COLORS);
-            var mesh = new Flynn._3DMeshText('Text', Flynn.mcp.canvas.ctx, this.TEXT_SIZE, color, "ABCDEFGHIJ", Flynn.Font.Normal );
+            var mesh = new Flynn._3DMeshText('Text', Flynn.mcp.canvas.ctx, this.TEXT_SIZE, color, "TEXT", Flynn.Font.Normal );
             this.meshes.push(mesh);
 
             // Add rotational speed properties to the mesh
