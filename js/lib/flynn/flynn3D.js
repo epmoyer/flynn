@@ -104,13 +104,15 @@ Flynn._3DMeshText = Flynn._3DMesh.extend({
     // ..rendered text will be centered about the origin)
     init: function(name, ctx, height, color, text, font){
         var i, j, len, len2, character, polygon;
+        text = String(text);
+
         // var pen_up;
         var draw_z = -height/2;
         var vertices = [];
         var lines = [];
-        var scale = height;
+        var scale = height / font.CharacterHeight;
         var step = scale * font.CharacterSpacing;
-        var draw_x = Math.round((-(text.length * step - (font.CharacterGap * scale))) / 2);
+        var draw_x = ((text.length * step - (font.CharacterGap * scale))) / 2;
         var aspect_ratio = 1.0;
 
         this._super(name, vertices, lines, color);
@@ -136,7 +138,7 @@ Flynn._3DMeshText = Flynn._3DMesh.extend({
                 else{
                     vertices.push(
                         new BABYLON.Vector3(
-                            polygon[j] * scale + draw_x,
+                            draw_x - polygon[j] * scale,
                             0,
                             polygon[j + 1] * scale / aspect_ratio + draw_z)
                     );
@@ -146,7 +148,7 @@ Flynn._3DMeshText = Flynn._3DMesh.extend({
                     lines.push(vertices.length - 1);
                 }
             }
-            draw_x += step;
+            draw_x -= step;
         }
         this._super(name, vertices, lines, color);
     },
