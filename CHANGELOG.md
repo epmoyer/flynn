@@ -16,6 +16,7 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - color alpha support
     - Flynn._3DMesh.init() now accepts alpha (defaults to 1.0)
     - ctx.vectoStart() now accepts alpha (defaults to 1.0)
+  - Flynn.Util.heatmap()
 - Test Application
   - Add text meshes to 3D demo panel.
   - Add alpha color demos.

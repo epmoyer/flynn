@@ -93,6 +93,26 @@ Flynn.Util = {
         return "#" + Flynn.Util.componentToHex(r) + Flynn.Util.componentToHex(g) + Flynn.Util.componentToHex(b);
     },
 
+    heatmap: function(magnitude){
+        // Convert an 0.0 to 1.0 value to a "#RRGGBB" heat map
+        // Low values are cool (blue).  High values are hot (red)
+        var r, g, b;
+        magnitude = Flynn.Util.minMaxBound(magnitude, 0, 1);
+        r = 0;
+        b = 0;
+        if (magnitude >= 0.5){
+            r = 255 * (magnitude - 0.5) * 2;
+            g = 255 * (-magnitude + 1) * 2;
+        }
+        if (magnitude < 0.5){
+            b = 255 * (-magnitude + 0.5) * 2;
+            g = 255 * (magnitude) * 2;
+        }
+        // Normalize brightness to pin the highest color component at 255
+        var max = Math.max(r, g, b);
+        return Flynn.Util.rgbToHex(255*r/max, 255*g/max, 255*b/max);
+    },
+
     colorOverdrive: function(color, increase){
         // Takes a color and increases it by some amount.  Once a color channel saturates, the color 
         // will overdrive towards pure white.  This color transformation is used to determine the color
