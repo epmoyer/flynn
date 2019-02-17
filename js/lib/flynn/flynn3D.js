@@ -201,18 +201,23 @@ Flynn._3DRenderer = Class.extend({
         var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(
                 0.78, this.width / this.height, 0.01, 1.0);
         this.pointTransformMatrix = viewMatrix.multiply(projectionMatrix);
+        this.transformCheckMatrix = viewMatrix;
     },
 
     renderPoint: function(ctx, location_v, size, color, alpha){
         // Must call .prepare() before calling this method
-        var projectedPoint = this.project(location_v, this.pointTransformMatrix);
-        ctx.fillStyle=color;
-        ctx.fillRect(
-            projectedPoint.x - size/2,
-            projectedPoint.y - size/2,
-            size,
-            size,
-            alpha);
+        var checkPoint = BABYLON.Vector3.TransformCoordinates(location_v, this.transformCheckMatrix);
+        // Only render the point if it is in front of the camera
+        if(checkPoint.z > 0){
+            var projectedPoint = this.project(location_v, this.pointTransformMatrix);
+            ctx.fillStyle=color;
+            ctx.fillRect(
+                projectedPoint.x - size/2,
+                projectedPoint.y - size/2,
+                size,
+                size,
+                alpha);
+        }
     },
 
     projectPoint: function(location_v){

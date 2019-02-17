@@ -9,6 +9,9 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 (None)
 
 ## (3.14.0 Candidate)
+### Fixed
+- Engine
+  - Flynn._3DRenderer.renderPoint() will now properly not render points which are behind the camera.
 ### Added
 - Engine 
   - Flynn._3DMeshText() renders text to a 3D mesh object.
