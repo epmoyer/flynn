@@ -5,6 +5,7 @@ js/lib/box2d/example.html
 deploy.sh
 deploy-exclude.txt
 scrapbook
+.vscode
 
 # npm
 node_modules/
