@@ -18,8 +18,8 @@ Flynn.Leaderboard = Class.extend({
         }
         var worst_entry = this.getWorstEntry();
         var better_than_worst = (
-            (!this.sortDescending && score > worst_entry.score) ||
-            ( this.sortDescending && score < worst_entry.score) );
+            (!this.sortDescending && score < worst_entry.score) ||
+            ( this.sortDescending && score > worst_entry.score) );
         var leaderboard_full = this.leaderList.length == this.maxItems;
         if(!better_than_worst && leaderboard_full){
             is_eligible = false;
