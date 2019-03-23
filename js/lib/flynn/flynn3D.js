@@ -2,8 +2,8 @@
 
 Flynn._3DCamera = Class.extend({
     init: function(){
-        this.Position = BABYLON.Vector3.Zero();
-        this.Target = BABYLON.Vector3.Zero();
+        this.position = BABYLON.Vector3.Zero();
+        this.target = BABYLON.Vector3.Zero();
     },
 });
 
@@ -20,7 +20,7 @@ Flynn._3DMesh = Class.extend({
         this.check_vertices = new Array(vertices.length);
         this.pre_rotation = null;
         this.rotation = BABYLON.Vector3.Zero();
-        this.Position = BABYLON.Vector3.Zero();
+        this.position = BABYLON.Vector3.Zero();
     },
 });
 
@@ -197,7 +197,7 @@ Flynn._3DRenderer = Class.extend({
 
     prepare: function(camera){
         // Prepare a transformation matrix for future point rendering using .renderPoint()
-        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
+        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.position, camera.target, BABYLON.Vector3.Up());
         var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(
                 0.78, this.width / this.height, 0.01, 1.0);
         this.pointTransformMatrix = viewMatrix.multiply(projectionMatrix);
@@ -228,7 +228,7 @@ Flynn._3DRenderer = Class.extend({
     render: function(ctx, camera, meshes){
         var cMesh;
 
-        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
+        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.position, camera.target, BABYLON.Vector3.Up());
         var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(
                 0.78, this.width / this.height, 0.01, 1.0);
 
@@ -245,7 +245,7 @@ Flynn._3DRenderer = Class.extend({
             //------------------------
             var distance = 0;
             if(this.fog_distance || this.enable_distance_order){
-                distance = BABYLON.Vector3.Distance(camera.Position, cMesh.Position);
+                distance = BABYLON.Vector3.Distance(camera.position, cMesh.position);
             }
 
             //------------------------
@@ -277,13 +277,13 @@ Flynn._3DRenderer = Class.extend({
                         .multiply(BABYLON.Matrix.RotationYawPitchRoll(
                             cMesh.rotation.y, cMesh.rotation.x, cMesh.rotation.z))
                         .multiply(BABYLON.Matrix.Translation(
-                            cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
+                            cMesh.position.x, cMesh.position.y, cMesh.position.z));
                 }
                 else{
                     worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
                         cMesh.rotation.y, cMesh.rotation.x, cMesh.rotation.z)
                         .multiply(BABYLON.Matrix.Translation(
-                        cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
+                        cMesh.position.x, cMesh.position.y, cMesh.position.z));
                 }
 
                 var transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
@@ -389,7 +389,7 @@ Flynn._3DRenderer = Class.extend({
         //
         var cMesh;
 
-        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
+        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.position, camera.target, BABYLON.Vector3.Up());
         var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(
                 0.78, this.width / this.height, 0.01, 1.0);
 
@@ -412,7 +412,7 @@ Flynn._3DRenderer = Class.extend({
             var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
                 cMesh.rotation.y, cMesh.rotation.x, cMesh.rotation.z)
                  .multiply(BABYLON.Matrix.Translation(
-                   cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
+                   cMesh.position.x, cMesh.position.y, cMesh.position.z));
 
             var transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
             // Transform for checking whether vertices are behind camera

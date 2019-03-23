@@ -34,7 +34,7 @@ Game.State3D = Flynn.State.extend({
             mesh_box.rot_speed_y = 0;
 
             if(i!=0){
-                mesh_box.Position = new BABYLON.Vector3(
+                mesh_box.position = new BABYLON.Vector3(
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE,   this.CUBE_DISTANCE),
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE/2, this.CUBE_DISTANCE/2),
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE,   this.CUBE_DISTANCE)
@@ -54,14 +54,14 @@ Game.State3D = Flynn.State.extend({
                     mesh_text.vertices[j] = mesh_text.vertices[j].add(offset);
                 }
                 // Give text same position/rotation as box
-                mesh_text.Position = mesh_box.Position;
+                mesh_text.position = mesh_box.position;
                 mesh_text.rotation = mesh_box.rotation;
             }
         }
 
         this.camera = new Flynn._3DCamera();
-        this.camera.Position =  new BABYLON.Vector3(0, 0, 10);
-        this.camera.Target = new BABYLON.Vector3(0, 0, 0);
+        this.camera.position =  new BABYLON.Vector3(0, 0, 10);
+        this.camera.target = new BABYLON.Vector3(0, 0, 0);
         this.camera_angle = 0;
 
         this.renderers = [
@@ -101,7 +101,7 @@ Game.State3D = Flynn.State.extend({
     update: function(elapsed_ticks) {
         var i;
         this.camera_angle += this.CAMERA_SPEED * elapsed_ticks;
-        this.camera.Position =  new BABYLON.Vector3(
+        this.camera.position =  new BABYLON.Vector3(
             Math.sin(this.camera_angle) * this.CAMERA_DISTANCE,
             0,
             Math.cos(this.camera_angle) * this.CAMERA_DISTANCE);
