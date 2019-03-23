@@ -13,46 +13,49 @@ Game.State3D = Flynn.State.extend({
     ],
     CUBE_DISTANCE: 15,
     CUBE_SIZE: 2,
-    NUM_CUBES: 40,
+    NUM_CUBES: 60,
 
     // Text meshes
-    NUM_TEXTS: 40,
     TEXT_SIZE: 0.5,
     TEXT_DISTANCE: 15,
 
     init: function() {
-        var i, j, color, mesh, text_mesh;
+        var i, j, color, mesh_box, mesh_text;
         this._super();
 
         this.meshes = [];
         for(i=0; i<this.NUM_CUBES; i++){
             color = i == 0 ? Flynn.Colors.WHITE :  Flynn.Util.randomChoice(this.CUBE_COLORS);
-            mesh = new Flynn._3DMeshCube('Cube', this.CUBE_SIZE, color);
-            this.meshes.push(mesh);
+            mesh_box = new Flynn._3DMeshCube('Cube', this.CUBE_SIZE, color);
+            this.meshes.push(mesh_box);
 
             // Add rotational speed properties to the mesh
-            mesh.rot_speed_x = 0;
-            mesh.rot_speed_y = 0;
+            mesh_box.rot_speed_x = 0;
+            mesh_box.rot_speed_y = 0;
 
             if(i!=0){
-                mesh.Position = new BABYLON.Vector3(
+                mesh_box.Position = new BABYLON.Vector3(
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE,   this.CUBE_DISTANCE),
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE/2, this.CUBE_DISTANCE/2),
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE,   this.CUBE_DISTANCE)
                     );
-                mesh.Rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
-                mesh.Rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
+                mesh_box.Rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
+                mesh_box.Rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
 
+                //-----------------------------
                 // Add text to one face of box
-                text_mesh = new Flynn._3DMeshText('Text', Flynn.mcp.canvas.ctx, this.TEXT_SIZE, color, "TEXT", Flynn.Font.Normal );
-                this.meshes.push(text_mesh);
+                //-----------------------------
+                mesh_text = new Flynn._3DMeshText('Text', Flynn.mcp.canvas.ctx, this.TEXT_SIZE, color, "TEXT", Flynn.Font.Normal );
+                this.meshes.push(mesh_text);
+                // Flynn._3DMeshText() returns text in the X/Z plane.  Add a Y offset to bring the
+                // text to the top face of the box.
                 var offset = new BABYLON.Vector3(0, this.CUBE_SIZE/2, 0);
-                for(j=0; j<text_mesh.Vertices.length; j++){
-                    text_mesh.Vertices[j] = text_mesh.Vertices[j].add(offset);
+                for(j=0; j<mesh_text.Vertices.length; j++){
+                    mesh_text.Vertices[j] = mesh_text.Vertices[j].add(offset);
                 }
-                text_mesh.Position = mesh.Position;
-                text_mesh.Rotation = mesh.Rotation;
-
+                // Give text same position/rotation as box
+                mesh_text.Position = mesh_box.Position;
+                mesh_text.Rotation = mesh_box.Rotation;
             }
         }
 
