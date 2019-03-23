@@ -34,35 +34,19 @@ Flynn.Leaderboard = Class.extend({
 
     loadFromCookies: function(){
         this.leaderList =[];
-        var numLeaderItems = 0;
-        var done = false;
-        while(!done){
-            var leaderItem = {};
-            for(var attributeIndex = 0, len = this.attributeList.length; attributeIndex<len; ++attributeIndex){
-                var attributeName = this.attributeList[attributeIndex];
-                var key = document.title + ':LB' + numLeaderItems + '_' + attributeName;
-                var attributeValue = Cookies.get(key);
-                if(Flynn.mcp.developerModeEnabled){
-                    console.log('DEV: flynnLeaderboard: Fetched ' + key + ':' + attributeValue);
-                }
-                if(attributeValue){
-                    leaderItem[attributeName] = attributeValue;
-                } else{
-                    // Stop loading if an entry does not exist.
-                    done = true;
-                }
-                if(attributeIndex === this.maxItems-1){
-                    // Don't attempt to load more than the max leaderboard item limit.
-                    done = true;
-                }
-            }
-            if(!done){
-                this.leaderList.push(leaderItem);
-                ++numLeaderItems;
+        var key = 
+            document.title + 
+            (Flynn.mcp.developerModeEnabled ? '_Develop' : '') +
+            ':LeaderBoard';
+        var json_text = Cookies.get(key);
+        if(json_text){
+            this.leaderList = JSON.parse(json_text);
+            if(Flynn.mcp.developerModeEnabled){
+                console.log('DEV: flynnLeaderboard: Fetched ' + key + ':' + this.leaderList);
             }
         }
 
-        if(numLeaderItems===0){
+        if(this.leaderList.length == 0){
             // No items found in cookies, so use the defaults.
             this.leaderList = this.defaultLeaderList;
         }
@@ -71,18 +55,14 @@ Flynn.Leaderboard = Class.extend({
     },
 
     saveToCookies: function(){
-        var i, len;
-        for(i=0, len=this.leaderList.length; i<len; i++){
-            var leaderItem = this.leaderList[i];
-            for(var attributeIndex = 0, len2 = this.attributeList.length; attributeIndex<len2; ++attributeIndex){
-                var attributeName = this.attributeList[attributeIndex];
-                var key = document.title + ':LB' + i + '_' + attributeName;
-                var value = leaderItem[attributeName];
-                Cookies.set(key, value, { expires: Infinity });
-                if(Flynn.mcp.developerModeEnabled){
-                    console.log('DEV: flynnLeaderboard: Saved ' + key + ':' + value);
-                }
-            }
+        var key =
+            document.title + 
+            (Flynn.mcp.developerModeEnabled ? '_Develop' : '') +
+            ':LeaderBoard';
+        var value = JSON.stringify(this.leaderList);
+        Cookies.set(key, value, { expires: Infinity });
+        if(Flynn.mcp.developerModeEnabled){
+            console.log('DEV: flynnLeaderboard: Saved ' + key + ':' + value);
         }
     },
 
