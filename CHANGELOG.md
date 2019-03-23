@@ -15,7 +15,7 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ### Added
 - Engine 
   - Flynn._3DMeshText() renders text to a 3D mesh object.
-  - Flynn._3DMesh now has .PreRotation
+  - Flynn._3DMesh now has .pre_rotation
   - color alpha support
     - Flynn._3DMesh.init() now accepts alpha (defaults to 1.0)
     - ctx.vectoStart() now accepts alpha (defaults to 1.0)

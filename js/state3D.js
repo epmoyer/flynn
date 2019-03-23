@@ -39,8 +39,8 @@ Game.State3D = Flynn.State.extend({
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE/2, this.CUBE_DISTANCE/2),
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE,   this.CUBE_DISTANCE)
                     );
-                mesh_box.Rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
-                mesh_box.Rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
+                mesh_box.rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
+                mesh_box.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
 
                 //-----------------------------
                 // Add text to one face of box
@@ -50,12 +50,12 @@ Game.State3D = Flynn.State.extend({
                 // Flynn._3DMeshText() returns text in the X/Z plane.  Add a Y offset to bring the
                 // text to the top face of the box.
                 var offset = new BABYLON.Vector3(0, this.CUBE_SIZE/2, 0);
-                for(j=0; j<mesh_text.Vertices.length; j++){
-                    mesh_text.Vertices[j] = mesh_text.Vertices[j].add(offset);
+                for(j=0; j<mesh_text.vertices.length; j++){
+                    mesh_text.vertices[j] = mesh_text.vertices[j].add(offset);
                 }
                 // Give text same position/rotation as box
                 mesh_text.Position = mesh_box.Position;
-                mesh_text.Rotation = mesh_box.Rotation;
+                mesh_text.rotation = mesh_box.rotation;
             }
         }
 
@@ -81,8 +81,8 @@ Game.State3D = Flynn.State.extend({
         this.index_renderer = 0;
 
         // Spin the center cube a bit
-        this.meshes[0].Rotation.x = Math.PI/8;
-        this.meshes[0].Rotation.y = Math.PI/8;
+        this.meshes[0].rotation.x = Math.PI/8;
+        this.meshes[0].rotation.y = Math.PI/8;
     },
 
     handleInputs: function(input, elapsed_ticks) {

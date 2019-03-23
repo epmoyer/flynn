@@ -10,16 +10,16 @@ Flynn._3DCamera = Class.extend({
 Flynn._3DMesh = Class.extend({
     init: function(name, vertices, lines, color, custom_palette, alpha){
         this.name = name;
-        this.Vertices = vertices;
-        this.Lines = lines;
+        this.vertices = vertices;
+        this.lines = lines;
         this.color = color;
         this.custom_palette = typeof(custom_palette)==='undefined' ? null : custom_palette;
         this.alpha = alpha == undefined ? 1.0 : alpha;
 
-        this.ProjectedVertices = new Array(vertices.length);
-        this.CheckVertices = new Array(vertices.length);
-        this.PreRotation = null;
-        this.Rotation = BABYLON.Vector3.Zero();
+        this.projected_vertices = new Array(vertices.length);
+        this.check_vertices = new Array(vertices.length);
+        this.pre_rotation = null;
+        this.rotation = BABYLON.Vector3.Zero();
         this.Position = BABYLON.Vector3.Zero();
     },
 });
@@ -169,7 +169,7 @@ Flynn._3DRenderer = Class.extend({
         //                 will fade out entirely (not be drawn)
         //    enable_vertices: (boolean) Set true to draw vertices as points.
         //    enable_lines: (boolean) Set true to draw lines (vectors) between
-        //        vertices (per the mesh.Lines array)
+        //        vertices (per the mesh.lines array)
         //    enable_distance_order: (boolean) Set true to sort meshes by their
         //        distance from the camera and draw in order from farthest 
         //        to closest.
@@ -271,17 +271,17 @@ Flynn._3DRenderer = Class.extend({
                 //------------------------------
                 // Apply rotation before translation
                 var worldMatrix = null;
-                if(cMesh.PreRotation){
+                if(cMesh.pre_rotation){
                     worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
-                        cMesh.PreRotation.y, cMesh.PreRotation.x, cMesh.PreRotation.z)
+                        cMesh.pre_rotation.y, cMesh.pre_rotation.x, cMesh.pre_rotation.z)
                         .multiply(BABYLON.Matrix.RotationYawPitchRoll(
-                            cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z))
+                            cMesh.rotation.y, cMesh.rotation.x, cMesh.rotation.z))
                         .multiply(BABYLON.Matrix.Translation(
                             cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
                 }
                 else{
                     worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
-                        cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z)
+                        cMesh.rotation.y, cMesh.rotation.x, cMesh.rotation.z)
                         .multiply(BABYLON.Matrix.Translation(
                         cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
                 }
@@ -290,13 +290,13 @@ Flynn._3DRenderer = Class.extend({
                 // Transform for checking whether vertices are behind camera
                 var transformCheckMatrix = worldMatrix.multiply(viewMatrix);
 
-                for (var indexVertices = 0; indexVertices < cMesh.Vertices.length; indexVertices++) {
+                for (var indexVertices = 0; indexVertices < cMesh.vertices.length; indexVertices++) {
                     // First, we project the 3D coordinates into the 2D space
-                    var projectedPoint = this.project(cMesh.Vertices[indexVertices], transformMatrix);
-                    cMesh.ProjectedVertices[indexVertices] = projectedPoint;
-                    cMesh.CheckVertices[indexVertices] = BABYLON.Vector3.TransformCoordinates(cMesh.Vertices[indexVertices], transformCheckMatrix);
+                    var projectedPoint = this.project(cMesh.vertices[indexVertices], transformMatrix);
+                    cMesh.projected_vertices[indexVertices] = projectedPoint;
+                    cMesh.check_vertices[indexVertices] = BABYLON.Vector3.TransformCoordinates(cMesh.vertices[indexVertices], transformCheckMatrix);
 
-                    if(this.enable_vertices && cMesh.CheckVertices[indexVertices].z>0){
+                    if(this.enable_vertices && cMesh.check_vertices[indexVertices].z>0){
                         // Draw vertices
                         ctx.fillStyle=color;
                         ctx.fillRect(
@@ -325,8 +325,8 @@ Flynn._3DRenderer = Class.extend({
                 var target = draw_list[i];
                 color = target.color;
                 cMesh = meshes[target.mesh_index];
-                var lines = cMesh.Lines;
-                var vertices = cMesh.ProjectedVertices;
+                var lines = cMesh.lines;
+                var vertices = cMesh.projected_vertices;
                 var pen_up = true;
                 var started = false;
                 for(var index_lines = 0; index_lines < lines.length; index_lines++){
@@ -358,7 +358,7 @@ Flynn._3DRenderer = Class.extend({
                     var vertex = vertices[index_vertex];
                     if(pen_up){
                         // Start line if vertex in front of camera
-                        if(cMesh.CheckVertices[index_vertex].z >0){
+                        if(cMesh.check_vertices[index_vertex].z >0){
                             ctx.vectorStart(color, false, false, cMesh.alpha);
                             ctx.vectorMoveTo(vertex.x, vertex.y);
                             pen_up = false;
@@ -367,7 +367,7 @@ Flynn._3DRenderer = Class.extend({
                     }
                     else{
                         // Draw line if vertex in front of camera
-                        if(cMesh.CheckVertices[index_vertex].z >0){
+                        if(cMesh.check_vertices[index_vertex].z >0){
                             ctx.vectorLineTo(vertex.x, vertex.y);
                         }
                     }
@@ -410,7 +410,7 @@ Flynn._3DRenderer = Class.extend({
             //------------------------------
             // Apply rotation before translation
             var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
-                cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z)
+                cMesh.rotation.y, cMesh.rotation.x, cMesh.rotation.z)
                  .multiply(BABYLON.Matrix.Translation(
                    cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
 
@@ -418,17 +418,17 @@ Flynn._3DRenderer = Class.extend({
             // Transform for checking whether vertices are behind camera
             var transformCheckMatrix = worldMatrix.multiply(viewMatrix);
 
-            for (var indexVertices = 0; indexVertices < cMesh.Vertices.length; indexVertices++) {
+            for (var indexVertices = 0; indexVertices < cMesh.vertices.length; indexVertices++) {
                 // First, we project the 3D coordinates into the 2D space
-                var projectedPoint = this.project(cMesh.Vertices[indexVertices], transformMatrix);
-                cMesh.ProjectedVertices[indexVertices] = projectedPoint;
+                var projectedPoint = this.project(cMesh.vertices[indexVertices], transformMatrix);
+                cMesh.projected_vertices[indexVertices] = projectedPoint;
             }            
 
             //------------------------
             // Compose vectors
             //------------------------
-            var lines = cMesh.Lines;
-            var vertices = cMesh.ProjectedVertices;
+            var lines = cMesh.lines;
+            var vertices = cMesh.projected_vertices;
             var pen_up = true;
             var started = false;
             for(var index_lines = 0; index_lines < lines.length; index_lines++){
