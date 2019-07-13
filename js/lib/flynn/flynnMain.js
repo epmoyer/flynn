@@ -15,13 +15,56 @@ Flynn.init = function(
     gameSpeedFactor, 
     stateBuilderFunc,
     hideCanvas,
-    hideVectorModeOption){
+    hideVectorModeOption,
+    disableUI){
+    //
+    // Args:
+    //    disableUI: If true the UI sounds will not be loaded.  Applications
+    //       which do not use the Flynn UI can set disableUI, and omit the
+    //       UI sounds from their site. 
+    //       NOTE: Without setting this option omitting the UI sounds will
+    //       result in console errors being logged as Flynn attempts to 
+    //       load the UI sounds.
 
     if(typeof(hideCanvas)==='undefined'){
-        hideCanvas= false;
+        hideCanvas = false;
     }
     if(typeof(hideVectorModeOption)==='undefined'){
-        hideVectorModeOption= false;
+        hideVectorModeOption = false;
+    }
+    if(typeof(disableUI)==='undefined'){
+        disableUI = false;
+    }
+
+    // Load sounds
+    if(!disableUI){
+        Flynn.sounds = {
+            ui_move: new Howl({
+                src: ['sounds/UI_move.webm','sounds/UI_move.mp3'],
+                volume: 0.4 }),
+            ui_select: new Howl({
+                src: ['sounds/UI_select.webm','sounds/UI_select.mp3'],
+                volume: 0.4 }),
+            ui_cancel: new Howl({
+                src: ['sounds/UI_cancel.webm','sounds/UI_cancel.mp3'],
+                volume: 0.4 }),
+            ui_success: new Howl({
+                src: ['sounds/UI_success.webm','sounds/UI_success.mp3'],
+                volume: 0.4 }),
+            ui_error: new Howl({
+                src: ['sounds/UI_error.webm','sounds/UI_error.mp3'],
+                volume: 0.4 }),
+        };
+    }
+    else{
+        // UI is disabled.  Do not load sounds.
+        Flynn.sounds = {
+            ui_move:    Flynn.NullSoundHandler,
+            ui_select:  Flynn.NullSoundHandler,
+            ui_cancel:  Flynn.NullSoundHandler,
+            ui_success: Flynn.NullSoundHandler,
+            ui_error:   Flynn.NullSoundHandler,
+        };
     }
 
     // Extend victor.js functionality
@@ -379,23 +422,15 @@ Flynn.Font.Block.Points.ASCII = [
 
 ];
 
-
-Flynn.sounds = {
-    ui_move: new Howl({
-        src: ['sounds/UI_move.webm','sounds/UI_move.mp3'],
-        volume: 0.4 }),
-    ui_select: new Howl({
-        src: ['sounds/UI_select.webm','sounds/UI_select.mp3'],
-        volume: 0.4 }),
-    ui_cancel: new Howl({
-        src: ['sounds/UI_cancel.webm','sounds/UI_cancel.mp3'],
-        volume: 0.4 }),
-    ui_success: new Howl({
-        src: ['sounds/UI_success.webm','sounds/UI_success.mp3'],
-        volume: 0.4 }),
-    ui_error: new Howl({
-        src: ['sounds/UI_error.webm','sounds/UI_error.mp3'],
-        volume: 0.4 }),
+// Sounds will be loaded at runtime during Flynn.init() 
+Flynn.sounds = {};
+Flynn.NullSoundHandler = {
+    // Null sound handler which can be used in place of a Howl
+    // sound object for a sound which will not actually be 
+    // loaded/created. Calling .play() does nothing.
+    play: function(){
+        return;
+    }
 };
 
 Flynn.Rect = Class.extend({

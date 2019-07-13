@@ -6,9 +6,8 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
-(None)
+3.14.0 Candidate
 
-## (3.14.0 Candidate)
 ### Fixed
 - Engine
   - Flynn._3DRenderer.renderPoint() will now properly not render points which are behind the camera.
@@ -19,7 +18,15 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - color alpha support
     - Flynn._3DMesh.init() now accepts alpha (defaults to 1.0)
     - ctx.vectoStart() now accepts alpha (defaults to 1.0)
+    - Alpha is now supported in color values. Before alpha, vectors which used dark colors (grays, or dim colors) could be drawn atop brighter colors and obscure them, which does not match vector display behavior.
+      - Colors can use either form:
+        - "#RRGGBB"
+        - "#RRGGBBAA"
+      - Some standard Flynn colors (Flynn.Colors.[CYAN_DK, GRAY, GRAY_DK]) now use alpha.
   - Flynn.Util.heatmap()
+  - Flynn.init() now accepts an optional disableUI parameter. 
+    - If true the UI sounds will not be loaded.  Applications which do not use the Flynn UI can set disableUI, and omit the UI sounds from their site. 
+    - NOTE: Without setting this option omitting the UI sounds will result in console errors being logged when Flynn attempts to load the UI sounds.
 - Test Application
   - Add text meshes to 3D demo panel.
   - Add alpha color demos.
