@@ -10,42 +10,58 @@ Game.State3D = Flynn.State.extend({
         Flynn.Colors.GREEN,
         Flynn.Colors.BLUE,
         Flynn.Colors.RED,
-        // Flynn.Colors.MAGENTA,
-        // Flynn.Colors.DODGERBLUE,
-        // Flynn.Colors.CYAN,
-        // Flynn.Colors.LIGHTBLUE,
-        // Flynn.Colors.ORANGE,
     ],
     CUBE_DISTANCE: 15,
     CUBE_SIZE: 2,
-    NUM_CUBES: 80,
+    NUM_CUBES: 60,
+
+    // Text meshes
+    TEXT_SIZE: 0.5,
+    TEXT_DISTANCE: 15,
 
     init: function() {
-        var i, x, drone_type, info;
+        var i, j, color, mesh_box, mesh_text;
         this._super();
+
         this.meshes = [];
         for(i=0; i<this.NUM_CUBES; i++){
-            var color = i == 0 ? Flynn.Colors.WHITE :  Flynn.Util.randomChoice(this.CUBE_COLORS);
-            var mesh = new Flynn._3DMeshCube('Cube', this.CUBE_SIZE, color);
-            this.meshes.push(mesh);
+            color = i == 0 ? Flynn.Colors.WHITE :  Flynn.Util.randomChoice(this.CUBE_COLORS);
+            mesh_box = new Flynn._3DMeshCube('Cube', this.CUBE_SIZE, color);
+            this.meshes.push(mesh_box);
 
             // Add rotational speed properties to the mesh
-            mesh.rot_speed_x = 0;
-            mesh.rot_speed_y = 0;
+            mesh_box.rot_speed_x = 0;
+            mesh_box.rot_speed_y = 0;
 
             if(i!=0){
-                mesh.Position = new BABYLON.Vector3(
+                mesh_box.position = new BABYLON.Vector3(
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE,   this.CUBE_DISTANCE),
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE/2, this.CUBE_DISTANCE/2),
                     Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE,   this.CUBE_DISTANCE)
                     );
-                mesh.Rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
-                mesh.Rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
+                mesh_box.rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
+                mesh_box.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
+
+                //-----------------------------
+                // Add text to one face of box
+                //-----------------------------
+                mesh_text = new Flynn._3DMeshText('Text', Flynn.mcp.canvas.ctx, this.TEXT_SIZE, color, "TEXT", Flynn.Font.Normal );
+                this.meshes.push(mesh_text);
+                // Flynn._3DMeshText() returns text in the X/Z plane.  Add a Y offset to bring the
+                // text to the top face of the box.
+                var offset = new BABYLON.Vector3(0, this.CUBE_SIZE/2, 0);
+                for(j=0; j<mesh_text.vertices.length; j++){
+                    mesh_text.vertices[j] = mesh_text.vertices[j].add(offset);
+                }
+                // Give text same position/rotation as box
+                mesh_text.position = mesh_box.position;
+                mesh_text.rotation = mesh_box.rotation;
             }
         }
+
         this.camera = new Flynn._3DCamera();
-        this.camera.Position =  new BABYLON.Vector3(0, 0, 10);
-        this.camera.Target = new BABYLON.Vector3(0, 0, 0);
+        this.camera.position =  new BABYLON.Vector3(0, 0, 10);
+        this.camera.target = new BABYLON.Vector3(0, 0, 0);
         this.camera_angle = 0;
 
         this.renderers = [
@@ -65,8 +81,8 @@ Game.State3D = Flynn.State.extend({
         this.index_renderer = 0;
 
         // Spin the center cube a bit
-        this.meshes[0].Rotation.x = Math.PI/8;
-        this.meshes[0].Rotation.y = Math.PI/8;
+        this.meshes[0].rotation.x = Math.PI/8;
+        this.meshes[0].rotation.y = Math.PI/8;
     },
 
     handleInputs: function(input, elapsed_ticks) {
@@ -85,7 +101,7 @@ Game.State3D = Flynn.State.extend({
     update: function(elapsed_ticks) {
         var i;
         this.camera_angle += this.CAMERA_SPEED * elapsed_ticks;
-        this.camera.Position =  new BABYLON.Vector3(
+        this.camera.position =  new BABYLON.Vector3(
             Math.sin(this.camera_angle) * this.CAMERA_DISTANCE,
             0,
             Math.cos(this.camera_angle) * this.CAMERA_DISTANCE);

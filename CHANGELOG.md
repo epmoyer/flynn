@@ -5,7 +5,32 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-(None)
+*(None)*
+
+## 3.14.0 - 2019-07-13
+### Fixed
+- Engine
+  - Flynn._3DRenderer.renderPoint() will now properly not render points which are behind the camera.
+  - Buttons no longer get "stuck" DOWN if focus is switched away from the app while they are held. On restoration of focus, all pressed buttons are now forced into the UP state.
+### Added
+- Engine 
+  - Flynn._3DMeshText() renders text to a 3D mesh object.
+  - Flynn._3DMesh now has .pre_rotation
+  - color alpha support
+    - Flynn._3DMesh.init() now accepts alpha (defaults to 1.0)
+    - ctx.vectoStart() now accepts alpha (defaults to 1.0)
+    - Alpha is now supported in color values. Before alpha, vectors which used dark colors (grays, or dim colors) could be drawn atop brighter colors and obscure them, which does not match vector display behavior.
+      - Colors can use either form:
+        - "#RRGGBB"
+        - "#RRGGBBAA"
+      - Some standard Flynn colors (Flynn.Colors.[CYAN_DK, GRAY, GRAY_DK]) now use alpha.
+  - Flynn.Util.heatmap()
+  - Flynn.init() now accepts an optional disableUI parameter. 
+    - If true the UI sounds will not be loaded.  Applications which do not use the Flynn UI can set disableUI, and omit the UI sounds from their site. 
+    - NOTE: Without setting this option omitting the UI sounds will result in console errors being logged when Flynn attempts to load the UI sounds.
+- Test Application
+  - Add text meshes to 3D demo panel.
+  - Add alpha color demos.
 
 ## 3.13.1 - 2019-01-11
 ### Fixed
@@ -150,5 +175,5 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - Test Application
   -  Performance test now iteratively adds/removes polygons to achieve 60 FPS.
 
-# Fixed
+### Fixed
 - "20 FPS" mode is now really 20 FPS (was 12 FPS)

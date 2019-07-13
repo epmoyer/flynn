@@ -346,6 +346,28 @@ Flynn.InputHandler = Class.extend({
         catch(err){
             console.log('Warning: Could not register "touchend" event.');
         }
+
+        window.onfocus = function() {
+            var name;
+            for (name in self.virtualButtons){
+                if(self.virtualButtons[name].isDown){
+                    self.virtualButtons[name].isDown = false;
+                    console.log(
+                        'Flynn: Forcing virtual button "' + 
+                        name +
+                        '" up because focus was restored to this app.');
+                }
+            }
+            for (name in self.uiButtons){
+                if(self.uiButtons[name].isDown){
+                    self.uiButtons[name].isDown = false;
+                    console.log(
+                        'Flynn: Forcing UI button "' + 
+                        name +
+                        '" up because focus was restored to this app.');
+                }
+            }
+        };
     },
 
     startTextCapture: function(){

@@ -6,7 +6,7 @@ var Flynn = Flynn || {}; // Create namespace
 
 (function () { "use strict"; 
 
-Flynn.VERSION = "3.13.1";
+Flynn.VERSION = "3.14.0";
  
 Flynn.init = function(
     canvasWidth,
@@ -15,13 +15,56 @@ Flynn.init = function(
     gameSpeedFactor, 
     stateBuilderFunc,
     hideCanvas,
-    hideVectorModeOption){
+    hideVectorModeOption,
+    disableUI){
+    //
+    // Args:
+    //    disableUI: If true the UI sounds will not be loaded.  Applications
+    //       which do not use the Flynn UI can set disableUI, and omit the
+    //       UI sounds from their site. 
+    //       NOTE: Without setting this option omitting the UI sounds will
+    //       result in console errors being logged as Flynn attempts to 
+    //       load the UI sounds.
 
     if(typeof(hideCanvas)==='undefined'){
-        hideCanvas= false;
+        hideCanvas = false;
     }
     if(typeof(hideVectorModeOption)==='undefined'){
-        hideVectorModeOption= false;
+        hideVectorModeOption = false;
+    }
+    if(typeof(disableUI)==='undefined'){
+        disableUI = false;
+    }
+
+    // Load sounds
+    if(!disableUI){
+        Flynn.sounds = {
+            ui_move: new Howl({
+                src: ['sounds/UI_move.webm','sounds/UI_move.mp3'],
+                volume: 0.4 }),
+            ui_select: new Howl({
+                src: ['sounds/UI_select.webm','sounds/UI_select.mp3'],
+                volume: 0.4 }),
+            ui_cancel: new Howl({
+                src: ['sounds/UI_cancel.webm','sounds/UI_cancel.mp3'],
+                volume: 0.4 }),
+            ui_success: new Howl({
+                src: ['sounds/UI_success.webm','sounds/UI_success.mp3'],
+                volume: 0.4 }),
+            ui_error: new Howl({
+                src: ['sounds/UI_error.webm','sounds/UI_error.mp3'],
+                volume: 0.4 }),
+        };
+    }
+    else{
+        // UI is disabled.  Do not load sounds.
+        Flynn.sounds = {
+            ui_move:    Flynn.NullSoundHandler,
+            ui_select:  Flynn.NullSoundHandler,
+            ui_cancel:  Flynn.NullSoundHandler,
+            ui_success: Flynn.NullSoundHandler,
+            ui_error:   Flynn.NullSoundHandler,
+        };
     }
 
     // Extend victor.js functionality
@@ -51,19 +94,23 @@ Flynn.DevPacingMode = {
 //------------
 Flynn.Colors = {
     BLACK:        "#000000",
-    BLUE:         "#2020FF",
     WHITE:        "#FFFFFF",
-    GREEN:        "#00FF00",
-    YELLOW:       "#FFFF00",
+    GRAY:         "#FFFFFF80",
+    GRAY_DK:      "#FFFFFF40",
+    
     RED:          "#FF0000",
+    GREEN:        "#00FF00",
+    BLUE:         "#2020FF",
+    
     CYAN:         "#00FFFF",
     MAGENTA:      "#FF00FF",
-    CYAN_DK:      "#008080",
+    YELLOW:       "#FFFF00",
+    
     ORANGE:       "#E55300",
-    BROWN:        "#8B4513",
-    YELLOW_DK:    "#807000",
-    GRAY:         "#808080",
-    GRAY_DK:      "#404040",
+    // BROWN_OLD:    "#8B4513",
+    BROWN:        "#E56C0080",
+    YELLOW_DK:    "#FFE00080",
+    CYAN_DK:      "#00FFFF80",
     LIGHTSKYBLUE: "#87CEFA",
     DODGERBLUE:   "#1E90FF",
     LIGHTBLUE:    "#ADD8E6",
@@ -214,18 +261,18 @@ Flynn.Font.Normal = {
             [1,0,2,5,1.5,5,1.5,6,2.5,6,2.5,5,2,5,3,0,1,0],                       // !
             [1,0,1,1,9000,7000,3,0,3,1],                                         // "
             [1,5,1,1,9000,7000,0,2,4,2,9000,7000,3,1,3,5,9000,7000,4,4,0,4],     // #
-            [0,6,3,6,4,5,4,4,3,3,1,3,0,2,0,1,1,0,4,0,9000,7000,2,0,2,6],         // $        
-            [0,6,4,0,9000,7000,2,5,2,1,0,1,0,3,4,3,4,5,2,5],                     // %  
-            [4,6,1,2,1,1,2,0,3,1,3,2,0,4,0,5,1,6,2,6,4,4],                       // &  
-            [2,0,2,1,2,0],                                                       // '  
-            [3,6,2,4,2,2,3,0],                                                   // ( 
-            [1,0,2,2,2,4,1,6],                                                   // )  
-            [0,1,4,5,9000,7000,2,5,2,1,9000,7000,4,3,0,3,9000,7000,0,5,4,1],     // *  
-            [2,5,2,1,9000,7000,0,3,4,3],                                         // +  
-            [2,5,1,6,2,5],                                                       // ,  
-            [1,3,3,3],                                                           // -  
-            [1.5,6,1.5,5,2.5,5,2.5,6,1.5,6],                                     // .  
-            [1,6,3,0,1,6],                                                       // /  
+            [0,6,3,6,4,5,4,4,3,3,1,3,0,2,0,1,1,0,4,0,9000,7000,2,0,2,6],         // $
+            [0,6,4,0,9000,7000,2,5,2,1,0,1,0,3,4,3,4,5,2,5],                     // %
+            [4,6,1,2,1,1,2,0,3,1,3,2,0,4,0,5,1,6,2,6,4,4],                       // &
+            [2,0,2,1,2,0],                                                       // '
+            [3,6,2,4,2,2,3,0],                                                   // (
+            [1,0,2,2,2,4,1,6],                                                   // )
+            [0,1,4,5,9000,7000,2,5,2,1,9000,7000,4,3,0,3,9000,7000,0,5,4,1],     // *
+            [2,5,2,1,9000,7000,0,3,4,3],                                         // +
+            [2,5,1,6,2,5],                                                       // ,
+            [1,3,3,3],                                                           // -
+            [1.5,6,1.5,5,2.5,5,2.5,6,1.5,6],                                     // .
+            [1,6,3,0,1,6],                                                       // /
             [0,0,4,0,4,6,0,6,0,0],                                               // 0
             [2,0,2,6],                                                           // 1
             [0,0,4,0,4,3,0,3,0,6,4,6],                                           // 2
@@ -238,10 +285,10 @@ Flynn.Font.Normal = {
             [4,3,0,3,0,0,4,0,4,6],                                               // 9
             [2,1,1.5,1.5,2,2,2.5,1.5,2,1,9000,7000,2,4,1.5,4.5,2,5,2.5,4.5,2,4], // :
             [2,1,1.5,1.5,2,2,2.5,1.5,2,1,9000,7000,1.5,4,2.5,4,1.5,6,1.5,4],     // ;
-            [4,1,0,3,4,5,0,3,4,1],                                               // <  
-            [0,1.5,4,1.5,9000,7000,0,4.5,4,4.5],                                 // = 
-            [0,1,4,3,0,5,4,3,0,1],                                               // >  
-            [0,2,0,1,1,0,3,0,4,1,4,2,2,3,2,6,2,3,4,2,4,1,3,0,1,0,0,1,0,2],       // ?  
+            [4,1,0,3,4,5,0,3,4,1],                                               // <
+            [0,1.5,4,1.5,9000,7000,0,4.5,4,4.5],                                 // =
+            [0,1,4,3,0,5,4,3,0,1],                                               // >
+            [0,2,0,1,1,0,3,0,4,1,4,2,2,3,2,4,9000,7000,2,5,2,6],                 // ?
             [3,4,3,2,1,2,1,4,4,4,4,2,3,1,1,1,0,2,0,4,1,5,3,5],                   // @
             [0,6,0,2,2,0,4,2,4,6,9000,7000,0,4,4,4],                             // A
             [3,3,4,4,4,5,3,6,0,6,0,0,3,0,4,1,4,2,3,3,0,3],                       // B
@@ -269,10 +316,10 @@ Flynn.Font.Normal = {
             [0,0,4,6,9000,7000,4,0,0,6],                                         // X
             [2,6,2,3,4,0,9000,7000,0,0,2,3],                                     // Y
             [0,0,4,0,0,6,4,6],                                                   // Z
-            [3,0,1,0,1,6,3,6],                                                   // [  
-            [1,0,3,6],                                                           // /  
-            [1,0,3,0,3,6,1,6],                                                   // ]  
-            [1,1,2,0,3,1],                                                       // ^ 
+            [3,0,1,0,1,6,3,6],                                                   // [
+            [1,0,3,6],                                                           // /
+            [1,0,3,0,3,6,1,6],                                                   // ]
+            [1,1,2,0,3,1],                                                       // ^
             [0,6,4,6],                                                           // _
             [1.5,0,2.5,1],                                                       // `
 
@@ -375,23 +422,15 @@ Flynn.Font.Block.Points.ASCII = [
 
 ];
 
-
-Flynn.sounds = {
-    ui_move: new Howl({
-        src: ['sounds/UI_move.webm','sounds/UI_move.mp3'],
-        volume: 0.4 }),
-    ui_select: new Howl({
-        src: ['sounds/UI_select.webm','sounds/UI_select.mp3'],
-        volume: 0.4 }),
-    ui_cancel: new Howl({
-        src: ['sounds/UI_cancel.webm','sounds/UI_cancel.mp3'],
-        volume: 0.4 }),
-    ui_success: new Howl({
-        src: ['sounds/UI_success.webm','sounds/UI_success.mp3'],
-        volume: 0.4 }),
-    ui_error: new Howl({
-        src: ['sounds/UI_error.webm','sounds/UI_error.mp3'],
-        volume: 0.4 }),
+// Sounds will be loaded at runtime during Flynn.init() 
+Flynn.sounds = {};
+Flynn.NullSoundHandler = {
+    // Null sound handler which can be used in place of a Howl
+    // sound object for a sound which will not actually be 
+    // loaded/created. Calling .play() does nothing.
+    play: function(){
+        return;
+    }
 };
 
 Flynn.Rect = Class.extend({

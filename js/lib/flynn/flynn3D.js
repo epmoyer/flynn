@@ -2,23 +2,25 @@
 
 Flynn._3DCamera = Class.extend({
     init: function(){
-        this.Position = BABYLON.Vector3.Zero();
-        this.Target = BABYLON.Vector3.Zero();
+        this.position = BABYLON.Vector3.Zero();
+        this.target = BABYLON.Vector3.Zero();
     },
 });
 
 Flynn._3DMesh = Class.extend({
-    init: function(name, vertices, lines, color, custom_palette){
+    init: function(name, vertices, lines, color, custom_palette, alpha){
         this.name = name;
-        this.Vertices = vertices;
-        this.Lines = lines;
+        this.vertices = vertices;
+        this.lines = lines;
         this.color = color;
         this.custom_palette = typeof(custom_palette)==='undefined' ? null : custom_palette;
+        this.alpha = alpha == undefined ? 1.0 : alpha;
 
-        this.ProjectedVertices = new Array(vertices.length);
-        this.CheckVertices = new Array(vertices.length);
-        this.Rotation = BABYLON.Vector3.Zero();
-        this.Position = BABYLON.Vector3.Zero();
+        this.projected_vertices = new Array(vertices.length);
+        this.check_vertices = new Array(vertices.length);
+        this.pre_rotation = null;
+        this.rotation = BABYLON.Vector3.Zero();
+        this.position = BABYLON.Vector3.Zero();
     },
 });
 
@@ -92,6 +94,66 @@ Flynn._3DMeshPlate = Flynn._3DMesh.extend({
     },
 });
 
+Flynn._3DMeshText = Flynn._3DMesh.extend({
+    // Make a (flat) 3d mesh containing text.
+    // The mesh will be created in the X/Z plane, and will be flat in Y.
+    // The text will be scaled to match the requested height (Z).
+    // The final width of the mesh (i.e. the largest X value) will be..
+    // ..governed by the width of the text.
+    // The mesh will be centered about the origin, (i.e. the..
+    // ..rendered text will be centered about the origin)
+    init: function(name, ctx, height, color, text, font){
+        var i, j, len, len2, character, polygon;
+        text = String(text);
+
+        // var pen_up;
+        var draw_z = -height/2;
+        var vertices = [];
+        var lines = [];
+        var scale = height / font.CharacterHeight;
+        var step = scale * font.CharacterSpacing;
+        var draw_x = ((text.length * step - (font.CharacterGap * scale))) / 2;
+        var aspect_ratio = 1.0;
+
+        this._super(name, vertices, lines, color);
+        for(i=0, len=text.length; i < len; i++){
+            if(i>0){
+                // lift pen between characters
+                lines.push(Flynn.PEN_UP);
+            }
+            character = text.charCodeAt(i);
+
+            if (character === ctx.SPACECODE){
+                draw_x += step;
+                continue;
+            }
+            polygon = ctx.charToPolygon(character, font);
+
+            // pen_up = false;
+            for (j=0, len2=polygon.length; j<len2; j+=2){
+                if(polygon[j]==Flynn.PEN_COMMAND){
+                    // pen_up = true;
+                    lines.push(Flynn.PEN_UP);
+                }
+                else{
+                    vertices.push(
+                        new BABYLON.Vector3(
+                            draw_x - polygon[j] * scale,
+                            0,
+                            polygon[j + 1] * scale / aspect_ratio + draw_z)
+                    );
+                    // if(j===0 || pen_up){
+                    //     pen_up = false;
+                    // }
+                    lines.push(vertices.length - 1);
+                }
+            }
+            draw_x -= step;
+        }
+        this._super(name, vertices, lines, color);
+    },
+});
+
 Flynn._3DRenderer = Class.extend({
     VERTEX_SIZE: 2,
 
@@ -107,7 +169,7 @@ Flynn._3DRenderer = Class.extend({
         //                 will fade out entirely (not be drawn)
         //    enable_vertices: (boolean) Set true to draw vertices as points.
         //    enable_lines: (boolean) Set true to draw lines (vectors) between
-        //        vertices (per the mesh.Lines array)
+        //        vertices (per the mesh.lines array)
         //    enable_distance_order: (boolean) Set true to sort meshes by their
         //        distance from the camera and draw in order from farthest 
         //        to closest.
@@ -135,22 +197,27 @@ Flynn._3DRenderer = Class.extend({
 
     prepare: function(camera){
         // Prepare a transformation matrix for future point rendering using .renderPoint()
-        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
+        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.position, camera.target, BABYLON.Vector3.Up());
         var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(
                 0.78, this.width / this.height, 0.01, 1.0);
         this.pointTransformMatrix = viewMatrix.multiply(projectionMatrix);
+        this.transformCheckMatrix = viewMatrix;
     },
 
     renderPoint: function(ctx, location_v, size, color, alpha){
         // Must call .prepare() before calling this method
-        var projectedPoint = this.project(location_v, this.pointTransformMatrix);
-        ctx.fillStyle=color;
-        ctx.fillRect(
-            projectedPoint.x - size/2,
-            projectedPoint.y - size/2,
-            size,
-            size,
-            alpha);
+        var checkPoint = BABYLON.Vector3.TransformCoordinates(location_v, this.transformCheckMatrix);
+        // Only render the point if it is in front of the camera
+        if(checkPoint.z > 0){
+            var projectedPoint = this.project(location_v, this.pointTransformMatrix);
+            ctx.fillStyle=color;
+            ctx.fillRect(
+                projectedPoint.x - size/2,
+                projectedPoint.y - size/2,
+                size,
+                size,
+                alpha);
+        }
     },
 
     projectPoint: function(location_v){
@@ -161,7 +228,7 @@ Flynn._3DRenderer = Class.extend({
     render: function(ctx, camera, meshes){
         var cMesh;
 
-        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
+        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.position, camera.target, BABYLON.Vector3.Up());
         var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(
                 0.78, this.width / this.height, 0.01, 1.0);
 
@@ -178,7 +245,7 @@ Flynn._3DRenderer = Class.extend({
             //------------------------
             var distance = 0;
             if(this.fog_distance || this.enable_distance_order){
-                distance = BABYLON.Vector3.Distance(camera.Position, cMesh.Position);
+                distance = BABYLON.Vector3.Distance(camera.position, cMesh.position);
             }
 
             //------------------------
@@ -203,22 +270,33 @@ Flynn._3DRenderer = Class.extend({
                 // Project vertices to screen
                 //------------------------------
                 // Apply rotation before translation
-                var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
-                    cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z)
-                     .multiply(BABYLON.Matrix.Translation(
-                       cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
+                var worldMatrix = null;
+                if(cMesh.pre_rotation){
+                    worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
+                        cMesh.pre_rotation.y, cMesh.pre_rotation.x, cMesh.pre_rotation.z)
+                        .multiply(BABYLON.Matrix.RotationYawPitchRoll(
+                            cMesh.rotation.y, cMesh.rotation.x, cMesh.rotation.z))
+                        .multiply(BABYLON.Matrix.Translation(
+                            cMesh.position.x, cMesh.position.y, cMesh.position.z));
+                }
+                else{
+                    worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
+                        cMesh.rotation.y, cMesh.rotation.x, cMesh.rotation.z)
+                        .multiply(BABYLON.Matrix.Translation(
+                        cMesh.position.x, cMesh.position.y, cMesh.position.z));
+                }
 
                 var transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
                 // Transform for checking whether vertices are behind camera
                 var transformCheckMatrix = worldMatrix.multiply(viewMatrix);
 
-                for (var indexVertices = 0; indexVertices < cMesh.Vertices.length; indexVertices++) {
+                for (var indexVertices = 0; indexVertices < cMesh.vertices.length; indexVertices++) {
                     // First, we project the 3D coordinates into the 2D space
-                    var projectedPoint = this.project(cMesh.Vertices[indexVertices], transformMatrix);
-                    cMesh.ProjectedVertices[indexVertices] = projectedPoint;
-                    cMesh.CheckVertices[indexVertices] = BABYLON.Vector3.TransformCoordinates(cMesh.Vertices[indexVertices], transformCheckMatrix);
+                    var projectedPoint = this.project(cMesh.vertices[indexVertices], transformMatrix);
+                    cMesh.projected_vertices[indexVertices] = projectedPoint;
+                    cMesh.check_vertices[indexVertices] = BABYLON.Vector3.TransformCoordinates(cMesh.vertices[indexVertices], transformCheckMatrix);
 
-                    if(this.enable_vertices && cMesh.CheckVertices[indexVertices].z>0){
+                    if(this.enable_vertices && cMesh.check_vertices[indexVertices].z>0){
                         // Draw vertices
                         ctx.fillStyle=color;
                         ctx.fillRect(
@@ -247,8 +325,8 @@ Flynn._3DRenderer = Class.extend({
                 var target = draw_list[i];
                 color = target.color;
                 cMesh = meshes[target.mesh_index];
-                var lines = cMesh.Lines;
-                var vertices = cMesh.ProjectedVertices;
+                var lines = cMesh.lines;
+                var vertices = cMesh.projected_vertices;
                 var pen_up = true;
                 var started = false;
                 for(var index_lines = 0; index_lines < lines.length; index_lines++){
@@ -280,8 +358,8 @@ Flynn._3DRenderer = Class.extend({
                     var vertex = vertices[index_vertex];
                     if(pen_up){
                         // Start line if vertex in front of camera
-                        if(cMesh.CheckVertices[index_vertex].z >0){
-                            ctx.vectorStart(color, false, false);
+                        if(cMesh.check_vertices[index_vertex].z >0){
+                            ctx.vectorStart(color, false, false, cMesh.alpha);
                             ctx.vectorMoveTo(vertex.x, vertex.y);
                             pen_up = false;
                             started = true;
@@ -289,7 +367,7 @@ Flynn._3DRenderer = Class.extend({
                     }
                     else{
                         // Draw line if vertex in front of camera
-                        if(cMesh.CheckVertices[index_vertex].z >0){
+                        if(cMesh.check_vertices[index_vertex].z >0){
                             ctx.vectorLineTo(vertex.x, vertex.y);
                         }
                     }
@@ -311,7 +389,7 @@ Flynn._3DRenderer = Class.extend({
         //
         var cMesh;
 
-        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
+        var viewMatrix = BABYLON.Matrix.LookAtLH(camera.position, camera.target, BABYLON.Vector3.Up());
         var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(
                 0.78, this.width / this.height, 0.01, 1.0);
 
@@ -332,25 +410,25 @@ Flynn._3DRenderer = Class.extend({
             //------------------------------
             // Apply rotation before translation
             var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(
-                cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z)
+                cMesh.rotation.y, cMesh.rotation.x, cMesh.rotation.z)
                  .multiply(BABYLON.Matrix.Translation(
-                   cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
+                   cMesh.position.x, cMesh.position.y, cMesh.position.z));
 
             var transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
             // Transform for checking whether vertices are behind camera
             var transformCheckMatrix = worldMatrix.multiply(viewMatrix);
 
-            for (var indexVertices = 0; indexVertices < cMesh.Vertices.length; indexVertices++) {
+            for (var indexVertices = 0; indexVertices < cMesh.vertices.length; indexVertices++) {
                 // First, we project the 3D coordinates into the 2D space
-                var projectedPoint = this.project(cMesh.Vertices[indexVertices], transformMatrix);
-                cMesh.ProjectedVertices[indexVertices] = projectedPoint;
+                var projectedPoint = this.project(cMesh.vertices[indexVertices], transformMatrix);
+                cMesh.projected_vertices[indexVertices] = projectedPoint;
             }            
 
             //------------------------
             // Compose vectors
             //------------------------
-            var lines = cMesh.Lines;
-            var vertices = cMesh.ProjectedVertices;
+            var lines = cMesh.lines;
+            var vertices = cMesh.projected_vertices;
             var pen_up = true;
             var started = false;
             for(var index_lines = 0; index_lines < lines.length; index_lines++){
