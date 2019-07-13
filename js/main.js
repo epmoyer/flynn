@@ -103,7 +103,10 @@ Game.Main = Class.extend({
                             false             // Abort enable
                             );
                 }
-            }
+            },
+            false, // hideCanvas
+            false, // hideVectorModeOption
+            false   // disableUI
         );
 
         // Set initial tab.
