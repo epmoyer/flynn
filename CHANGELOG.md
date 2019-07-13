@@ -11,6 +11,7 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ### Fixed
 - Engine
   - Flynn._3DRenderer.renderPoint() will now properly not render points which are behind the camera.
+  - Buttons no longer get "stuck" DOWN if focus is switched away from the app while they are held. On restoration of focus, all pressed buttons are now forced into the UP state.
 ### Added
 - Engine 
   - Flynn._3DMeshText() renders text to a 3D mesh object.
