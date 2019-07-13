@@ -5,9 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+*(None)*
 
-3.14.0 Candidate
-
+## 3.14.0 - 2019-07-13
 ### Fixed
 - Engine
   - Flynn._3DRenderer.renderPoint() will now properly not render points which are behind the camera.
