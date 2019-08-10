@@ -179,7 +179,7 @@ Game.StateFont = Flynn.State.extend({
         indent = 20;
         for (high=0; high<=15; ++high){
             ctx.vectorText2({
-                text: high.toString(16),
+                text: high.toString(16).toUpperCase(),
                 scale: scale,
                 x: left_x + indent + x_step * (high+1),
                 y: current_y,
@@ -189,7 +189,7 @@ Game.StateFont = Flynn.State.extend({
             for (low=0; low<=15; ++low){
                 if(high === 0){
                     ctx.vectorText2({
-                        text: low.toString(16),
+                        text: low.toString(16).toUpperCase(),
                         scale: scale,
                         x: left_x + indent,
                         y: current_y + y_step * (low + 1),
