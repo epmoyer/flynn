@@ -3,7 +3,7 @@
   :alt: Documentation Status
 
 :author: `Eric Moyer`_
-:copyright: Copyright © 2015-2017 Eric Moyer <eric@lemoncrab.com>
+:copyright: Copyright © 2015-2019 Eric Moyer <eric@lemoncrab.com>
 :license: MIT
 
 #########
