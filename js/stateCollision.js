@@ -312,7 +312,7 @@ Game.StateCollision = Flynn.State.extend({
             color: heading_color
         });
         for (i=0; i<button_list.length; i++){
-            name = button_list[i];
+            name = button_list[i].toUpperCase();
             if(Flynn.mcp.input.virtualButtonIsDown(name)){
                 color = Flynn.Colors.GREEN;
             }
