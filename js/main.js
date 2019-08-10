@@ -106,7 +106,8 @@ Game.Main = Class.extend({
             },
             false, // hideCanvas
             false, // hideVectorModeOption
-            false   // disableUI
+            false, // disableUI
+            false  // forceUpperCase
         );
 
         // Set initial tab.

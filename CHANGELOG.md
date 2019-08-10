@@ -5,7 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-*(None)*
+### Added
+- Engine
+  - Lowercase characters now supported in Normal font.
+  - Flynn.init() now takes forceUpperCase argument (defaults to true).
+- Test Application
+  - Show lowercase characters in ASCII table and sample text.
+
+### Changed
+- Engine
+  - Improve some characters in Normal font: 'K', '(', ')'.
 
 ## 3.14.0 - 2019-07-13
 ### Fixed
