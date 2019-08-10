@@ -422,7 +422,7 @@ Flynn.Canvas = Class.extend({
             ctx.charToPolygon = function(ch, font){
                 var p;
                 if ((ch >= this.EXCLAMATIONCODE) && (ch <= this.TILDE)){
-                    if(ch >= this.LOWERCASE_A && ch <= this.LOWERCASE_Z){
+                    if(Flynn.mcp.forceUpperCase && ch >= this.LOWERCASE_A && ch <= this.LOWERCASE_Z){
                         ch -= this.UPPER_TO_LOWER;
                     }
                     p = font.Points.ASCII[ch - this.EXCLAMATIONCODE];

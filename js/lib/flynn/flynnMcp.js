@@ -4,7 +4,15 @@
 
 Flynn.Mcp = Class.extend({
 
-    init: function(canvasWidth, canvasHeight, noChangeState, gameSpeedFactor, stateBuilderFunc, hideCanvas, hideVectorModeOption) {
+    init: function(
+        canvasWidth, 
+        canvasHeight,
+        noChangeState,
+        gameSpeedFactor,
+        stateBuilderFunc,
+        hideCanvas,
+        hideVectorModeOption,
+        forceUpperCase) {
 
         Flynn.mcp = this;
 
@@ -13,15 +21,8 @@ Flynn.Mcp = Class.extend({
         this.noChangeState = noChangeState;
         this.gameSpeedFactor = gameSpeedFactor;
         this.stateBuilderFunc = stateBuilderFunc;
-        if(typeof(hideCanvas)==='undefined'){
-            this.hideCanvas = false;
-        }
-        else{
-            this.hideCanvas = hideCanvas;
-        }
-        if(typeof(hideVectorModeOption)==='undefined'){
-            hideVectorModeOption = false;
-        }
+        this.hideCanvas = hideCanvas;
+        this.forceUpperCase = forceUpperCase;
 
         this.developerModeEnabled = Flynn.Util.getUrlFlag("develop");
         this.arcadeModeEnabled = Flynn.Util.getUrlFlag("arcade");

@@ -414,7 +414,7 @@ Game.StateHome = Flynn.State.extend({
             }
         }
         ctx.vectorText2({
-            text:"JACKDAWS LOVE MY BIG SPHINX OF QUARTZ",
+            text:"JACKDAWS LOVE MY BIG SPHINX OF QUARTZ    jackdaws love my big sphinx of quartz",
             scale: 2,
             x: left_x + indent,
             y: curret_y + y_step * 18,
