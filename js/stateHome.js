@@ -70,6 +70,8 @@ Game.handleInputs_common = function(input){
         Flynn.sounds.ui_select.play();
     }
     if (input.virtualButtonWasPressed("UI_escape")) {
+        // Come back to the current state after exiting the config state
+        Game.ConfigParentState = Flynn.mcp.current_state_id;
         Flynn.mcp.changeState(Game.States.CONFIG);
     }
     if (input.virtualButtonWasPressed("UI_exit") && Flynn.mcp.backEnabled){
@@ -388,7 +390,7 @@ Game.StateHome = Flynn.State.extend({
         var indent = 20;
         for (high=0; high<=15; ++high){
             ctx.vectorText2({
-                text:high.toString(16),
+                text:high.toString(16).toUpperCase(),
                 scale: 2,
                 x: left_x + indent + x_step * (high+1),
                 y: curret_y,
@@ -397,7 +399,7 @@ Game.StateHome = Flynn.State.extend({
             for (low=0; low<=15; ++low){
                 if(high === 0){
                     ctx.vectorText2({
-                        text:low.toString(16),
+                        text:low.toString(16).toUpperCase(),
                         scale: 2,
                         x: left_x + indent,
                         y: curret_y + y_step * (low + 1),
@@ -414,7 +416,7 @@ Game.StateHome = Flynn.State.extend({
             }
         }
         ctx.vectorText2({
-            text:"JACKDAWS LOVE MY BIG SPHINX OF QUARTZ",
+            text:"JACKDAWS LOVE MY BIG SPHINX OF QUARTZ    jackdaws love my big sphinx of quartz",
             scale: 2,
             x: left_x + indent,
             y: curret_y + y_step * 18,

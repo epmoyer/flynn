@@ -120,9 +120,9 @@ Game.State3D = Flynn.State.extend({
         var input = Flynn.mcp.input;
         ctx.vectorText2({
             text: 'USE UP (' +
-                input.getVirtualButtonBoundKeyName('up') +
+                input.getVirtualButtonBoundKeyName('up').toUpperCase() +
                 ') / DOWN (' +
-                input.getVirtualButtonBoundKeyName('down') +
+                input.getVirtualButtonBoundKeyName('down').toUpperCase() +
                 ') TO SELECT A RENDERER', 
             scale: scale,
             y: Game.BOUNDS.bottom - 18,

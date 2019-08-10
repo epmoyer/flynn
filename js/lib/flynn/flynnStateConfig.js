@@ -238,7 +238,7 @@ Flynn.StateConfig = Flynn.State.extend({
             switch(optionDescriptor.type){
                 case Flynn.OptionType.COMMAND:
                     ctx.vectorText2({
-                        text: optionDescriptor.promptText,
+                        text: optionDescriptor.promptText.toUpperCase(),
                         scale: 2,
                         y: menu_top_y + menu_line_height * i,
                         color: this.menuTextColor
@@ -254,7 +254,7 @@ Flynn.StateConfig = Flynn.State.extend({
                     break;
                 default:
                     ctx.vectorText2({
-                        text: optionDescriptor.promptText + ':',
+                        text: optionDescriptor.promptText.toUpperCase() + ':',
                         scale: 2,
                         x: menu_center_x - this.OPTION_CENTER_GAP_WIDTH/2,
                         y: menu_top_y + menu_line_height * i,
@@ -318,7 +318,7 @@ Flynn.StateConfig = Flynn.State.extend({
                         valueColor = this.menuPromptColor;
                     }
                     else{
-                        valueText = Flynn.mcp.input.keyCodeToKeyName(keyCode);
+                        valueText = Flynn.mcp.input.keyCodeToKeyName(keyCode).toUpperCase();
                     }
                     lineSelectionBox = {
                         x: menu_center_x + this.OPTION_CENTER_GAP_WIDTH/2 - this.OPTION_SELECTION_MARGIN,
