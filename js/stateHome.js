@@ -70,6 +70,8 @@ Game.handleInputs_common = function(input){
         Flynn.sounds.ui_select.play();
     }
     if (input.virtualButtonWasPressed("UI_escape")) {
+        // Come back to the current state after exiting the config state
+        Game.ConfigParentState = Flynn.mcp.current_state_id;
         Flynn.mcp.changeState(Game.States.CONFIG);
     }
     if (input.virtualButtonWasPressed("UI_exit") && Flynn.mcp.backEnabled){

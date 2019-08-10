@@ -45,6 +45,8 @@ Game.States = {
     CONFIG:    91,
 };
 
+Game.ConfigParentState = Game.States.HOME;
+
 Game.Main = Class.extend({
     
     init: function() {
@@ -98,10 +100,10 @@ Game.Main = Class.extend({
                             Flynn.Colors.YELLOW, 
                             Flynn.Colors.GREEN,
                             Flynn.Colors.MAGENTA,
-                            Game.States.HOME, // Parent state
-                            Game.States.HOME, // Abort state
-                            false             // Abort enable
-                            );
+                            Game.ConfigParentState, // Parent state
+                            Game.States.HOME,       // Abort state
+                            false                   // Abort enable
+                            ); 
                 }
             },
             false, // hideCanvas
