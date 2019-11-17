@@ -224,6 +224,19 @@ Game.StateText = Flynn.State.extend({
                 font: Flynn.Font.Normal,
                 transform_f: Game.TransformWarpFunction
             });
+
+            ctx.vectorText2({
+                text: "ROTATE & TRANSFORM",
+                scale: 2.2,
+                x: Flynn.mcp.canvasWidth * 0.80,
+                y: Flynn.mcp.canvasHeight * 0.80,
+                angle: this.rotate_angle,
+                radius: 50,
+                justify: 'center',
+                color: Flynn.Colors.CYAN,
+                font: Flynn.Font.Normal,
+                transform_f: Game.TransformWarpFunction
+            });
         }
     }
 });
@@ -248,5 +261,21 @@ Game.TransformWarpFunction = function(vertex_v){
 //         return(vertex_v.clone().rotate(length * this.magnitude));
 //     },
 // });
+
+PROJECTION_ANGLE = Math.PI/4; // 45 degrees
+
+Transform2D = function(vertex_v){
+    return {
+        x: vertex_v.x + vertex_v.y * Math.cos(PROJECTION_ANGLE),
+        y: vertex_v.y * Math.sin(PROJECTION_ANGLE)
+    };
+};
+
+Transform3D = function(vertex_3d_v){
+    return {
+        x: vertex_3d_v.x + vertex_3d_v.y * Math.cos(PROJECTION_ANGLE),
+        y: vertex_3d_v.y * Math.sin(PROJECTION_ANGLE) + vertex_3d_v.z
+    };
+};
 
 }()); // "use strict" wrapper

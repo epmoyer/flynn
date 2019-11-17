@@ -625,6 +625,9 @@ Flynn.Canvas = Class.extend({
                                 var draw_v = pen_v.clone();
                                 draw_v.add(unit_x_v.clone().multiplyScalar(polygon[j]*opts.scale));
                                 draw_v.add(unit_y_v.clone().multiplyScalar(polygon[j+1]*opts.scale / opts.aspect_ratio));
+                                if(opts.transform_f !== null){
+                                    draw_v = opts.transform_f(draw_v);
+                                }
                                 if(j===0 || pen_up){
                                     this.vectorMoveTo(draw_v.x + string_x, draw_v.y + string_y);
                                     pen_up = false;
