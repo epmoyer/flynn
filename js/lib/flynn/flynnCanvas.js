@@ -469,14 +469,15 @@ Flynn.Canvas = Class.extend({
                 //       false: Use screen coordinates
                 //    font: Flynn font object (Flynn.Font.Normal, Flynn.Font.Block, etc.)
                 //    angle: Rotation angle (radians).  Set null (or do not pass it) for 
-                //       unrotated text.  Rotated text does not support justification.
-                //       Note: Unrotated text has better rendering performance than text with
-                //       an angle of "0", so pass null (or do not pass) for unrotated use.
-                //    asepct_ratio: Stretches the font height. Value is width/height, so 
+                //       un-rotated text.  Rotated text does not support justification.
+                //       Note: Un-rotated text has better rendering performance than text with
+                //       an angle of "0", so pass null (or do not pass) for un-rotated use.
+                //    aspect_ratio: Stretches the font height. Value is width/height, so 
                 //        1.0 causes no stretching, 0.5 doubles the height, 2.0 halves the
                 //        height, etc. 
                 //        Tip: An aspect_ratio of 0.75 mimics most old-school vector games.
                 //    spacing: scale the inter-character spacing.  1.0 = normal spacing.
+                //    transform_f: Vertex transformation callback function.
                 //
                 opts              = opts              || {};
                 opts.text         = Flynn.Util.defaultText(opts.text, '<TEXT>');
@@ -490,6 +491,7 @@ Flynn.Canvas = Class.extend({
                 opts.angle        = opts.angle        || null;
                 opts.aspect_ratio = opts.aspect_ratio || 1.0;
                 opts.spacing      = opts.spacing      || 1.0;
+                opts.transform_f   = opts.transform_f || null;
 
                 // Force opts.text to be a string representation
                 opts.text = String(opts.text);
@@ -542,7 +544,7 @@ Flynn.Canvas = Class.extend({
                         this.vectorStart(
                             opts.color,
                             opts.is_world,
-                            true // Unrotated text is always constrained
+                            true // Un-rotated text is always constrained
                             );
 
                         for (j=0, len2=polygon.length; j<len2; j+=2){
@@ -550,16 +552,22 @@ Flynn.Canvas = Class.extend({
                                 pen_up = true;
                             }
                             else{
+                                var vertex_v = new Victor(
+                                    polygon[j],
+                                    polygon[j+1]/opts.aspect_ratio);
+                                if(opts.transform_f !== null){
+                                    vertex_v = opts.transform_f(vertex_v);
+                                }
                                 if(j===0 || pen_up){
                                     this.vectorMoveTo(
-                                        polygon[j]*opts.scale+draw_x,
-                                        polygon[j+1]*opts.scale/opts.aspect_ratio + draw_y);
+                                        vertex_v.x * opts.scale + draw_x,
+                                        vertex_v.y * opts.scale + draw_y);
                                     pen_up = false;
                                 }
                                 else{
                                     this.vectorLineTo(
-                                        polygon[j]*opts.scale+draw_x,
-                                        polygon[j+1]*opts.scale/opts.aspect_ratio + draw_y);
+                                        vertex_v.x * opts.scale + draw_x,
+                                        vertex_v.y * opts.scale + draw_y);
                                 }
                             }
                         }

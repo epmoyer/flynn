@@ -14,6 +14,7 @@ Game.StateText = Flynn.State.extend({
         this.render_dirty = true;
         this.rotate_angle = 0;
         this.rotate_step = -(Math.PI/3)/60;
+
     },
 
     handleInputs: function(input, elapsed_ticks) {
@@ -204,15 +205,47 @@ Game.StateText = Flynn.State.extend({
             ctx.vectorText2({
                 text: "ROTATION",
                 scale: 2.5,
-                x: Flynn.mcp.canvasWidth * 0.9,
+                x: Flynn.mcp.canvasWidth * 0.88,
                 y: Flynn.mcp.canvasHeight * 0.15,
                 justify: 'center',
                 color: Flynn.Colors.CYAN,
                 font: Flynn.Font.Normal,
                 angle: this.rotate_angle
             });
+
+            ctx.vectorText2({
+                text: "TRANSFORMATION",
+                scale: 2.5,
+                x: Flynn.mcp.canvasWidth * 0.88,
+                y: Flynn.mcp.canvasHeight * 0.3,
+                justify: 'center',
+                color: Flynn.Colors.CYAN,
+                font: Flynn.Font.Normal,
+                transform_f: Game.TransformWarpFunction
+            });
         }
     }
 });
+
+Game.TransformWarpMagnitude = 0.16;
+
+Game.TransformWarpFunction = function(vertex_v){
+    var angle = vertex_v.angle();
+    var length = vertex_v.length();
+    return(vertex_v.clone().rotate(length * Game.TransformWarpMagnitude));
+};
+
+// Game.WarpTransformation = Class.extend({
+
+//     init: function(){
+//         this.magnitude = 0.01;
+//     },
+
+//     transform: function(vertex_v){
+//         var angle = vertex_v.angle();
+//         var length = vertex_v.length();
+//         return(vertex_v.clone().rotate(length * this.magnitude));
+//     },
+// });
 
 }()); // "use strict" wrapper

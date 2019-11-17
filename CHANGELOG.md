@@ -7,6 +7,13 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## Unreleased
 ### Added
 - Engine
+  - transform_f argument to vectorText2 (callback function for vertex transformation).
+- Test Application
+  - Text transformation test/demo.
+
+## 3.14.0 - 2019-08-10
+### Added
+- Engine
   - Lowercase characters now supported in Normal font.
   - Flynn.init() now takes forceUpperCase argument (defaults to true).
 - Test Application
