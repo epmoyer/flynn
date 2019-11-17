@@ -215,9 +215,9 @@ Game.StateText = Flynn.State.extend({
 
             ctx.vectorText2({
                 text: "TRANSFORMATION",
-                scale: 2.5,
+                scale: 2.2,
                 x: Flynn.mcp.canvasWidth * 0.88,
-                y: Flynn.mcp.canvasHeight * 0.3,
+                y: Flynn.mcp.canvasHeight * 0.35,
                 justify: 'center',
                 color: Flynn.Colors.CYAN,
                 font: Flynn.Font.Normal,
@@ -227,7 +227,7 @@ Game.StateText = Flynn.State.extend({
     }
 });
 
-Game.TransformWarpMagnitude = 0.16;
+Game.TransformWarpMagnitude = 0.015;
 
 Game.TransformWarpFunction = function(vertex_v){
     var angle = vertex_v.angle();

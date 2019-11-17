@@ -497,8 +497,10 @@ Flynn.Canvas = Class.extend({
                 opts.text = String(opts.text);
 
                 var i, len, j, len2, character, polygon, pen_up;
-                var draw_x = opts.x;
-                var draw_y = opts.y;
+                var string_x = opts.x;
+                var string_y = opts.y;
+                var character_x = 0;
+                var character_y = 0;
 
                 var step = opts.scale * opts.font.CharacterSpacing * opts.spacing;
 
@@ -508,20 +510,20 @@ Flynn.Canvas = Class.extend({
                     //----------------------------
 
                     // Center x/y if they are not numbers
-                    if (draw_x == null){
-                        draw_x = Math.round((this.width - (opts.text.length*step-(opts.font.CharacterGap*opts.scale)))/2);
+                    if (string_x == null){
+                        string_x = Math.round((this.width - (opts.text.length*step-(opts.font.CharacterGap*opts.scale)))/2);
                     }
-                    if (draw_y == null){
-                        draw_y = Math.round((this.height - step)/2);
+                    if (string_y == null){
+                        string_y = Math.round((this.height - step)/2);
                     }
 
                     // Justification
                     switch(opts.justify){
                         case 'right':
-                            draw_x -= step * opts.text.length - opts.scale * opts.font.CharacterGap;
+                            character_x -= step * opts.text.length - opts.scale * opts.font.CharacterGap;
                             break;
                         case 'center':
-                            draw_x -= step * opts.text.length / 2 - opts.scale * opts.font.CharacterGap / 2;
+                            character_x -= step * opts.text.length / 2 - opts.scale * opts.font.CharacterGap / 2;
                             break;
                         case 'left':
                             break;
@@ -535,7 +537,7 @@ Flynn.Canvas = Class.extend({
                         character = opts.text.charCodeAt(i);
 
                         if (character === this.SPACECODE){
-                            draw_x += step;
+                            character_x += step;
                             continue;
                         }
                         polygon = this.charToPolygon(character, opts.font);
@@ -553,26 +555,26 @@ Flynn.Canvas = Class.extend({
                             }
                             else{
                                 var vertex_v = new Victor(
-                                    polygon[j],
-                                    polygon[j+1]/opts.aspect_ratio);
+                                    polygon[j] * opts.scale + character_x,
+                                    polygon[j+1] / opts.aspect_ratio * opts.scale + character_y );
                                 if(opts.transform_f !== null){
                                     vertex_v = opts.transform_f(vertex_v);
                                 }
                                 if(j===0 || pen_up){
                                     this.vectorMoveTo(
-                                        vertex_v.x * opts.scale + draw_x,
-                                        vertex_v.y * opts.scale + draw_y);
+                                        vertex_v.x + string_x,
+                                        vertex_v.y + string_y);
                                     pen_up = false;
                                 }
                                 else{
                                     this.vectorLineTo(
-                                        vertex_v.x * opts.scale + draw_x,
-                                        vertex_v.y * opts.scale + draw_y);
+                                        vertex_v.x + string_x,
+                                        vertex_v.y + string_y);
                                 }
                             }
                         }
                         this.vectorEnd();
-                        draw_x += step;
+                        character_x += step;
                     }
                 }
                 else{
@@ -581,14 +583,14 @@ Flynn.Canvas = Class.extend({
                     //----------------------
 
                     // Center x or y is they are not numbers
-                    if (draw_x == null){
-                        draw_x = Math.round(this.width);
+                    if (character_x == null){
+                        character_x = Math.round(this.width);
                     }
-                    if (draw_y == null){
-                        draw_y = Math.round(this.height);
+                    if (character_y == null){
+                        character_y = Math.round(this.height);
                     }
 
-                    var pen_v = new Victor(draw_x, draw_y);
+                    var pen_v = new Victor(character_x, character_y);
                     var unit_x_v = new Victor(1, 0).rotate(opts.angle);
                     var unit_y_v = new Victor(0, 1).rotate(opts.angle);
 
@@ -624,11 +626,11 @@ Flynn.Canvas = Class.extend({
                                 draw_v.add(unit_x_v.clone().multiplyScalar(polygon[j]*opts.scale));
                                 draw_v.add(unit_y_v.clone().multiplyScalar(polygon[j+1]*opts.scale / opts.aspect_ratio));
                                 if(j===0 || pen_up){
-                                    this.vectorMoveTo(draw_v.x, draw_v.y);
+                                    this.vectorMoveTo(draw_v.x + string_x, draw_v.y + string_y);
                                     pen_up = false;
                                 }
                                 else{
-                                    this.vectorLineTo(draw_v.x, draw_v.y);
+                                    this.vectorLineTo(draw_v.x + string_x, draw_v.y + string_y);
                                 }
                             }
                         }
