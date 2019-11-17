@@ -24,6 +24,7 @@ Game.StateText = Flynn.State.extend({
     update: function(elapsed_ticks) {
         this.gameClock += elapsed_ticks;
         this.rotate_angle += this.rotate_step * elapsed_ticks;
+        Game.TransformWarpMagnitude = 0.015 * Math.sin(this.rotate_angle);
     },
 
     render: function(ctx){
