@@ -477,21 +477,36 @@ Flynn.Canvas = Class.extend({
                 //        height, etc. 
                 //        Tip: An aspect_ratio of 0.75 mimics most old-school vector games.
                 //    spacing: scale the inter-character spacing.  1.0 = normal spacing.
-                //    transform_f: Vertex transformation callback function.
+                //    transform_f: Vertex transformation callback function. Defaults no null if
+                //        no transform_f argument is passed.
+                //        If it exists, for each font vertex the callback function will be passed
+                //        a Victor object representing the x/y vertex
+                //        and should return a Victor object representing the new
+                //        (transformed) vertex.
                 //
-                opts              = opts              || {};
-                opts.text         = Flynn.Util.defaultText(opts.text, '<TEXT>');
-                opts.scale        = opts.scale        || 1.0;
-                opts.x            = opts.x            || null;
-                opts.y            = opts.y            || null;
-                opts.justify      = opts.justify      || 'left';
-                opts.color        = opts.color        || Flynn.Colors.WHITE;
-                opts.is_world     = opts.is_world     || false;
-                opts.font         = opts.font         || Flynn.Font.Normal;
-                opts.angle        = opts.angle        || null;
-                opts.aspect_ratio = opts.aspect_ratio || 1.0;
-                opts.spacing      = opts.spacing      || 1.0;
-                opts.transform_f   = opts.transform_f || null;
+                opts                = opts                || {};
+                opts.text           = Flynn.Util.defaultText(opts.text, '<TEXT>');
+                opts.scale          = opts.scale          || 1.0;
+                opts.x              = opts.x              || null;
+                opts.y              = opts.y              || null;
+                opts.justify        = opts.justify        || 'left';
+                opts.color          = opts.color          || Flynn.Colors.WHITE;
+                opts.is_world       = opts.is_world       || false;
+                opts.font           = opts.font           || Flynn.Font.Normal;
+                opts.angle          = opts.angle          || null;
+                opts.aspect_ratio   = opts.aspect_ratio   || 1.0;
+                opts.spacing        = opts.spacing        || 1.0;
+                opts.transform_f    = opts.transform_f    || null;
+
+                if(opts.is_constrained == undefined){
+                    if (opts.angle == null){
+                        // Un-rotated text defaults to constrained
+                        opts.is_constrained = true;
+                    } else{
+                        // Rotated text defaults to unconstrained
+                        opts.is_constrained = false;
+                    }
+                }
 
                 // Force opts.text to be a string representation
                 opts.text = String(opts.text);
@@ -546,7 +561,7 @@ Flynn.Canvas = Class.extend({
                         this.vectorStart(
                             opts.color,
                             opts.is_world,
-                            true // Un-rotated text is always constrained
+                            opts.is_constrained
                             );
 
                         for (j=0, len2=polygon.length; j<len2; j+=2){
@@ -615,7 +630,7 @@ Flynn.Canvas = Class.extend({
                         this.vectorStart(
                             opts.color,
                             opts.is_world,
-                            false // Unconstrained
+                            opts.is_constrained
                             );
                         for (j=0, len2=polygon.length; j<len2; j+=2){
                             if(polygon[j]==Flynn.PEN_COMMAND){

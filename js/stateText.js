@@ -222,13 +222,14 @@ Game.StateText = Flynn.State.extend({
                 justify: 'center',
                 color: Flynn.Colors.CYAN,
                 font: Flynn.Font.Normal,
+                is_constrained: false,
                 transform_f: Game.TransformWarpFunction
             });
 
             ctx.vectorText2({
                 text: "ROTATE & TRANSFORM",
                 scale: 2.2,
-                x: Flynn.mcp.canvasWidth * 0.80,
+                x: Flynn.mcp.canvasWidth * 0.85,
                 y: Flynn.mcp.canvasHeight * 0.80,
                 angle: this.rotate_angle,
                 radius: 50,
@@ -244,6 +245,15 @@ Game.StateText = Flynn.State.extend({
 Game.TransformWarpMagnitude = 0.015;
 
 Game.TransformWarpFunction = function(vertex_v){
+    // This function performs a spiral transformation on the vertex
+    // Passed to it.  It is designed to be passed to the transform_f argument
+    // of ctx.vectorText2.
+    //
+    // Args:
+    //    vertex_v: A Victor object.
+    // Returns:
+    //   A Victor object representing the transformed vertex.
+    //
     var angle = vertex_v.angle();
     var length = vertex_v.length();
     return(vertex_v.clone().rotate(length * Game.TransformWarpMagnitude));
