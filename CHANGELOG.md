@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+*(None)*
+
+## 3.16.0 - 2019-11-17
 ### Added
 - Engine
   - transform_f argument to vectorText2 (callback function for vertex transformation).
