@@ -119,10 +119,13 @@ Flynn.Particles = Class.extend({
         }
     },
 
-    shatter: function(polygon, max_velocity, velocity){
-        var i, len, pen_up, first_point, color, position, segment, particle_velocity, polygon_velocity;
+    shatter: function(polygon, max_velocity, velocity, distribute_exit_angles){
+        var i, len, pen_up, first_point, piece_color, piece_position, piece_segment;
+        var particle_velocity, polygon_velocity;
         var velocity_scalar;
         var point_x, point_y, previous_x, previous_y;
+
+        distribute_exit_angles = Flynn.Util.defaultArg(distribute_exit_angles, false);
 
         if(polygon.is_world != this.is_world){
             throw(".is_world must match for polygon and the Particles object.");
@@ -139,8 +142,9 @@ Flynn.Particles = Class.extend({
         }
 
         pen_up = false;
-        color = polygon.color;
+        piece_color = polygon.color;
         first_point = true;
+        var pieces = [];
 
         for (i=0, len=polygon.points.length; i<len; i+=2){
             if(polygon.points[i] == Flynn.PEN_COMMAND){
@@ -148,7 +152,7 @@ Flynn.Particles = Class.extend({
                     pen_up = true;
                 }
                 else{
-                    color = Flynn.ColorsOrdered[polygon.points[i+1] - Flynn.PEN_COLOR0];
+                    piece_color = Flynn.ColorsOrdered[polygon.points[i+1] - Flynn.PEN_COLOR0];
                 }
             }
             else{
@@ -156,28 +160,17 @@ Flynn.Particles = Class.extend({
                 point_y = polygon.points[i+1];
                 if(!first_point && !pen_up){
                     // Add line as particle
-                    position = new Victor(
+                    piece_position = new Victor(
                         (point_x + previous_x) / 2,
                         (point_y + previous_y) /2).add(polygon.position);
-                    segment = new Victor(
+                    piece_segment = new Victor(
                         point_x - previous_x,
                         point_y - previous_y);
-                    velocity_scalar = max_velocity * (1.0 - this.VELOCITY_VARIATION + Math.random() * this.VELOCITY_VARIATION);
-                    particle_velocity = 
-                        position.clone().subtract(polygon.position).normalize()
-                        .multiplyScalar(velocity_scalar).add(polygon_velocity);
-                    this.particles.push(new Flynn.Particle(
-                        this,
-                        position,
-                        particle_velocity,
-                        color,
-                        segment.length(),
-                        segment.angle(),
-                    // Math.PI/60
-                    Flynn.Util.randomFromInterval(
-                        -this.ANGULAR_VELOCITY_MAX,
-                        this.ANGULAR_VELOCITY_MAX)
-                    ));
+                    pieces.push({
+                        position: piece_position,
+                        segment: piece_segment,
+                        color: piece_color,
+                    });
                 }
                 first_point = false;
                 pen_up = false;
@@ -185,6 +178,28 @@ Flynn.Particles = Class.extend({
                 previous_y = point_y;
             }
         }
+
+        for (i=0, len=pieces.length; i<len; i++){
+            var piece = pieces[i];
+
+            velocity_scalar = max_velocity * (1.0 - this.VELOCITY_VARIATION + Math.random() * this.VELOCITY_VARIATION);
+            particle_velocity = 
+                piece.position.clone().subtract(polygon.position).normalize()
+                .multiplyScalar(velocity_scalar).add(polygon_velocity);
+            this.particles.push(new Flynn.Particle(
+                this,
+                piece.position,
+                particle_velocity,
+                piece.color,
+                piece.segment.length(),
+                piece.segment.angle(),
+            // Math.PI/60
+            Flynn.Util.randomFromInterval(
+                -this.ANGULAR_VELOCITY_MAX,
+                this.ANGULAR_VELOCITY_MAX)
+            ));
+        }
+
 
     },
 
