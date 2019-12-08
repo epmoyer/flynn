@@ -139,7 +139,7 @@ Flynn.Particles = Class.extend({
         }
 
         pen_up = false;
-        color = Flynn.Colors.WHITE;
+        color = polygon.color;
         first_point = true;
 
         for (i=0, len=polygon.points.length; i<len; i+=2){
