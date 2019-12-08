@@ -179,13 +179,55 @@ Flynn.Particles = Class.extend({
             }
         }
 
-        for (i=0, len=pieces.length; i<len; i++){
-            var piece = pieces[i];
+        // ----------------------------
+        // Determine piece exit angles
+        // ----------------------------
+        var piece;
+        var angle_base = -Math.PI/4;
+        // var angle_base = null;
+        if(distribute_exit_angles){
+            var angle_step = (Math.PI * 2) / pieces.length;
+            if(angle_base === null){
+                for (i=0, len=pieces.length; i<len; i++){
+                    piece = pieces[i];
+                    piece.position_angle = piece.position.clone().subtract(polygon.position).angle();
+                }
+                pieces.sort(function(a, b){
+                    return a.position_angle-b.position_angle;
+                });
+                
+                angle_base = pieces[0].position_angle;
+                for (i=0, len=pieces.length; i<len; i++){
+                    piece = pieces[i];
+                    piece.exit_angle = angle_base + angle_step * i;
+                }
+            }
+            else{
+                // pieces[0].color = '#FF0000';
+                // pieces[1].color = '#0000FF';
+                for (i=0, len=pieces.length; i<len; i++){
+                    piece = pieces[i];
+                    piece.exit_angle = polygon.angle + angle_base + angle_step * i;
+                }
+            }
+        }
+        else {
+            for (i=0, len=pieces.length; i<len; i++){
+                piece = pieces[i];
+                piece.exit_angle = piece.position.clone().subtract(polygon.position).angle();
+            }
+        }
 
-            velocity_scalar = max_velocity * (1.0 - this.VELOCITY_VARIATION + Math.random() * this.VELOCITY_VARIATION);
-            particle_velocity = 
-                piece.position.clone().subtract(polygon.position).normalize()
-                .multiplyScalar(velocity_scalar).add(polygon_velocity);
+        for (i=0, len=pieces.length; i<len; i++){
+            piece = pieces[i];
+
+            velocity_scalar = max_velocity;
+            // particle_velocity = 
+            //     piece.position.clone().subtract(polygon.position).normalize()
+            //     .multiplyScalar(velocity_scalar).add(polygon_velocity);
+            particle_velocity = polygon_velocity.clone().add(
+                new Victor(1, 0).rotate(piece.exit_angle).multiplyScalar(velocity_scalar)
+            )
             this.particles.push(new Flynn.Particle(
                 this,
                 piece.position,
@@ -193,10 +235,11 @@ Flynn.Particles = Class.extend({
                 piece.color,
                 piece.segment.length(),
                 piece.segment.angle(),
-            // Math.PI/60
-            Flynn.Util.randomFromInterval(
-                -this.ANGULAR_VELOCITY_MAX,
-                this.ANGULAR_VELOCITY_MAX)
+                0
+                // Flynn.Util.randomFromInterval(
+                //     -this.ANGULAR_VELOCITY_MAX,
+                //     this.ANGULAR_VELOCITY_MAX)
+                // 
             ));
         }
 

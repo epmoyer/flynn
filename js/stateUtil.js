@@ -22,7 +22,8 @@ var Game = Game || {}; // Create namespace
 
         SHATTER_POLYGON_LIFETIME: 60,
         SHATTER_POLYGON_VELOCITY: 1.1,
-        SHATTER_PARTICLE_VELOCITY_MAX: 0.5,
+        // SHATTER_PARTICLE_VELOCITY_MAX: 0.5,
+        SHATTER_PARTICLE_VELOCITY_MAX: 1,
         SHATTER_SPAWN_INTERVAL: 30,
 
         init: function() {
@@ -113,15 +114,15 @@ var Game = Game || {}; // Create namespace
             this.shatter_spawn_counter = this.SHATTER_SPAWN_INTERVAL;
             this.particles = new Flynn.Particles(true);
             this.shatter_polygon_catalog = [
-                { points: Game.Points.SHIP, scale: 3 },
-                { points: Game.Points.SHIPB, scale: 3 },
+                // { points: Game.Points.SHIP, scale: 3 },
+                // { points: Game.Points.SHIPB, scale: 3 },
                 { points: Game.Points.CARET, scale: 1.5 },
-                { points: Game.Points.MUTICOLOR1, scale: 3 },
-                { points: Game.Points.MUTICOLOR2, scale: 3 },
-                { points: Game.Points.MUTICOLOR3, scale: 3 },
-                { points: Game.Points.MUTICOLOR4, scale: 4.2 },
-                { points: Game.Points.MUTICOLOR5, scale: 2.3 },
-                { points: Game.Points.MUTICOLOR6, scale: 3.2 }
+                // { points: Game.Points.MUTICOLOR1, scale: 3 },
+                // { points: Game.Points.MUTICOLOR2, scale: 3 },
+                // { points: Game.Points.MUTICOLOR3, scale: 3 },
+                // { points: Game.Points.MUTICOLOR4, scale: 4.2 },
+                // { points: Game.Points.MUTICOLOR5, scale: 2.3 },
+                // { points: Game.Points.MUTICOLOR6, scale: 3.2 }
             ];
 
             this.span_polygons = [];
@@ -197,7 +198,12 @@ var Game = Game || {}; // Create namespace
                 polygon.lifetime -= elapsed_ticks;
                 if (polygon.lifetime <= 0) {
                     // Shatter
-                    this.particles.shatter(polygon, this.SHATTER_PARTICLE_VELOCITY_MAX);
+                    this.particles.shatter(
+                        polygon,
+                        this.SHATTER_PARTICLE_VELOCITY_MAX,
+                        undefined,  // velocity
+                        true        // distribute_exit_angles
+                        );
 
                     // Remove polygon
                     this.shatter_polygons.splice(i, 1);
