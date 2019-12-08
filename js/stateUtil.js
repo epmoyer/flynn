@@ -115,6 +115,7 @@ var Game = Game || {}; // Create namespace
             this.shatter_polygon_catalog = [
                 { points: Game.Points.SHIP, scale: 3 },
                 { points: Game.Points.SHIPB, scale: 3 },
+                { points: Game.Points.CARET, scale: 1.5 },
                 { points: Game.Points.MUTICOLOR1, scale: 3 },
                 { points: Game.Points.MUTICOLOR2, scale: 3 },
                 { points: Game.Points.MUTICOLOR3, scale: 3 },
