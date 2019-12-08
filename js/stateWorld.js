@@ -242,7 +242,7 @@ Game.StateWorld = Flynn.State.extend({
         if(this.timers.hasExpired("Shoot")){
             this.timers.set("Shoot", this.TIMER_SHOOT_TICKS);
             // Drones shoot
-            len=this.drones.length
+            len=this.drones.length;
             for(i=0; i<len; i++){
                 var min_distance = 9000000;
                 var closest_v = null;
