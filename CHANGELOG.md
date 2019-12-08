@@ -7,6 +7,7 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## Unreleased
 - Engine
   - Add support for monochrome polygons to Flynn.Particles.shatter()
+  - ctx.vectorText2 options opts.x, .y, and .angle now properly handle values of 0 (0 was getting overridden by null default).
 - Test Application
   - Test monochrome polygon shatter
 
