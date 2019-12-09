@@ -142,7 +142,7 @@ Flynn.Particles = Class.extend({
         //
         //  Args:
         //      polygon: The polygon object to shatter
-        //      opts: Options struct.  Can be omitted to use defaults.
+        //      opts: Options object.  Can be omitted to use defaults.
         //      {
         //          life_range: {
         //              min: <min particle life, in ticks>,
