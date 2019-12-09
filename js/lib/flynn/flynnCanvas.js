@@ -263,7 +263,7 @@ Flynn.Canvas = Class.extend({
                         config = Flynn.Config.VectorRender.V_THICK;
                         break;
                 }
-                var line_color = Flynn.Util.shadeColor(color, config.lineBrightness)
+                var line_color = Flynn.Util.shadeColor(color, config.lineBrightness);
                 this.vectorVertexColor = Flynn.Util.colorOverdrive(color, config.vertexBrightness);
                 this.vectorVertexAlpha = alpha * 0.7;
                 this.index_vector_vertex = 0;
@@ -487,13 +487,13 @@ Flynn.Canvas = Class.extend({
                 opts                = opts                || {};
                 opts.text           = Flynn.Util.defaultText(opts.text, '<TEXT>');
                 opts.scale          = opts.scale          || 1.0;
-                opts.x              = opts.x              || null;
-                opts.y              = opts.y              || null;
+                opts.x              = Flynn.Util.defaultArg(opts.x, null);
+                opts.y              = Flynn.Util.defaultArg(opts.y, null);
                 opts.justify        = opts.justify        || 'left';
                 opts.color          = opts.color          || Flynn.Colors.WHITE;
                 opts.is_world       = opts.is_world       || false;
                 opts.font           = opts.font           || Flynn.Font.Normal;
-                opts.angle          = opts.angle          || null;
+                opts.angle          = Flynn.Util.defaultArg(opts.angle, null);
                 opts.aspect_ratio   = opts.aspect_ratio   || 1.0;
                 opts.spacing        = opts.spacing        || 1.0;
                 opts.transform_f    = opts.transform_f    || null;

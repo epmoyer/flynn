@@ -259,33 +259,4 @@ Game.TransformWarpFunction = function(vertex_v){
     return(vertex_v.clone().rotate(length * Game.TransformWarpMagnitude));
 };
 
-// Game.WarpTransformation = Class.extend({
-
-//     init: function(){
-//         this.magnitude = 0.01;
-//     },
-
-//     transform: function(vertex_v){
-//         var angle = vertex_v.angle();
-//         var length = vertex_v.length();
-//         return(vertex_v.clone().rotate(length * this.magnitude));
-//     },
-// });
-
-PROJECTION_ANGLE = Math.PI/4; // 45 degrees
-
-Transform2D = function(vertex_v){
-    return {
-        x: vertex_v.x + vertex_v.y * Math.cos(PROJECTION_ANGLE),
-        y: vertex_v.y * Math.sin(PROJECTION_ANGLE)
-    };
-};
-
-Transform3D = function(vertex_3d_v){
-    return {
-        x: vertex_3d_v.x + vertex_3d_v.y * Math.cos(PROJECTION_ANGLE),
-        y: vertex_3d_v.y * Math.sin(PROJECTION_ANGLE) + vertex_3d_v.z
-    };
-};
-
 }()); // "use strict" wrapper
