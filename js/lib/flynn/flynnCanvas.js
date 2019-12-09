@@ -263,7 +263,7 @@ Flynn.Canvas = Class.extend({
                         config = Flynn.Config.VectorRender.V_THICK;
                         break;
                 }
-                var line_color = Flynn.Util.shadeColor(color, config.lineBrightness)
+                var line_color = Flynn.Util.shadeColor(color, config.lineBrightness);
                 this.vectorVertexColor = Flynn.Util.colorOverdrive(color, config.vertexBrightness);
                 this.vectorVertexAlpha = alpha * 0.7;
                 this.index_vector_vertex = 0;

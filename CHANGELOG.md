@@ -8,8 +8,11 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - Engine
   - Add support for monochrome polygons to Flynn.Particles.shatter()
   - ctx.vectorText2 options opts.x, .y, and .angle now properly handle values of 0 (0 was getting overridden by null default).
+  - Flynn.Particles.shatter() *API changed*
+    - Support min/max range for life, velocity, angular_velocity, and options for uniformly distributed exit angles.
 - Test Application
-  - Test monochrome polygon shatter
+  - Test monochrome polygon shatter.
+  - Test new shatter options. Add "caret" ship.
 
 ## 3.16.0 - 2019-11-17
 ### Added
