@@ -1,0 +1,18 @@
+.DS_Store
+untracked/
+js/lib/box2d/demo.html
+js/lib/box2d/example.html
+deploy.sh
+deploy-exclude.txt
+scrapbook
+.vscode
+
+# npm
+node_modules/
+package-lock.json
+
+# Sphinx
+_build
+_static
+_templates
+autosphinx.sh
