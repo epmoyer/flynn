@@ -11,7 +11,9 @@ posted at www.vectoralchemy.com
 
 ![logo][logo] 
 
-The API is clean and the code is well organized, but there is (presently) no end-user documentation. I wrote it to support my own game development and I've worked aggressively to push as much generalizable functionality into Flynn as possible. Games implemented on top of Flynn end up having a light code base, and all browser issues (touch handling, window resizing, etc.) get handled by the engine. In practice, new game development stays very purely focused on game specifics & games run cross-platform "out of the box" with little effort. If you're mildly enterprising then the test app code and the code for the VA games should be sufficient for you to develop your own games on top of Flynn.  If there is developer interest then I'll start putting some documentation together.
+The API is clean and the code is well organized, but there is (presently) not much end-user documentation.  You can find the current docs [here](http://flynn.readthedocs.io/en/latest).
+
+I wrote Flynn to support my own game development and I've worked aggressively to push as much generalizable functionality into the engine as possible. Games implemented on top of Flynn end up having a light code base, and all browser issues (touch handling, window resizing, etc.) get handled by the engine. In practice, new game development stays very purely focused on game specifics & games run cross-platform "out of the box" with little effort. If you're mildly enterprising then the test app code and the code for the VA games should be sufficient for you to develop your own games on top of Flynn.  If there is developer interest then I'll start putting some more comprehensive documentation together.
 
 ![screen_flynn][screen_flynn] 
 ![screen_flynn_text][screen_flynn_text] 
