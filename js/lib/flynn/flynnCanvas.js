@@ -143,10 +143,15 @@ Flynn.Canvas = Class.extend({
             }
             PIXI.utils.sayHello(type);
 
-            ctx.renderer = PIXI.autoDetectRenderer(
-                Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT,
-                {view:canvas, antialias:true}
-                );
+            ctx.renderer = PIXI.autoDetectRenderer({
+                width: Game.CANVAS_WIDTH,
+                height: Game.CANVAS_HEIGHT,
+                view:canvas,
+                antialias:true
+            });
+            PIXI.settings.SPRITE_MAX_TEXTURES = Math.min(PIXI.settings.SPRITE_MAX_TEXTURES, 16);
+            PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.HIGH;
+
             ctx.renderer.backgroundColor = 0x000000;
             ctx.stage = new PIXI.Container();
             ctx.graphics = new PIXI.Graphics();
