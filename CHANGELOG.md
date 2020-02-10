@@ -7,6 +7,11 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## Unreleased
 **(None)**
 
+## 3.18.0 - 2020-02-09
+### Changed
+- Engine
+ - Adopt PixiJS v5.2.1
+
 ## 3.17.0 - 2019-12-08
 ### Added
 - Engine
