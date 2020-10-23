@@ -6,7 +6,7 @@ var Flynn = Flynn || {}; // Create namespace
 
 (function () { "use strict"; 
 
-Flynn.VERSION = "3.18.0";
+Flynn.VERSION = "3.19.0";
  
 Flynn.init = function(
     canvasWidth,
@@ -372,7 +372,7 @@ Flynn.Font.Block = {
 };
 Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR = [0,0,6,10,6,0,0,10,0,0,6,0,9000,7000,0,10,6,10];
 Flynn.Font.Block.Points.ASCII = [
-    Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR,      // !
+    [4,8,2,8,2,10,4,10,4,8,9000,7000,1,0,3,6,5,0,1,0],      // !,
     Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR,      // "
     Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR,      // #
     Flynn.Font.Block.Points.UNIMPLEMENTED_CHAR,      // $        
