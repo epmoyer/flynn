@@ -167,6 +167,12 @@ Flynn.StateEnd = Flynn.State.extend({
                     'timestamp': (new Date()).toISOString(),
                 });
                 Flynn.sounds.ui_success.play();
+
+                // Force history of "UI_enter" press to clear.  Games using touch may
+                // may UI_ender to a touch button encompassing the whole screen.
+                // We must clear the state so that the last touch used to complete
+                // name entry does not also trigger exiting this screen prematurely.
+                input.virtualButtonWasPressed("UI_enter");
             }
         }
 
