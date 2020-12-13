@@ -26,7 +26,7 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - Engine
   - ctx.vectorText2 options opts.x, .y, and .angle now properly handle values of 0 (0 was getting overridden by null default).
 
-## 3.19.0 - 2019-11-17
+## 3.19.0 - 2020-10-23
 ### Added
 - Engine
   - Add "!" to Flynn.Font.Block.
