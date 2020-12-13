@@ -109,6 +109,8 @@ Flynn.InputHandler = Class.extend({
 
         this.touchable_elements = [];
 
+        this._touch_location_v = null;
+
         var self = this;
         this.keyDownHandler = function(evt){
             if(evt.keyCode == Flynn.KeyboardMap.escape || 
@@ -186,7 +188,7 @@ Flynn.InputHandler = Class.extend({
                 self.processTextCapture(evt.keyCode);
             }
         };
-        document.addEventListener("keypress", this.keyPressHandler);
+        document.addEventListener("keydown", this.keyPressHandler);
 
         if(Flynn.mcp.mousetouchEnabled || Flynn.mcp.developerModeEnabled){
             try{
@@ -410,12 +412,31 @@ Flynn.InputHandler = Class.extend({
         this.touchable_elements.push(element);
     },
 
+    getLastTouchLocation: function(clear){
+        var touch_location_v;
+
+        if(clear == undefined){
+            clear = true;
+        }
+        if(this._touch_location_v == null){
+            touch_location_v = null;
+        }
+        else{
+            touch_location_v = this._touch_location_v.clone();
+        }
+        if(clear){
+            this._touch_location_v = null;
+        }
+        return touch_location_v;
+    },
+
     handleTouchStart: function(x,y,touch_identifier){
         // Process a "touchstart" event and apply it to the appropriate virtual control (button/joystick)
         // if one exists.  
         // Returns true if a control caught the event, else false.
 
         //console.log("DEV: handleTouchStart() ",x,y);
+        this._touch_location_v = new Victor(x, y);
         var name, region, joystick, touched, event_caught;
 
         event_caught = false;
