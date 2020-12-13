@@ -144,8 +144,8 @@ Flynn.Canvas = Class.extend({
             PIXI.utils.sayHello(type);
 
             ctx.renderer = PIXI.autoDetectRenderer({
-                width: Game.CANVAS_WIDTH,
-                height: Game.CANVAS_HEIGHT,
+                width: Flynn.mcp.canvasWidth,
+                height: Flynn.mcp.canvasHeight,
                 view:canvas,
                 antialias:true
             });

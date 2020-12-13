@@ -7,6 +7,14 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## Unreleased
 **(None)**
 
+## 3.19.0 - 2020-12-12
+**(WORK IN PROGRESS)**
+- Added
+    - .getLastTouchLocation() to Flynn.InputHandler
+    -  "!" character to Flynn.Font.Block
+- Fixed
+    - Backspace key now captured again (used to work, but broke for some browsers).
+
 ## 3.18.0 - 2020-02-09
 ### Changed
 - Engine
