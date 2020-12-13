@@ -48,10 +48,14 @@ Flynn.StateEnd = Flynn.State.extend({
         var worstEntry = this.leaderboard.getWorstEntry();
         if (    (!this.leaderboard.sortDescending && this.score < worstEntry.score) ||
                 ( this.leaderboard.sortDescending && this.score > worstEntry.score) ) {
+            // Capture name (because score is better than worst current leaderboard score).
             this.hasEnteredName = false;
-            Flynn.mcp.input.startTextCapture();
         } else {
-            this.hasEnteredName = true;
+            // Capture name if leaderboard not full.
+            this.hasEnteredName = this.leaderboard.isFull();
+        }
+        if(!this.hasEnteredName){
+            Flynn.mcp.input.startTextCapture();
         }
         this.cursorBlinkTimer = 0;
 

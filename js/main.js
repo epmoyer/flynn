@@ -129,7 +129,7 @@ Game.Main = Class.extend({
         Game.config.score = 500000;
         Game.config.leaderboard = new Flynn.Leaderboard(
             ['name', 'score'],  // attributeList
-            6,                  // maxItems
+            7,                  // maxItems
             true                // sortDescending
             );
         Game.config.leaderboard.setDefaultList(

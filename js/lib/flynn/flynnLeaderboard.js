@@ -80,8 +80,16 @@ Flynn.Leaderboard = Class.extend({
         return this.leaderList[this.leaderList.length-1];
     },
 
+    getLength: function(){
+        return this.leaderList.length();
+    },
+
+    isFull: function(){
+        return this.leaderList.length >= this.maxItems;
+    },
+
     sortAndTruncate: function(){
-        // sort hiscore in ascending order
+        // sort high score in ascending order
         if (this.sortDescending){
             this.leaderList.sort(function(a, b) {
                 return b['score'] - a['score'];
