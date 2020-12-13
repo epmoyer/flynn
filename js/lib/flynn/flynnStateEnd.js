@@ -145,7 +145,9 @@ Flynn.StateEnd = Flynn.State.extend({
 
     handleInputs: function(input, elapsed_ticks) {
         if (this.hasEnteredName) {
-            if (input.virtualButtonWasPressed("UI_enter")) {
+            if (input.virtualButtonWasPressed("UI_enter") ||
+                (Flynn.mcp.browserSupportsTouch && input.getLastTouchLocation() !== null)
+                ) {
                 // Exit back to the parent state
                 Flynn.mcp.changeState(this.parentState);
                 Flynn.sounds.ui_move.play();
@@ -326,8 +328,11 @@ Flynn.StateEnd = Flynn.State.extend({
                     aspect_ratio: this.font_aspect_ratio
                 });
             }
+            var text = Flynn.mcp.browserSupportsTouch ? 
+                "TAP ANYWHERE TO CONTINUE" :
+                "PRESS <ENTER> TO CONTINUE";
             ctx.vectorText2({
-                text: "PRESS <ENTER> TO CONTINUE",
+                text: text,
                 scale: 2,
                 y: 450,
                 color: this.color,

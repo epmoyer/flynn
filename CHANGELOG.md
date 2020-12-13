@@ -10,10 +10,12 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## 3.19.0 - 2020-12-12
 **(WORK IN PROGRESS)**
 - Added
-    - .getLastTouchLocation() to Flynn.InputHandler
-    -  "!" character to Flynn.Font.Block
+    - On-screen touch keyboard for high score name entry on touch devices (in flynnStateEnd).
+    - Add .getLastTouchLocation() to Flynn.InputHandler. Allows games to interrogate the position of touch events to implement their own full-screen touch handlers.
+    - Add "!" character to Flynn.Font.Block
 - Fixed
-    - Backspace key now captured again (used to work, but broke for some browsers).
+    - Backspace key is now captured again (it used to work, but then broke with browser evolution).
+    - flynnCanvas was inspecting Game object for canvas size. Fixed to use Flynn.mcp object.
 
 ## 3.18.0 - 2020-02-09
 ### Changed
