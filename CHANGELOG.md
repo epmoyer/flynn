@@ -13,11 +13,10 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
     - On-screen touch keyboard for high score name entry on touch devices (in flynnStateEnd).
     - Add .getLastTouchLocation() to Flynn.InputHandler. Allows games to interrogate the position of touch events to implement their own full-screen touch handlers.
     - Add "!" character to Flynn.Font.Block
-- Changed
-    - Leaderboard will accept up to 10 entries (by default).
 - Fixed
     - Backspace key is now captured again (it used to work, but then broke with browser evolution).
     - flynnCanvas was inspecting Game object for canvas size. Fixed to use Flynn.mcp object.
+    - flynnStateEnd will accept names for up to {leaderboard}.maxItems entries if Leaderboard not yet full.
 
 ## 3.18.0 - 2020-02-09
 ### Changed
