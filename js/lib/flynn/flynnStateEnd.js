@@ -22,7 +22,7 @@ Flynn.StateEnd = Flynn.State.extend({
     REFERENCE_KEY_GAP: 5,
     KEYBOARD_MARGIN: 5,
 
-    init: function(score, leaderboard, color, title, prompt, parentState, score_is_seconds, font_aspect_ratio) {
+    init: function(score, leaderboard, color, title, prompt, parentState, score_is_seconds, font_aspect_ratio, game_version) {
         this._super();
 
         this.score = score;
@@ -36,8 +36,12 @@ Flynn.StateEnd = Flynn.State.extend({
         if(font_aspect_ratio == undefined){
             font_aspect_ratio = 1.0;
         }
+        if(game_version == undefined){
+            game_version = '0.0';
+        }
         this.score_is_seconds = score_is_seconds;
         this.font_aspect_ratio = font_aspect_ratio;
+        this.game_version = game_version;
 
         if(typeof(parentState)==='undefined'){
             throw("API has changed. parentState is now a required parameter.");
@@ -167,7 +171,7 @@ Flynn.StateEnd = Flynn.State.extend({
                 this.leaderboard.add({
                     'name':this.nickname,
                     'score':this.score,
-                    'version': Game.VERSION,
+                    'version': this.game_version,
                     'timestamp': (new Date()).toISOString(),
                 });
                 Flynn.sounds.ui_success.play();
