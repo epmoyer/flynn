@@ -209,7 +209,7 @@ Flynn.VALogo = Class.extend({
                 ctx.fillStyle=Flynn.Util.shadeBlend(-(1-this.bubbles[i].brightness), Flynn.Colors.ORANGE);
             }
             else{
-                ctx.fillStyle=Flynn.Util.shadeBlend(-(1-this.bubbles[i].brightness), Flynn.Colors.GRAY);
+                ctx.fillStyle=Flynn.Util.shadeBlend(-(1-this.bubbles[i].brightness), "#808080");
             }
             ctx.fillRect(
                 this.bubbles[i].x * this.scale + this.position.x,

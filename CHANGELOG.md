@@ -17,6 +17,7 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
     - Backspace key is now captured again (it used to work, but then broke with browser evolution).
     - flynnCanvas was inspecting Game object for canvas size. Fixed to use Flynn.mcp object.
     - flynnStateEnd will accept names for up to {leaderboard}.maxItems entries if Leaderboard not yet full.
+    - VA logo smoke restored.
 
 ## 3.18.0 - 2020-02-09
 ### Changed
