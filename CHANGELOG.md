@@ -7,7 +7,7 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## Unreleased
 **(None)**
 
-## 3.19.0 - 2020-12-12
+## 3.19.1 - 2020-12-12
 **(WORK IN PROGRESS)**
 - Added
     - On-screen touch keyboard for high score name entry on touch devices (in flynnStateEnd).
