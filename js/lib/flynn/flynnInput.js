@@ -372,9 +372,10 @@ Flynn.InputHandler = Class.extend({
         };
     },
 
-    startTextCapture: function(){
+    startTextCapture: function(default_text){
+        default_text = default_text == undefined ? '' : default_text;
         this.text_capture_enabled = true;
-        this.captured_text = '';
+        this.captured_text = default_text;
     },
 
     getTextCapture: function(){

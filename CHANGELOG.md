@@ -13,6 +13,7 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
     - On-screen touch keyboard for high score name entry on touch devices (in flynnStateEnd).
     - Add .getLastTouchLocation() to Flynn.InputHandler. Allows games to interrogate the position of touch events to implement their own full-screen touch handlers.
     - Add "!" character to Flynn.Font.Block
+    - Remember high-score name (within the current session) and default to the previous name on subsequent high-score entry screens.
 - Fixed
     - Backspace key is now captured again (it used to work, but then broke with browser evolution).
     - flynnCanvas was inspecting Game object for canvas size. Fixed to use Flynn.mcp object.

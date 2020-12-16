@@ -3,6 +3,11 @@
 //    End of game screens (leaderboard score entry/table)
 //--------------------------------------------
 
+Flynn.persist = Flynn.persist || {}; // Create namespace
+Flynn.persist.StateEnd = {
+    default_leaderboard_name: ''
+};
+
 (function () { "use strict";
 
 Flynn.StateEnd = Flynn.State.extend({
@@ -59,7 +64,7 @@ Flynn.StateEnd = Flynn.State.extend({
             this.hasEnteredName = this.leaderboard.isFull();
         }
         if(!this.hasEnteredName){
-            Flynn.mcp.input.startTextCapture();
+            Flynn.mcp.input.startTextCapture(Flynn.persist.StateEnd.default_leaderboard_name);
         }
         this.cursorBlinkTimer = 0;
 
@@ -175,6 +180,9 @@ Flynn.StateEnd = Flynn.State.extend({
                     'timestamp': (new Date()).toISOString(),
                 });
                 Flynn.sounds.ui_success.play();
+
+                // Remember name as default for next high-score entry
+                Flynn.persist.StateEnd.default_leaderboard_name = this.nickname;
 
                 // Force history of "UI_enter" press to clear.  Games using touch may
                 // may UI_ender to a touch button encompassing the whole screen.
