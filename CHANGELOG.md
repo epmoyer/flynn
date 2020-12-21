@@ -14,6 +14,8 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
     - Add .getLastTouchLocation() to Flynn.InputHandler. Allows games to interrogate the position of touch events to implement their own full-screen touch handlers.
     - Add "!" character to Flynn.Font.Block
     - Remember high-score name (within the current session) and default to the previous name on subsequent high-score entry screens.
+- Changed
+    - Flynn.Util.doBoundsBounce returns boolean (true if bounce occurred)
 - Fixed
     - Backspace key is now captured again (it used to work, but then broke with browser evolution).
     - flynnCanvas was inspecting Game object for canvas size. Fixed to use Flynn.mcp object.

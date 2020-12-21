@@ -494,23 +494,29 @@ Flynn.Util = {
         //       Rectangle bounds (type: Flynn.Rect)
         //    restitution:
         //       bounce restitution (0 to 1)
-        //
+        // Returns:
+        //    True if bounced, False if not.
         if(object.position.x < bounds.left + object.radius){
             object.position.x = bounds.left + object.radius + (bounds.left + object.radius - object.position.x);
             object.velocity.x = -object.velocity.x * restitution;
+            return true;
         }
         else if (object.position.x > bounds.right - object.radius){
             object.position.x = bounds.right - object.radius - (object.position.x - (bounds.right - object.radius));
             object.velocity.x = -object.velocity.x * restitution;
+            return true;
         }
         if(object.position.y < bounds.top + object.radius){
             object.position.y = bounds.top + object.radius + (bounds.top + object.radius - object.position.y);
             object.velocity.y = -object.velocity.y * restitution;
+            return true;
         }
         else if (object.position.y > bounds.bottom - object.radius){
             object.position.y = bounds.bottom - object.radius - (object.position.y - (bounds.bottom - object.radius));
             object.velocity.y = -object.velocity.y * restitution;
+            return true;
         }  
+        return false;
     },
 
     doBoundsWrap: function(object, bounds){
