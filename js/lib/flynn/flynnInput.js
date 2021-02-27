@@ -811,7 +811,7 @@
             }
         },
 
-        flushWasPressed: function () {
+        flushButtons: function () {
             // Flush (clear) the "WasPressed" state of all buttons. After a flush, no button will
             // report as "WasPressed" unit it is 1) released (if currently down) and 2) pressed
             // (again). This effectively clears any pending "WasPressed" events.
