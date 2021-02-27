@@ -8,22 +8,23 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 **(None)**
 
 ## 3.20.0 2021-
-- Added
-    - Optional dotSize argument to Flynn.Particles
+### Added
+- Optional dotSize argument to Flynn.Particles
+- .flushWasPressed() method to Flynn.InputHandler
 
 ## 3.19.1 - 2020-12-12
-- Added
-    - On-screen touch keyboard for high score name entry on touch devices (in flynnStateEnd).
-    - Add .getLastTouchLocation() to Flynn.InputHandler. Allows games to interrogate the position of touch events to implement their own full-screen touch handlers.
-    - Add "!" character to Flynn.Font.Block
-    - Remember high-score name (within the current session) and default to the previous name on subsequent high-score entry screens.
-- Changed
-    - Flynn.Util.doBoundsBounce returns boolean (true if bounce occurred)
-- Fixed
-    - Backspace key is now captured again (it used to work, but then broke with browser evolution).
-    - flynnCanvas was inspecting Game object for canvas size. Fixed to use Flynn.mcp object.
-    - flynnStateEnd will accept names for up to {leaderboard}.maxItems entries if Leaderboard not yet full.
-    - VA logo smoke restored.
+### Added
+- On-screen touch keyboard for high score name entry on touch devices (in flynnStateEnd).
+- Add .getLastTouchLocation() to Flynn.InputHandler. Allows games to interrogate the position of touch events to implement their own full-screen touch handlers.
+- Add "!" character to Flynn.Font.Block
+- Remember high-score name (within the current session) and default to the previous name on subsequent high-score entry screens.
+### Changed
+- Flynn.Util.doBoundsBounce returns boolean (true if bounce occurred)
+### Fixed
+- Backspace key is now captured again (it used to work, but then broke with browser evolution).
+- flynnCanvas was inspecting Game object for canvas size. Fixed to use Flynn.mcp object.
+- flynnStateEnd will accept names for up to {leaderboard}.maxItems entries if Leaderboard not yet full.
+- VA logo smoke restored.
 
 ## 3.18.0 - 2020-02-09
 ### Changed
