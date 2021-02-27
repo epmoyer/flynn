@@ -7,8 +7,11 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## Unreleased
 **(None)**
 
+## 3.20.0 2021-
+- Added
+    - Optional dotSize argument to Flynn.Particles
+
 ## 3.19.1 - 2020-12-12
-**(WORK IN PROGRESS)**
 - Added
     - On-screen touch keyboard for high score name entry on touch devices (in flynnStateEnd).
     - Add .getLastTouchLocation() to Flynn.InputHandler. Allows games to interrogate the position of touch events to implement their own full-screen touch handlers.
