@@ -284,7 +284,10 @@
             return array[this.randomIntFromInterval(0, array.length - 1)];
         },
 
-        randomShuffleInPlace: function (array) {
+        randomShuffle: function (array) {
+            // Return a shuffled copy of an array.
+
+            array = array.slice(); // copy
             let currentIndex = array.length; let temporaryValue; let randomIndex;
 
             // While there remain elements to shuffle...
