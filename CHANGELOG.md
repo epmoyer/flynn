@@ -7,10 +7,11 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## Unreleased
 **(None)**
 
-## 3.20.0 2021-
+## 3.20.0 2021-03-02
 ### Added
 - Optional dotSize argument to Flynn.Particles
-- .flushButtons() method to Flynn.InputHandler
+- Flynn.InputHandler.flushButtons()
+- Flynn.Util.randomShuffleInPlace()
 
 ## 3.19.1 - 2020-12-12
 ### Added
