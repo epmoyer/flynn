@@ -812,15 +812,19 @@
         },
 
         flushButtons: function () {
-            // Flush (clear) the "WasPressed" state of all buttons. After a flush, no button will
-            // report as "WasPressed" unit it is 1) released (if currently down) and 2) pressed
-            // (again). This effectively clears any pending "WasPressed" events.
+            // Effectively flush (clear) the "WasPressed" state of all buttons. After a flush,
+            // no button will report as "WasPressed" unit it is 1) released (if currently down)
+            // and 2) pressed (again). This effectively clears any pending "WasPressed" events.
 
-            for (const value of Object.values(this.virtualButtons)) {
-                value.pressWasReported = true;
+            for (const virtualButton of Object.values(this.virtualButtons)) {
+                if (virtualButton.isDown) {
+                    virtualButton.pressWasReported = true;
+                }
             }
-            for (const value of Object.values(this.uiButtons)) {
-                value.pressWasReported = true;
+            for (const virtualButton of Object.values(this.uiButtons)) {
+                if (virtualButton.isDown) {
+                    virtualButton.pressWasReported = true;
+                }
             }
         },
 
