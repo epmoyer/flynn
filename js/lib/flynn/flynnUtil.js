@@ -286,6 +286,7 @@
 
         randomShuffle: function (array) {
             // Return a shuffled copy of an array.
+            // See: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 
             array = array.slice(); // copy
             let currentIndex = array.length; let temporaryValue; let randomIndex;
