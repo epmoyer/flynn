@@ -241,6 +241,10 @@
         //    enable_distance_order: (boolean) Set true to sort meshes by their
         //        distance from the camera and draw in order from farthest
         //        to closest.
+        //    screenOffsetV: (Victor) a 2d vector specifying a screen offset.
+        //        screenOffsetV will be added to the final screen location of rendered
+        //        objects before drawing.  Can be used to translate the rendering, or
+        //        implement screen shake effects.
         //
             opts = opts || {};
             this.width = opts.width || Flynn.mcp.canvasWidth;
@@ -249,6 +253,7 @@
             this.enable_vertices = opts.enable_vertices || false;
             this.enable_lines = Flynn.Util.defaultTrue(opts.enable_lines);
             this.enable_distance_order = Flynn.Util.defaultTrue(opts.enable_distance_order);
+            this.screenOffsetV = opts.screenOffsetV || new Victor(0, 0);
         },
 
         project: function (coord, transMat) {
@@ -258,8 +263,8 @@
             // from top left. We then need to transform them again to have x:0, y:0 on top left.
             // var x = point.x * this.width + this.width / 2.0 >> 0;
             // var y = -point.y * this.height + this.height / 2.0 >> 0;
-            const x = point.x * this.width + this.width / 2.0;
-            const y = -point.y * this.height + this.height / 2.0;
+            const x = point.x * this.width + this.width / 2.0 + this.screenOffsetV.x;
+            const y = -point.y * this.height + this.height / 2.0 + this.screenOffsetV.y;
             return (new BABYLON.Vector3(x, y, point.z));
         },
 
