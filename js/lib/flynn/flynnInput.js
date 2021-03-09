@@ -37,7 +37,7 @@
                 this.show = true;
                 return;
             } else {
-                for (i = 0, len = this.visible_states; i < len; i++) {
+                for (i = 0, len = this.visible_states.length; i < len; i++) {
                     if (current_state == this.visible_states[i]) {
                         this.show = true;
                         return;
@@ -430,6 +430,14 @@
             event_caught = false;
             for (name in this.touchRegions) {
                 region = this.touchRegions[name];
+                if (!region.show) {
+                    // TODO: This breaks invisible touch regions in legacy games.
+                    // Add an "active_states" property to specify the game state
+                    // in which the touch region is active, set .is_active accordingly,
+                    // and use it here.
+                    continue;
+                }
+
                 if (region.shape == 'round') {
                     touched = Math.pow(x - region.center_x, 2) + Math.pow(y - region.center_y, 2) <
                    Math.pow(region.radius, 2);

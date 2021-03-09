@@ -4,10 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres
 to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## TODO
+- TODO: 3.20.0 breaks invisible touch regions.  See TODO: in flynnInput.js.
+
 ## Unreleased
 **(None)**
 
 ## 3.20.0 2021-03-02
+### Fixed
+- visible_states now work for touch regions and virtual (touch) joysticks (Flynn.mcp.input.addTouchRegion() and Flynn.mcp.input.addVirtualJoystick()).
+### Changed
+- **Breaking**: Touch regions are now disabled in game states not appearing in visible_states. This breaks legacy games that made use of invisible touch regions.  A future fix release will add an active_states argument which defaults to all states (thus restoring legacy functionality with no required code changes). 
 ### Added
 - Optional dotSize argument to Flynn.Particles
 - Flynn.InputHandler.flushButtons()
