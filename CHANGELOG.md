@@ -16,6 +16,8 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ### Changed
 - **Breaking**: Touch regions are now disabled in game states not appearing in visible_states. This breaks legacy games that made use of invisible touch regions.  A future fix release will add an active_states argument which defaults to all states (thus restoring legacy functionality with no required code changes). 
 ### Added
+- URL Flags
+    - `quiethalt`: When set, halting (Accent/Tilde key in dev mode) will not display the "MCP HALTED. CLICK TO RESUME." banner.  This flag is provided to make it easier to get clean screenshots of a game for publishing.
 - Optional dotSize argument to Flynn.Particles
 - Flynn.InputHandler.flushButtons()
 - Flynn.Util.randomShuffle()
