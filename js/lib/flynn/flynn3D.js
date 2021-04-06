@@ -9,13 +9,13 @@
     });
 
     Flynn._3DMesh = Class.extend({
-        init: function (name, vertices, lines, color, custom_palette, alpha) {
+        init: function (name, vertices, lines, color, custom_palette, alpha, culling_faces, culling_lines) {
             this.name = name;
             this.vertices = vertices;
             this.lines = lines;
             this.color = color;
             this.custom_palette = typeof (custom_palette) === 'undefined' ? null : custom_palette;
-            this.alpha = alpha == undefined ? 1.0 : alpha;
+            this.alpha = alpha === undefined ? 1.0 : alpha;
 
             this.projected_vertices = new Array(vertices.length);
             this.check_vertices = new Array(vertices.length);
@@ -68,30 +68,80 @@
     Flynn._3DMeshCube = Flynn._3DMesh.extend({
         init: function (name, size, color) {
             const loc = size / 2;
+            //
+            //    1 --------------- 0
+            //    | \             / |
+            //    |  5 ----------4  |
+            //    |  |           |  |
+            //    |  |           |  |
+            //    |  |           |  |
+            //    |  |           |  |
+            //    |  6 ----------7  |
+            //    | /             \ |
+            //    2 --------------- 3
+            //
+            //   Y
+            //   ^  Z
+            //   | /
+            //   +--> X
+            //
             const vertices = [
-                new BABYLON.Vector3(loc, loc, loc),
-                new BABYLON.Vector3(-loc, loc, loc),
-                new BABYLON.Vector3(-loc, -loc, loc),
-                new BABYLON.Vector3(loc, -loc, loc),
-                new BABYLON.Vector3(loc, loc, -loc),
-                new BABYLON.Vector3(-loc, loc, -loc),
-                new BABYLON.Vector3(-loc, -loc, -loc),
-                new BABYLON.Vector3(loc, -loc, -loc)
+                new BABYLON.Vector3(loc, loc, loc), // 0
+                new BABYLON.Vector3(-loc, loc, loc), // 1
+                new BABYLON.Vector3(-loc, -loc, loc), // 2
+                new BABYLON.Vector3(loc, -loc, loc), // 3
+                new BABYLON.Vector3(loc, loc, -loc), // 4
+                new BABYLON.Vector3(-loc, loc, -loc), // 5
+                new BABYLON.Vector3(-loc, -loc, -loc), // 6
+                new BABYLON.Vector3(loc, -loc, -loc) // 7
             ];
 
             const lines = [
-                0, 1, 2, 3, 0, // Top
-                4, // Side 1
-                5, 6, 7, 4, // Bottom
+                0, 1, 2, 3, 0, // Front
+                4, // Top right edge
+                5, 6, 7, 4, // Back
                 Flynn.PEN_UP,
-                1, 5, // Side 2
+                1, 5, // Top left edge
                 Flynn.PEN_UP,
-                2, 6, // Side 3
+                2, 6, // Bottom left edge
                 Flynn.PEN_UP,
-                3, 7 // Side 4
+                3, 7 //  Bottom right edge
             ];
 
-            this._super(name, vertices, lines, color);
+            // - All face vertices MUST be in the same plane.
+            // - The two vectors defined by (V_0, V_1) and (V_0, V_N-1) must have a <180 degree
+            //   interior angle. Together they define the normal vector of the face's VISIBLE
+            //   side per the "right hand rule".
+            //
+            const culling_faces = [
+                [0, 1, 2, 3], // Face 0 (front)
+                [7, 6, 5, 4], // Face 1 (back)
+                [0, 3, 7, 4], // Face 2 (right)
+                [0, 4, 5, 1], // Face 3 (top)
+                [1, 5, 6, 2], // Face 4 (left)
+                [2, 6, 7, 3], // Face 5 (bottom)
+            ];
+
+            const culling_lines = [
+                // [Vertex A, Vertex B, [List of faces that include the line]]
+                // TODO: It would be possible for code to algorithmically determine
+                //       the list of faces which include each line.  Do that instead
+                //       so it is easier to author this data structure.
+                [0, 1, [0, 3]],
+                [1, 2, [0, 4]],
+                [2, 3, [0, 5]],
+                [3, 0, [0, 2]],
+                [0, 4, [2, 3]],
+                [1, 5, [3, 4]],
+                [2, 6, [4, 5]],
+                [3, 7, [5, 2]],
+                [7, 4, [1, 2]],
+                [4, 5, [1, 3]],
+                [5, 6, [1, 4]],
+                [6, 7, [1, 5]],
+            ];
+
+            this._super(name, vertices, lines, color, null, 1.0, culling_faces, culling_lines);
         },
     });
 
@@ -102,8 +152,8 @@
             const lines = [];
             let num_vertices = 0;
             for (i = 0; i < points.length; i += 2) {
-                if (points[i] == Flynn.PEN_COMMAND) {
-                    if (points[i + 1] == Flynn.PEN_UP) {
+                if (points[i] === Flynn.PEN_COMMAND) {
+                    if (points[i + 1] === Flynn.PEN_UP) {
                         lines.push(Flynn.PEN_UP);
                     }
                     continue;

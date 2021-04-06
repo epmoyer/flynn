@@ -3,6 +3,14 @@
         "browser": true,
         "es2021": true
     },
+    "globals": {
+        "Game": true,
+        "BABYLON": true,
+        "Flynn": true,
+        "Victor": true,
+        "Class": true,
+        "Howl": true
+    },
     "extends": [
         "plugin:react/recommended",
         "standard"
