@@ -78,14 +78,15 @@ var Game = Game || {}; // Create namespace
                             'TEXT',
                             Flynn.Font.Normal);
                         this.meshes.push(mesh_text);
-                        // Flynn._3DMeshText() returns text in the X/Z plane.  Add a Y offset to bring the
-                        // text to the top face of the box.
-                        const offset = new BABYLON.Vector3(0, this.CUBE_SIZE / 2, 0);
-                        for (j = 0; j < mesh_text.vertices.length; j++) {
-                            mesh_text.vertices[j] = mesh_text.vertices[j].add(offset);
-                        }
+
+                        let offset = new BABYLON.Vector3(0, this.CUBE_SIZE / 2, 0);
+                        const transformMatrix = BABYLON.Matrix.RotationYawPitchRoll(
+                            meshBox.rotation.y, meshBox.rotation.x, meshBox.rotation.z);
+                        offset = BABYLON.Vector3.TransformCoordinates(offset, transformMatrix);
+
                         // Give text same position/rotation as box
-                        mesh_text.position = meshBox.position;
+                        // mesh_text.position = meshBox.position;
+                        mesh_text.position = meshBox.position.add(offset);
                         mesh_text.rotation = meshBox.rotation;
                     }
                 }
