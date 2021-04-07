@@ -82,7 +82,7 @@ var Game = Game || {}; // Create namespace
                 }
 
                 meshBox.rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
-                meshBox.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
+                meshBox.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI * 2);
 
                 // -----------------------------
                 // Add text to one face of box
