@@ -484,6 +484,20 @@
                     const dot = BABYLON.Vector3.Dot(vLineOfSight, vNormal);
                     if (dot < 0) {
                         visibleFaces.push(i);
+
+                        // ----------------------------
+                        // Fill visible face
+                        // ----------------------------
+                        const polygonPoints = [];
+                        for (const vertexIndex of faceVertexList) {
+                            const screenVertex = screenVertices[vertexIndex];
+                            polygonPoints.push(screenVertex.x);
+                            polygonPoints.push(screenVertex.y);
+                        }
+                        // ctx.graphics.beginFill(0x00ffff, 0.5);
+                        ctx.graphics.beginFill(0x000000, 1.0);
+                        ctx.graphics.drawPolygon(polygonPoints);
+                        ctx.graphics.endFill();
                     }
                 }
 
