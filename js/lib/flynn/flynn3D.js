@@ -442,28 +442,58 @@
 
             if (this.enable_lines) {
                 if (this.enable_backface_culling) {
-                    this._render_culled(ctx, meshes, drawList);
+                    this._render_culled(ctx, camera, meshes, drawList);
                 } else {
                     this._render_lines(ctx, meshes, drawList);
                 }
             }
         },
 
-        _render_culled: function (ctx, meshes, drawList) {
+        _render_culled: function (ctx, camera, meshes, drawList) {
             let cMesh, color;
 
-            // ----------------------------
-            // Render lines
-            // ----------------------------
-            for (const drawItem of Object.values(drawList)) {
+            // Fer each mesh, farthest to nearest
+            for (const drawItem of drawList) {
                 color = drawItem.color;
                 cMesh = meshes[drawItem.mesh_index];
                 if (cMesh.culling_lines === null || cMesh.culling_faces == null) {
                     // This mesh has no culling information
                     continue;
                 }
+
                 const vertices = cMesh.projected_vertices;
+
+                // ----------------------------
+                // Determine visible faces
+                // ----------------------------
+                const visibleFaces = [];
+                for (const [i, faceVertexList] of cMesh.culling_faces.entries()) {
+                    const point1 = vertices[faceVertexList[0]];
+                    let point2 = vertices[faceVertexList[1]];
+                    const vector1 = point2.subtract(point1);
+
+                    point2 = vertices[faceVertexList[faceVertexList.length - 1]];
+                    const vector2 = point2.subtract(point1);
+                    const vNormal = BABYLON.Vector3.Cross(vector1, vector2);
+
+                    const vLineOfSight = point1.subtract(camera.position);
+                    const dot = BABYLON.Vector3.Dot(vLineOfSight, vNormal);
+                    if (dot < 0) {
+                        visibleFaces.push(i);
+                    }
+                }
+
+                // ----------------------------
+                // Render lines
+                // ----------------------------
                 for (const lineDescriptor of cMesh.culling_lines) {
+                    const lineFaces = lineDescriptor[2];
+                    const filteredArray = lineFaces.filter(value => visibleFaces.includes(value));
+                    if (filteredArray.length ==- 0) {
+                        // This line does not appear in a visible face, do do not draw it.
+                        continue;
+                    }
+
                     const vertex1 = vertices[lineDescriptor[0]];
                     const vertex2 = vertices[lineDescriptor[1]];
                     ctx.vectorStart(color, false, false, cMesh.alpha);
