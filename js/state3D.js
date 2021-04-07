@@ -15,7 +15,7 @@ var Game = Game || {}; // Create namespace
         CUBE_DISTANCE: 15,
         CUBE_SIZE: 2,
         MIN_CUBE_SEPARATION: 3.5,
-        NUM_CUBES: 60,
+        NUM_CUBES: 40,
 
         // Text meshes
         TEXT_SIZE: 0.5,

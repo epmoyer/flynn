@@ -447,7 +447,8 @@
                 if (this.enable_backface_culling) {
                     this._render_culled(ctx, camera, meshes, drawList);
                 } else {
-                    this._render_lines(ctx, meshes, drawList);
+                    // this._render_lines(ctx, meshes, drawList);
+                    this._render_all_wireframe(ctx, meshes, drawList);
                 }
             }
         },
@@ -522,64 +523,61 @@
             }
         },
 
-        _render_lines: function (ctx, meshes, drawList) {
-            let cMesh, color;
+        _render_all_wireframe: function (ctx, meshes, drawList) {
+            for (const drawItem of drawList) {
+                this._render_mesh_wireframe(
+                    ctx, meshes[drawItem.mesh_index], drawItem.color, drawItem.dim_factor);
+            }
+        },
 
-            // ------------------------
-            // Draw vectors
-            // ------------------------
-            for (let i = 0; i < drawList.length; i++) {
-                const target = drawList[i];
-                color = target.color;
-                cMesh = meshes[target.mesh_index];
-                const lines = cMesh.lines;
-                const vertices = cMesh.projected_vertices;
-                let penUp = true;
-                let started = false;
-                for (let indexLines = 0; indexLines < lines.length; indexLines++) {
-                    const indexVertex = lines[indexLines];
-                    if (indexVertex == Flynn.PEN_UP) {
-                    // Pen up
-                        ctx.vectorEnd();
-                        penUp = true;
-                        continue;
-                    }
-                    if (indexVertex >= Flynn.PEN_COLOR0) {
-                    // Switch colors
-                        const colorIndex = indexVertex - Flynn.PEN_COLOR0;
-                        if (cMesh.custom_palette == null) {
-                            color = Flynn.ColorsOrdered[colorIndex];
-                        } else {
-                            color = cMesh.custom_palette[colorIndex];
-                        }
-                        if (target.dim_factor != 0) {
-                            color = Flynn.Util.shadeColor(color, target.dim_factor);
-                        }
-                        if (started) {
-                            ctx.vectorEnd();
-                        }
-                        penUp = true;
-                        continue;
-                    }
-                    const vertex = vertices[indexVertex];
-                    if (penUp) {
-                    // Start line if vertex in front of camera
-                        if (cMesh.check_vertices[indexVertex].z > 0) {
-                            ctx.vectorStart(color, false, false, cMesh.alpha);
-                            ctx.vectorMoveTo(vertex.x, vertex.y);
-                            penUp = false;
-                            started = true;
-                        }
-                    } else {
-                    // Draw line if vertex in front of camera
-                        if (cMesh.check_vertices[indexVertex].z > 0) {
-                            ctx.vectorLineTo(vertex.x, vertex.y);
-                        }
-                    }
-                }
-                if (started) {
+        _render_mesh_wireframe: function (ctx, cMesh, color, dimFactor) {
+            const lines = cMesh.lines;
+            const vertices = cMesh.projected_vertices;
+            let penUp = true;
+            let started = false;
+            for (let indexLines = 0; indexLines < lines.length; indexLines++) {
+                const indexVertex = lines[indexLines];
+                if (indexVertex == Flynn.PEN_UP) {
+                // Pen up
                     ctx.vectorEnd();
+                    penUp = true;
+                    continue;
                 }
+                if (indexVertex >= Flynn.PEN_COLOR0) {
+                // Switch colors
+                    const colorIndex = indexVertex - Flynn.PEN_COLOR0;
+                    if (cMesh.custom_palette == null) {
+                        color = Flynn.ColorsOrdered[colorIndex];
+                    } else {
+                        color = cMesh.custom_palette[colorIndex];
+                    }
+                    if (dimFactor !== 0) {
+                        color = Flynn.Util.shadeColor(color, dimFactor);
+                    }
+                    if (started) {
+                        ctx.vectorEnd();
+                    }
+                    penUp = true;
+                    continue;
+                }
+                const vertex = vertices[indexVertex];
+                if (penUp) {
+                // Start line if vertex in front of camera
+                    if (cMesh.check_vertices[indexVertex].z > 0) {
+                        ctx.vectorStart(color, false, false, cMesh.alpha);
+                        ctx.vectorMoveTo(vertex.x, vertex.y);
+                        penUp = false;
+                        started = true;
+                    }
+                } else {
+                // Draw line if vertex in front of camera
+                    if (cMesh.check_vertices[indexVertex].z > 0) {
+                        ctx.vectorLineTo(vertex.x, vertex.y);
+                    }
+                }
+            }
+            if (started) {
+                ctx.vectorEnd();
             }
         },
 
