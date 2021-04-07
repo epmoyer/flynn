@@ -75,7 +75,7 @@ var Game = Game || {}; // Create namespace
 
             this.renderers = [
                 {
-                    name: 'FOG (GRADUAL), BACK-SIDE CULLING',
+                    name: 'FOG (GRADUAL), BACK-FACE CULLING',
                     renderer: new Flynn._3DRenderer(
                         { fog_distance: { near: 70, far: 100 }, enable_backface_culling: true })
                 },

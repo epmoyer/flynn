@@ -19,6 +19,7 @@
             this.culling_faces = typeof (culling_faces) === 'undefined' ? null : culling_faces;
             this.culling_lines = typeof (culling_lines) === 'undefined' ? null : culling_lines;
 
+            this.world_vertices = new Array(vertices.length);
             this.projected_vertices = new Array(vertices.length);
             this.check_vertices = new Array(vertices.length);
             this.pre_rotation = null;
@@ -416,7 +417,9 @@
                     const transformCheckMatrix = worldMatrix.multiply(viewMatrix);
 
                     for (let indexVertices = 0; indexVertices < cMesh.vertices.length; indexVertices++) {
-                    // First, we project the 3D coordinates into the 2D space
+                        // Transform into world coordinates (for backside culling)
+                        cMesh.world_vertices[indexVertices] = BABYLON.Vector3.TransformCoordinates(cMesh.vertices[indexVertices], worldMatrix);
+                        // First, we project the 3D coordinates into the 2D space
                         const projectedPoint = this.project(cMesh.vertices[indexVertices], transformMatrix);
                         cMesh.projected_vertices[indexVertices] = projectedPoint;
                         cMesh.check_vertices[indexVertices] = BABYLON.Vector3.TransformCoordinates(cMesh.vertices[indexVertices], transformCheckMatrix);
@@ -461,18 +464,19 @@
                     continue;
                 }
 
-                const vertices = cMesh.projected_vertices;
+                const worldVertices = cMesh.world_vertices;
+                const screenVertices = cMesh.projected_vertices;
 
                 // ----------------------------
                 // Determine visible faces
                 // ----------------------------
                 const visibleFaces = [];
                 for (const [i, faceVertexList] of cMesh.culling_faces.entries()) {
-                    const point1 = vertices[faceVertexList[0]];
-                    let point2 = vertices[faceVertexList[1]];
+                    const point1 = worldVertices[faceVertexList[0]];
+                    let point2 = worldVertices[faceVertexList[1]];
                     const vector1 = point2.subtract(point1);
 
-                    point2 = vertices[faceVertexList[faceVertexList.length - 1]];
+                    point2 = worldVertices[faceVertexList[faceVertexList.length - 1]];
                     const vector2 = point2.subtract(point1);
                     const vNormal = BABYLON.Vector3.Cross(vector1, vector2);
 
@@ -489,13 +493,13 @@
                 for (const lineDescriptor of cMesh.culling_lines) {
                     const lineFaces = lineDescriptor[2];
                     const filteredArray = lineFaces.filter(value => visibleFaces.includes(value));
-                    if (filteredArray.length ==- 0) {
+                    if (filteredArray.length === 0) {
                         // This line does not appear in a visible face, do do not draw it.
                         continue;
                     }
 
-                    const vertex1 = vertices[lineDescriptor[0]];
-                    const vertex2 = vertices[lineDescriptor[1]];
+                    const vertex1 = screenVertices[lineDescriptor[0]];
+                    const vertex2 = screenVertices[lineDescriptor[1]];
                     ctx.vectorStart(color, false, false, cMesh.alpha);
                     ctx.vectorMoveTo(vertex1.x, vertex1.y);
                     ctx.vectorLineTo(vertex2.x, vertex2.y);
