@@ -6,7 +6,8 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## TODO
 - TODO: 3.20.0 breaks invisible touch regions.  See TODO: in flynnInput.js.
-- TODO: Generation of world_vertices (for 3D) does some of the same math as projection.  Optimize performance.
+- TODO: Generation of world_vertices (for 3D) does some of the same math as projection. Optimize performance.
+- TODO: dimFactor seems redundant.  Is already applied to color (in 3D Mesh rendering). Remove?  Is it getting applied twice to wireframe? With ill effect?
 
 ## Unreleased
 **(None)**

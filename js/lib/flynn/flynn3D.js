@@ -461,7 +461,8 @@
                 color = drawItem.color;
                 cMesh = meshes[drawItem.mesh_index];
                 if (cMesh.culling_lines === null || cMesh.culling_faces == null) {
-                    // This mesh has no culling information
+                    // This mesh has no culling information, so render it as a standard wireframe
+                    this._render_mesh_wireframe(ctx, cMesh, color, drawItem.dim_factor);
                     continue;
                 }
 
