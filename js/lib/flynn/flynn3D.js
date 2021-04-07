@@ -169,9 +169,9 @@
             //
 
             const vertices = [
-                (new BABYLON.Vector3(-Math.sqrt(2 / 3), -1 / 3, -Math.sqrt(2 / 9))).scale(size), // 0
-                (new BABYLON.Vector3(Math.sqrt(2 / 3), -1 / 3, -Math.sqrt(2 / 9))).scale(size), // 1
-                (new BABYLON.Vector3(0, -1 / 3, Math.sqrt(8 / 9))).scale(size), // 2
+                (new BABYLON.Vector3(-Math.sqrt(2 / 3), -1 / 3, Math.sqrt(2 / 9))).scale(size), // 0
+                (new BABYLON.Vector3(Math.sqrt(2 / 3), -1 / 3, Math.sqrt(2 / 9))).scale(size), // 1
+                (new BABYLON.Vector3(0, -1 / 3, -Math.sqrt(8 / 9))).scale(size), // 2
                 (new BABYLON.Vector3(0, 1, 0)).scale(size), // 3
             ];
 

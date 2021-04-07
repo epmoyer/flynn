@@ -12,10 +12,18 @@ var Game = Game || {}; // Create namespace
             Flynn.Colors.BLUE,
             Flynn.Colors.RED,
         ],
+        TETRAHEDRON_COLORS: [
+            Flynn.Colors.CYAN,
+            Flynn.Colors.MAGENTA,
+            Flynn.Colors.ORANGE
+        ],
         CUBE_DISTANCE: 15,
         CUBE_SIZE: 2,
         MIN_CUBE_SEPARATION: 3.5,
-        NUM_CUBES: 40,
+        NUM_CUBES: 30,
+
+        NUM_TETRAHEDRONS: 15,
+        TETRAHEDRON_SIZE: 2,
 
         // Text meshes
         TEXT_SIZE: 0.5,
@@ -26,71 +34,119 @@ var Game = Game || {}; // Create namespace
             this._super();
 
             this.meshes = [];
+
+            // --------------------
+            // Add cubes
+            // --------------------
             for (i = 0; i < this.NUM_CUBES; i++) {
-                color = i == 0 ? Flynn.Colors.WHITE : Flynn.Util.randomChoice(this.CUBE_COLORS);
+                color = i === 0 ? Flynn.Colors.WHITE : Flynn.Util.randomChoice(this.CUBE_COLORS);
                 meshBox = new Flynn._3DMeshCube('Cube', this.CUBE_SIZE, color);
 
                 // Add rotational speed properties to the mesh
+                // TODO: Remove?
                 meshBox.rot_speed_x = 0;
                 meshBox.rot_speed_y = 0;
 
-                if (i !== 0) {
-                    // -------------------------
-                    // Position new box at least MIN_CUBE_SEPARATION from all others.
-                    // -------------------------
-                    let numRetries = 0;
-                    let done = false;
-                    while (numRetries < 20000 && !done) {
-                        numRetries += 1;
-                        meshBox.position = new BABYLON.Vector3(
-                            Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE),
-                            Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE / 2, this.CUBE_DISTANCE / 2),
-                            Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE)
-                        );
-                        done = true;
-                        for (const mesh of this.meshes) {
-                            // if (mesh === meshBox) {
-                            //     // Don't compare against ourselves
-                            //     continue;
-                            // }
-                            const distance = mesh.position.subtract(meshBox.position).length();
-                            if (distance < this.MIN_CUBE_SEPARATION) {
-                                done = false;
-                            }
+                if (i === 0) {
+                    // Center cube
+                    this.meshes.push(meshBox);
+                    continue;
+                }
+
+                // -------------------------
+                // Position new box at least MIN_CUBE_SEPARATION from all others.
+                // -------------------------
+                let numRetries = 0;
+                let done = false;
+                while (numRetries < 20000 && !done) {
+                    numRetries += 1;
+                    meshBox.position = new BABYLON.Vector3(
+                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE),
+                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE / 2, this.CUBE_DISTANCE / 2),
+                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE)
+                    );
+                    done = true;
+                    for (const mesh of this.meshes) {
+                        // if (mesh === meshBox) {
+                        //     // Don't compare against ourselves
+                        //     continue;
+                        // }
+                        const distance = mesh.position.subtract(meshBox.position).length();
+                        if (distance < this.MIN_CUBE_SEPARATION) {
+                            done = false;
                         }
                     }
-                    if (numRetries === 0) {
-                        console.log('Unable to place box MIN_CUBE_SEPARATION form all others.');
-                    }
-
-                    meshBox.rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
-                    meshBox.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
-
-                    // -----------------------------
-                    // Add text to one face of box
-                    // -----------------------------
-                    meshText = new Flynn._3DMeshText(
-                        'Text',
-                        Flynn.mcp.canvas.ctx,
-                        this.TEXT_SIZE,
-                        color,
-                        'TEXT',
-                        Flynn.Font.Normal);
-                    this.meshes.push(meshText);
-
-                    // Determine the offset vector (vOffset) from the center of the box
-                    // to the surface where the text will appear.
-                    let vOffset = new BABYLON.Vector3(0, this.CUBE_SIZE / 2, 0);
-                    const transformMatrix = BABYLON.Matrix.RotationYawPitchRoll(
-                        meshBox.rotation.y, meshBox.rotation.x, meshBox.rotation.z);
-                    vOffset = BABYLON.Vector3.TransformCoordinates(vOffset, transformMatrix);
-
-                    // Position the text on the surface of the box, with the same rotation
-                    // as the box.
-                    meshText.position = meshBox.position.add(vOffset);
-                    meshText.rotation = meshBox.rotation;
                 }
+                if (numRetries === 0) {
+                    console.log('Unable to place box MIN_CUBE_SEPARATION form all others.');
+                }
+
+                meshBox.rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
+                meshBox.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
+
+                // -----------------------------
+                // Add text to one face of box
+                // -----------------------------
+                meshText = new Flynn._3DMeshText(
+                    'Text',
+                    Flynn.mcp.canvas.ctx,
+                    this.TEXT_SIZE,
+                    color,
+                    'TEXT',
+                    Flynn.Font.Normal);
+                this.meshes.push(meshText);
+
+                // Determine the offset vector (vOffset) from the center of the box
+                // to the surface where the text will appear.
+                let vOffset = new BABYLON.Vector3(0, this.CUBE_SIZE / 2, 0);
+                const transformMatrix = BABYLON.Matrix.RotationYawPitchRoll(
+                    meshBox.rotation.y, meshBox.rotation.x, meshBox.rotation.z);
+                vOffset = BABYLON.Vector3.TransformCoordinates(vOffset, transformMatrix);
+
+                // Position the text on the surface of the box, with the same rotation
+                // as the box.
+                meshText.position = meshBox.position.add(vOffset);
+                meshText.rotation = meshBox.rotation;
+
                 this.meshes.push(meshBox);
+            }
+
+            // --------------------
+            // Add tetrahedrons
+            // --------------------
+            for (i = 0; i < this.NUM_TETRAHEDRONS; i++) {
+                color = Flynn.Util.randomChoice(this.TETRAHEDRON_COLORS);
+                const meshTetrahedron = new Flynn._3DMeshTetrahedron(
+                    'Tetrahedron', this.TETRAHEDRON_SIZE, color);
+
+                // -------------------------
+                // Position new tetrahedron at least MIN_CUBE_SEPARATION from all others.
+                // -------------------------
+                let numRetries = 0;
+                let done = false;
+                while (numRetries < 20000 && !done) {
+                    numRetries += 1;
+                    meshTetrahedron.position = new BABYLON.Vector3(
+                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE),
+                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE / 2, this.CUBE_DISTANCE / 2),
+                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE)
+                    );
+                    done = true;
+                    for (const mesh of this.meshes) {
+                        const distance = mesh.position.subtract(meshTetrahedron.position).length();
+                        if (distance < this.MIN_CUBE_SEPARATION) {
+                            done = false;
+                        }
+                    }
+                }
+                if (numRetries === 0) {
+                    console.log('Unable to place tetrahedron MIN_CUBE_SEPARATION form all others.');
+                }
+
+                meshTetrahedron.rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
+                meshTetrahedron.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
+
+                this.meshes.push(meshTetrahedron);
             }
 
             this.camera = new Flynn._3DCamera();
