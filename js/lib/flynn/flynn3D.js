@@ -16,6 +16,8 @@
             this.color = color;
             this.custom_palette = typeof (custom_palette) === 'undefined' ? null : custom_palette;
             this.alpha = alpha === undefined ? 1.0 : alpha;
+            this.culling_faces = typeof (culling_faces) === 'undefined' ? null : culling_faces;
+            this.culling_lines = typeof (culling_lines) === 'undefined' ? null : culling_lines;
 
             this.projected_vertices = new Array(vertices.length);
             this.check_vertices = new Array(vertices.length);
@@ -439,7 +441,36 @@
             }
 
             if (this.enable_lines) {
-                this._render_lines(ctx, meshes, drawList);
+                if (this.enable_backface_culling) {
+                    this._render_culled(ctx, meshes, drawList);
+                } else {
+                    this._render_lines(ctx, meshes, drawList);
+                }
+            }
+        },
+
+        _render_culled: function (ctx, meshes, drawList) {
+            let cMesh, color;
+
+            // ----------------------------
+            // Render lines
+            // ----------------------------
+            for (const drawItem of Object.values(drawList)) {
+                color = drawItem.color;
+                cMesh = meshes[drawItem.mesh_index];
+                if (cMesh.culling_lines === null || cMesh.culling_faces == null) {
+                    // This mesh has no culling information
+                    continue;
+                }
+                const vertices = cMesh.projected_vertices;
+                for (const lineDescriptor of cMesh.culling_lines) {
+                    const vertex1 = vertices[lineDescriptor[0]];
+                    const vertex2 = vertices[lineDescriptor[1]];
+                    ctx.vectorStart(color, false, false, cMesh.alpha);
+                    ctx.vectorMoveTo(vertex1.x, vertex1.y);
+                    ctx.vectorLineTo(vertex2.x, vertex2.y);
+                    ctx.vectorEnd();
+                }
             }
         },
 
