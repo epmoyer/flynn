@@ -22,7 +22,7 @@ var Game = Game || {}; // Create namespace
         TEXT_DISTANCE: 15,
 
         init: function () {
-            let i, j, color, meshBox, mesh_text;
+            let i, j, color, meshBox, meshText;
             this._super();
 
             this.meshes = [];
@@ -66,29 +66,29 @@ var Game = Game || {}; // Create namespace
                     meshBox.rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
                     meshBox.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
 
-                    if (true) {
-                        // -----------------------------
-                        // Add text to one face of box
-                        // -----------------------------
-                        mesh_text = new Flynn._3DMeshText(
-                            'Text',
-                            Flynn.mcp.canvas.ctx,
-                            this.TEXT_SIZE,
-                            color,
-                            'TEXT',
-                            Flynn.Font.Normal);
-                        this.meshes.push(mesh_text);
+                    // -----------------------------
+                    // Add text to one face of box
+                    // -----------------------------
+                    meshText = new Flynn._3DMeshText(
+                        'Text',
+                        Flynn.mcp.canvas.ctx,
+                        this.TEXT_SIZE,
+                        color,
+                        'TEXT',
+                        Flynn.Font.Normal);
+                    this.meshes.push(meshText);
 
-                        let vOffset = new BABYLON.Vector3(0, this.CUBE_SIZE / 2, 0);
-                        const transformMatrix = BABYLON.Matrix.RotationYawPitchRoll(
-                            meshBox.rotation.y, meshBox.rotation.x, meshBox.rotation.z);
-                        vOffset = BABYLON.Vector3.TransformCoordinates(vOffset, transformMatrix);
+                    // Determine the offset vector (vOffset) from the center of the box
+                    // to the surface where the text will appear.
+                    let vOffset = new BABYLON.Vector3(0, this.CUBE_SIZE / 2, 0);
+                    const transformMatrix = BABYLON.Matrix.RotationYawPitchRoll(
+                        meshBox.rotation.y, meshBox.rotation.x, meshBox.rotation.z);
+                    vOffset = BABYLON.Vector3.TransformCoordinates(vOffset, transformMatrix);
 
-                        // Give text same position/rotation as box
-                        // mesh_text.position = meshBox.position;
-                        mesh_text.position = meshBox.position.add(vOffset);
-                        mesh_text.rotation = meshBox.rotation;
-                    }
+                    // Position the text on the surface of the box, with the same rotation
+                    // as the box.
+                    meshText.position = meshBox.position.add(vOffset);
+                    meshText.rotation = meshBox.rotation;
                 }
                 this.meshes.push(meshBox);
             }
