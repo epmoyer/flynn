@@ -79,14 +79,14 @@ var Game = Game || {}; // Create namespace
                             Flynn.Font.Normal);
                         this.meshes.push(mesh_text);
 
-                        let offset = new BABYLON.Vector3(0, this.CUBE_SIZE / 2, 0);
+                        let vOffset = new BABYLON.Vector3(0, this.CUBE_SIZE / 2, 0);
                         const transformMatrix = BABYLON.Matrix.RotationYawPitchRoll(
                             meshBox.rotation.y, meshBox.rotation.x, meshBox.rotation.z);
-                        offset = BABYLON.Vector3.TransformCoordinates(offset, transformMatrix);
+                        vOffset = BABYLON.Vector3.TransformCoordinates(vOffset, transformMatrix);
 
                         // Give text same position/rotation as box
                         // mesh_text.position = meshBox.position;
-                        mesh_text.position = meshBox.position.add(offset);
+                        mesh_text.position = meshBox.position.add(vOffset);
                         mesh_text.rotation = meshBox.rotation;
                     }
                 }
