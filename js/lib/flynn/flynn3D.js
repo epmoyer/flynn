@@ -291,6 +291,8 @@
         //    enable_distance_order: (boolean) Set true to sort meshes by their
         //        distance from the camera and draw in order from farthest
         //        to closest.
+        //    enable_backface_culling: (boolean) Enable back-face culling for those
+        //        meshes which declare culling info.
         //    screenOffsetV: (Victor) a 2d vector specifying a screen offset.
         //        screenOffsetV will be added to the final screen location of rendered
         //        objects before drawing.  Can be used to translate the rendering, or
@@ -303,6 +305,7 @@
             this.enable_vertices = opts.enable_vertices || false;
             this.enable_lines = Flynn.Util.defaultTrue(opts.enable_lines);
             this.enable_distance_order = Flynn.Util.defaultTrue(opts.enable_distance_order);
+            this.enable_backface_culling = opts.enable_backface_culling || false;
             this.screenOffsetV = opts.screenOffsetV || new Victor(0, 0);
         },
 
