@@ -14,6 +14,7 @@ var Game = Game || {}; // Create namespace
         ],
         CUBE_DISTANCE: 15,
         CUBE_SIZE: 2,
+        MIN_CUBE_SEPARATION: 3.5,
         NUM_CUBES: 60,
 
         // Text meshes
@@ -21,27 +22,50 @@ var Game = Game || {}; // Create namespace
         TEXT_DISTANCE: 15,
 
         init: function () {
-            let i, j, color, mesh_box, mesh_text;
+            let i, j, color, meshBox, mesh_text;
             this._super();
 
             this.meshes = [];
             for (i = 0; i < this.NUM_CUBES; i++) {
                 color = i == 0 ? Flynn.Colors.WHITE : Flynn.Util.randomChoice(this.CUBE_COLORS);
-                mesh_box = new Flynn._3DMeshCube('Cube', this.CUBE_SIZE, color);
-                this.meshes.push(mesh_box);
+                meshBox = new Flynn._3DMeshCube('Cube', this.CUBE_SIZE, color);
 
                 // Add rotational speed properties to the mesh
-                mesh_box.rot_speed_x = 0;
-                mesh_box.rot_speed_y = 0;
+                meshBox.rot_speed_x = 0;
+                meshBox.rot_speed_y = 0;
 
-                if (i != 0) {
-                    mesh_box.position = new BABYLON.Vector3(
-                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE),
-                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE / 2, this.CUBE_DISTANCE / 2),
-                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE)
-                    );
-                    mesh_box.rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
-                    mesh_box.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
+                if (i !== 0) {
+
+                    // -------------------------
+                    // Position new box at least MIN_CUBE_SEPARATION from all others.
+                    // -------------------------
+                    let numRetries = 0;
+                    let done = false;
+                    while (numRetries < 20000 && !done) {
+                        numRetries += 1;
+                        meshBox.position = new BABYLON.Vector3(
+                            Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE),
+                            Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE / 2, this.CUBE_DISTANCE / 2),
+                            Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE)
+                        );
+                        done = true;
+                        for (const mesh of this.meshes) {
+                            // if (mesh === meshBox) {
+                            //     // Don't compare against ourselves
+                            //     continue;
+                            // }
+                            const distance = mesh.position.subtract(meshBox.position).length();
+                            if (distance < this.MIN_CUBE_SEPARATION) {
+                                done = false;
+                            }
+                        }
+                    }
+                    if (numRetries === 0) {
+                        console.log('Unable to place box MIN_CUBE_SEPARATION form all others.');
+                    }
+
+                    meshBox.rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
+                    meshBox.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
 
                     if (false) {
                         // -----------------------------
@@ -62,10 +86,11 @@ var Game = Game || {}; // Create namespace
                             mesh_text.vertices[j] = mesh_text.vertices[j].add(offset);
                         }
                         // Give text same position/rotation as box
-                        mesh_text.position = mesh_box.position;
-                        mesh_text.rotation = mesh_box.rotation;
+                        mesh_text.position = meshBox.position;
+                        mesh_text.rotation = meshBox.rotation;
                     }
                 }
+                this.meshes.push(meshBox);
             }
 
             this.camera = new Flynn._3DCamera();
