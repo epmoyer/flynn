@@ -35,7 +35,6 @@ var Game = Game || {}; // Create namespace
                 meshBox.rot_speed_y = 0;
 
                 if (i !== 0) {
-
                     // -------------------------
                     // Position new box at least MIN_CUBE_SEPARATION from all others.
                     // -------------------------
