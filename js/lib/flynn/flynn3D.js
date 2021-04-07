@@ -151,7 +151,7 @@
     Flynn._3DMeshTetrahedron = Flynn._3DMesh.extend({
         init: function (name, size, color) {
             //
-            //             3 
+            //             3
             //            /|\
             //           / | \
             //          /  |  \
@@ -169,22 +169,16 @@
             //
 
             const vertices = [
-                (new BABYLON.Vector3( -Math.sqrt(2/3), -1/3, -Math.sqrt(2/9) )).scale(size), // 0
-                (new BABYLON.Vector3(  Math.sqrt(2/3), -1/3, -Math.sqrt(2/9) )).scale(size), // 1
-                (new BABYLON.Vector3(               0, -1/3,  Math.sqrt(8/9) )).scale(size), // 2
-                (new BABYLON.Vector3(               0,    1,               0 )).scale(size), // 3
+                (new BABYLON.Vector3(-Math.sqrt(2 / 3), -1 / 3, -Math.sqrt(2 / 9))).scale(size), // 0
+                (new BABYLON.Vector3(Math.sqrt(2 / 3), -1 / 3, -Math.sqrt(2 / 9))).scale(size), // 1
+                (new BABYLON.Vector3(0, -1 / 3, Math.sqrt(8 / 9))).scale(size), // 2
+                (new BABYLON.Vector3(0, 1, 0)).scale(size), // 3
             ];
 
             const lines = [
-                0, 1, 2, 3, 0, // Front
-                4, // Top right edge
-                5, 6, 7, 4, // Back
+                0, 1, 3, 0, 2, 3,
                 Flynn.PEN_UP,
-                1, 5, // Top left edge
-                Flynn.PEN_UP,
-                2, 6, // Bottom left edge
-                Flynn.PEN_UP,
-                3, 7 //  Bottom right edge
+                2, 1 // back right bottom
             ];
 
             // - All face vertices MUST be in the same plane.
@@ -193,12 +187,10 @@
             //   side per the "right hand rule".
             //
             const culling_faces = [
-                [0, 1, 2, 3], // Face 0 (front)
-                [7, 6, 5, 4], // Face 1 (back)
-                [0, 3, 7, 4], // Face 2 (right)
-                [0, 4, 5, 1], // Face 3 (top)
-                [1, 5, 6, 2], // Face 4 (left)
-                [2, 6, 7, 3], // Face 5 (bottom)
+                [0, 1, 3], // Face 0 (front)
+                [0, 2, 1], // Face 1 (bottom)
+                [0, 3, 2], // Face 2 (left)
+                [1, 2, 3], // Face 3 (right)
             ];
 
             const culling_lines = [
@@ -206,18 +198,12 @@
                 // TODO: It would be possible for code to algorithmically determine
                 //       the list of faces which include each line.  Do that instead
                 //       so it is easier to author this data structure.
-                [0, 1, [0, 3]],
-                [1, 2, [0, 4]],
-                [2, 3, [0, 5]],
-                [3, 0, [0, 2]],
-                [0, 4, [2, 3]],
-                [1, 5, [3, 4]],
-                [2, 6, [4, 5]],
-                [3, 7, [5, 2]],
-                [7, 4, [1, 2]],
-                [4, 5, [1, 3]],
-                [5, 6, [1, 4]],
-                [6, 7, [1, 5]],
+                [0, 1, [0, 1]],
+                [1, 3, [0, 3]],
+                [0, 3, [0, 2]],
+                [0, 2, [2, 1]],
+                [1, 2, [3, 1]],
+                [2, 3, [2, 3]],
             ];
 
             this._super(name, vertices, lines, color, null, 1.0, culling_faces, culling_lines);
