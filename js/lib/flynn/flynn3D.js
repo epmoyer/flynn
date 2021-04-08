@@ -119,6 +119,8 @@
             //    | /             \ |
             //    2 --------------- 3
             //
+            //   - The origin is equidistant from all vertices (i.e. at the center of mass).
+            //
             //   Y
             //   ^  Z
             //   | /
@@ -147,12 +149,14 @@
                 3, 7 //  Bottom right edge
             ];
 
-            // - All face vertices MUST be in the same plane.
-            // - The two vectors defined by (V_0, V_1) and (V_0, V_N-1) must have a <180 degree
-            //   interior angle. Together they define the normal vector of the face's VISIBLE
-            //   side per the "right hand rule".
-            //
             const culling_faces = [
+                // - A list of vertex lists, each describing a face.
+                // - Each vertex list may contain 3 or more points.
+                // - All face vertices MUST be in the same plane.
+                // - The two vectors defined by (V_0, V_1) and (V_0, V_N-1) must have a <180 degree
+                //   interior angle. Together they define the normal vector of the face's VISIBLE
+                //   side per the "right hand rule".
+                //
                 [0, 1, 2, 3], // Face 0 (front)
                 [7, 6, 5, 4], // Face 1 (back)
                 [0, 3, 7, 4], // Face 2 (right)
@@ -183,6 +187,8 @@
 
     Flynn._3DMeshTetrahedron = Flynn._3DMesh.extend({
         init: function (name, height, color) {
+            //  Args:
+            //    height: The height, from flat base (0, 1, 2) to top point (3).
             //
             //             3
             //            /|\
@@ -194,6 +200,10 @@
             //      /  /       \  \
             //     / /           \ \
             //    0 --------------- 1
+            //
+            //   - Vertex 2 is "into the page".
+            //   - 0,1,2 form a flat "bottom".
+            //   - The origin is equidistant from all vertices (i.e. at the center of mass).
             //
             //   Y
             //   ^  Z
@@ -215,12 +225,14 @@
                 2, 1 // back right bottom
             ];
 
-            // - All face vertices MUST be in the same plane.
-            // - The two vectors defined by (V_0, V_1) and (V_0, V_N-1) must have a <180 degree
-            //   interior angle. Together they define the normal vector of the face's VISIBLE
-            //   side per the "right hand rule".
-            //
             const culling_faces = [
+                // - A list of vertex lists, each describing a face.
+                // - Each vertex list may contain 3 or more points.
+                // - All face vertices MUST be in the same plane.
+                // - The two vectors defined by (V_0, V_1) and (V_0, V_N-1) must have a <180 degree
+                //   interior angle. Together they define the normal vector of the face's VISIBLE
+                //   side per the "right hand rule".
+                //
                 [0, 1, 3], // Face 0 (front)
                 [0, 2, 1], // Face 1 (bottom)
                 [0, 3, 2], // Face 2 (left)
