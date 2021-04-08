@@ -18,6 +18,9 @@
             this.alpha = alpha === undefined ? 1.0 : alpha;
             this.culling_faces = typeof (culling_faces) === 'undefined' ? null : culling_faces;
             this.culling_lines = typeof (culling_lines) === 'undefined' ? null : culling_lines;
+            if (this.culling_lines !== null && this.culling_faces !== null) {
+                this.culling_lines = this._parse_culling_lines(this.culling_lines, this.culling_faces);
+            }
 
             this.world_vertices = new Array(vertices.length);
             this.projected_vertices = new Array(vertices.length);
@@ -25,6 +28,39 @@
             this.pre_rotation = null;
             this.rotation = BABYLON.Vector3.Zero();
             this.position = BABYLON.Vector3.Zero();
+        },
+
+        _parse_culling_lines: function (cullingLines, cullingFaces) {
+            // Culling lines are passed as an array of arrays where each array contains
+            // the two vertices of a vector line to draw.  We will:
+            // - Parse the lines,
+            // - For each line determine which faces include that line
+            // - Append list of indices of faces that include the line.
+            const newCullingLines = [];
+            for (const lineDescriptor of cullingLines) {
+                const vertexIndex1 = lineDescriptor[0];
+                const vertexIndex2 = lineDescriptor[1];
+                const faceIndices = [];
+                for (const [cullingFaceIndex, cullingFaceVertices] of cullingFaces.entries()) {
+                    const vertices = [...cullingFaceVertices];
+                    vertices.push(cullingFaceVertices[0]);
+                    let match = false;
+                    for (let i = 0; i < vertices.length - 1; i++) {
+                        if (vertices[i] === vertexIndex1 && vertices[i + 1] === vertexIndex2) {
+                            match = true;
+                        }
+                        if (vertices[i + 1] === vertexIndex1 && vertices[i] === vertexIndex2) {
+                            match = true;
+                        }
+                    }
+                    if (match) {
+                        faceIndices.push(cullingFaceIndex);
+                    }
+                }
+                newCullingLines.push([vertexIndex1, vertexIndex2, faceIndices]);
+            }
+            console.log(newCullingLines);
+            return newCullingLines;
         },
 
         to_segments: function () {
