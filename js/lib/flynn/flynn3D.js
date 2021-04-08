@@ -162,22 +162,19 @@
             ];
 
             const culling_lines = [
-                // [Vertex A, Vertex B, [List of faces that include the line]]
-                // TODO: It would be possible for code to algorithmically determine
-                //       the list of faces which include each line.  Do that instead
-                //       so it is easier to author this data structure.
-                [0, 1, [0, 3]],
-                [1, 2, [0, 4]],
-                [2, 3, [0, 5]],
-                [3, 0, [0, 2]],
-                [0, 4, [2, 3]],
-                [1, 5, [3, 4]],
-                [2, 6, [4, 5]],
-                [3, 7, [5, 2]],
-                [7, 4, [1, 2]],
-                [4, 5, [1, 3]],
-                [5, 6, [1, 4]],
-                [6, 7, [1, 5]],
+                // [Vertex A, Vertex B]
+                [0, 1],
+                [1, 2],
+                [2, 3],
+                [3, 0],
+                [0, 4],
+                [1, 5],
+                [2, 6],
+                [3, 7],
+                [7, 4],
+                [4, 5],
+                [5, 6],
+                [6, 7],
             ];
 
             this._super(name, vertices, lines, color, null, 1.0, culling_faces, culling_lines);
@@ -231,16 +228,13 @@
             ];
 
             const culling_lines = [
-                // [Vertex A, Vertex B, [List of faces that include the line]]
-                // TODO: It would be possible for code to algorithmically determine
-                //       the list of faces which include each line.  Do that instead
-                //       so it is easier to author this data structure.
-                [0, 1, [0, 1]],
-                [1, 3, [0, 3]],
-                [0, 3, [0, 2]],
-                [0, 2, [2, 1]],
-                [1, 2, [3, 1]],
-                [2, 3, [2, 3]],
+                // [Vertex A, Vertex B]
+                [0, 1],
+                [1, 3],
+                [0, 3],
+                [0, 2],
+                [1, 2],
+                [2, 3],
             ];
 
             this._super(name, vertices, lines, color, null, 1.0, culling_faces, culling_lines);
