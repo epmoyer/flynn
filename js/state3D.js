@@ -100,7 +100,16 @@ var Game = Game || {}; // Create namespace
 
             this.renderers = [
                 {
-                    name: 'FOG (GRADUAL), BACK-FACE CULLING, HIDDEN LINE REMOVAL',
+                    name: 'FOG (GRADUAL), BACK-FACE CULLING, OPACITY',
+                    renderer: new Flynn._3DRenderer(
+                        {
+                            fog_distance: { near: 70, far: 100 },
+                            enable_backface_culling: true,
+                            enable_opacity: true
+                        })
+                },
+                {
+                    name: 'FOG (GRADUAL), BACK-FACE CULLING, (NO OPACITY)',
                     renderer: new Flynn._3DRenderer(
                         { fog_distance: { near: 70, far: 100 }, enable_backface_culling: true })
                 },
@@ -138,7 +147,7 @@ var Game = Game || {}; // Create namespace
             this.meshes[0].rotation.y = Math.PI / 8;
         },
 
-        _getNewObjectLocation: function() {
+        _getNewObjectLocation: function () {
             // Find a location at least MIN_OBJECT_SEPARATION form all existing objects.
             let position;
             let numRetries = 0;

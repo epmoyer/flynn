@@ -401,6 +401,8 @@
         //        to closest.
         //    enable_backface_culling: (boolean) Enable back-face culling for those
         //        meshes which declare culling info.
+        //    enable_opacity: (boolean) Enable opacity for those
+        //        meshes which declare culling info.
         //    screenOffsetV: (Victor) a 2d vector specifying a screen offset.
         //        screenOffsetV will be added to the final screen location of rendered
         //        objects before drawing.  Can be used to translate the rendering, or
@@ -414,6 +416,7 @@
             this.enable_lines = Flynn.Util.defaultTrue(opts.enable_lines);
             this.enable_distance_order = Flynn.Util.defaultTrue(opts.enable_distance_order);
             this.enable_backface_culling = opts.enable_backface_culling || false;
+            this.enable_opacity = opts.enable_opacity || false;
             this.screenOffsetV = opts.screenOffsetV || new Victor(0, 0);
         },
 
@@ -592,19 +595,21 @@
                     if (dot < 0) {
                         visibleFaces.push(i);
 
-                        // ----------------------------
-                        // Fill visible face
-                        // ----------------------------
-                        const polygonPoints = [];
-                        for (const vertexIndex of faceVertexList) {
-                            const screenVertex = screenVertices[vertexIndex];
-                            polygonPoints.push(screenVertex.x);
-                            polygonPoints.push(screenVertex.y);
+                        if(this.enable_opacity) {
+                            // ----------------------------
+                            // Fill visible face
+                            // ----------------------------
+                            const polygonPoints = [];
+                            for (const vertexIndex of faceVertexList) {
+                                const screenVertex = screenVertices[vertexIndex];
+                                polygonPoints.push(screenVertex.x);
+                                polygonPoints.push(screenVertex.y);
+                            }
+                            // ctx.graphics.beginFill(0x00ffff, 0.5);
+                            ctx.graphics.beginFill(0x000000, 1.0);
+                            ctx.graphics.drawPolygon(polygonPoints);
+                            ctx.graphics.endFill();
                         }
-                        // ctx.graphics.beginFill(0x00ffff, 0.5);
-                        ctx.graphics.beginFill(0x000000, 1.0);
-                        ctx.graphics.drawPolygon(polygonPoints);
-                        ctx.graphics.endFill();
                     }
                 }
 
