@@ -11,11 +11,12 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## Unreleased
 **(None)**
 
-## 3.21.0u 2021-04-05
+## 3.21.0u 2021-04-06
 ### Added
-- 3D
+- flynn3D
     - Add backside culling.
     - Add opacity (hidden line removal).
+    - Add `_3DMeshTetrahedron()` constructor.
 - flynnText
     - Imported as-is; not reviewed yet.  Not added to demo/test app yet.
 
