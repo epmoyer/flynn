@@ -42,11 +42,6 @@ var Game = Game || {}; // Create namespace
                 color = i === 0 ? Flynn.Colors.WHITE : Flynn.Util.randomChoice(this.CUBE_COLORS);
                 meshBox = new Flynn._3DMeshCube('Cube', this.CUBE_SIZE, color);
 
-                // Add rotational speed properties to the mesh
-                // TODO: Remove?
-                meshBox.rot_speed_x = 0;
-                meshBox.rot_speed_y = 0;
-
                 if (i === 0) {
                     // Center cube
                     this.meshes.push(meshBox);
