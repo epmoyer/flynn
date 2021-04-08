@@ -15,7 +15,7 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ### Added
 - 3D
     - Add backside culling.
-    - Add hidden line removal.
+    - Add opacity (hidden line removal).
 - flynnText
     - Imported as-is; not reviewed yet.  Not added to demo/test app yet.
 
