@@ -539,7 +539,7 @@
                                 this.VERTEX_SIZE);
                         }
                     }
-                    drawList.push({ mesh_index: index, distance: distance, color: color, dim_factor: dimFactor });
+                    drawList.push({ mesh_index: index, distance: distance, color: color });
                 }
             }
 
@@ -567,7 +567,7 @@
                 cMesh = meshes[drawItem.mesh_index];
                 if (cMesh.culling_lines === null || cMesh.culling_faces == null) {
                     // This mesh has no culling information, so render it as a standard wireframe
-                    this._render_mesh_wireframe(ctx, cMesh, color, drawItem.dim_factor);
+                    this._render_mesh_wireframe(ctx, cMesh, color);
                     continue;
                 }
 
@@ -632,11 +632,11 @@
         _render_all_wireframe: function (ctx, meshes, drawList) {
             for (const drawItem of drawList) {
                 this._render_mesh_wireframe(
-                    ctx, meshes[drawItem.mesh_index], drawItem.color, drawItem.dim_factor);
+                    ctx, meshes[drawItem.mesh_index], drawItem.color);
             }
         },
 
-        _render_mesh_wireframe: function (ctx, cMesh, color, dimFactor) {
+        _render_mesh_wireframe: function (ctx, cMesh, color) {
             const lines = cMesh.lines;
             const vertices = cMesh.projected_vertices;
             let penUp = true;
@@ -656,9 +656,6 @@
                         color = Flynn.ColorsOrdered[colorIndex];
                     } else {
                         color = cMesh.custom_palette[colorIndex];
-                    }
-                    if (dimFactor !== 0) {
-                        color = Flynn.Util.shadeColor(color, dimFactor);
                     }
                     if (started) {
                         ctx.vectorEnd();
