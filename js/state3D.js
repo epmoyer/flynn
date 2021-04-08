@@ -19,7 +19,7 @@ var Game = Game || {}; // Create namespace
         ],
         CUBE_DISTANCE: 15,
         CUBE_SIZE: 2,
-        MIN_CUBE_SEPARATION: 3.5,
+        MIN_OBJECT_SEPARATION: 3.5,
         NUM_CUBES: 30,
 
         NUM_TETRAHEDRONS: 15,
@@ -52,35 +52,7 @@ var Game = Game || {}; // Create namespace
                     this.meshes.push(meshBox);
                     continue;
                 }
-
-                // -------------------------
-                // Position new box at least MIN_CUBE_SEPARATION from all others.
-                // -------------------------
-                let numRetries = 0;
-                let done = false;
-                while (numRetries < 20000 && !done) {
-                    numRetries += 1;
-                    meshBox.position = new BABYLON.Vector3(
-                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE),
-                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE / 2, this.CUBE_DISTANCE / 2),
-                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE)
-                    );
-                    done = true;
-                    for (const mesh of this.meshes) {
-                        // if (mesh === meshBox) {
-                        //     // Don't compare against ourselves
-                        //     continue;
-                        // }
-                        const distance = mesh.position.subtract(meshBox.position).length();
-                        if (distance < this.MIN_CUBE_SEPARATION) {
-                            done = false;
-                        }
-                    }
-                }
-                if (numRetries === 0) {
-                    console.log('Unable to place box MIN_CUBE_SEPARATION form all others.');
-                }
-
+                meshBox.position = this._getNewObjectLocation();
                 meshBox.rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
                 meshBox.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI * 2);
 
@@ -119,30 +91,7 @@ var Game = Game || {}; // Create namespace
                 const meshTetrahedron = new Flynn._3DMeshTetrahedron(
                     'Tetrahedron', this.TETRAHEDRON_HEIGHT, color);
 
-                // -------------------------
-                // Position new tetrahedron at least MIN_CUBE_SEPARATION from all others.
-                // -------------------------
-                let numRetries = 0;
-                let done = false;
-                while (numRetries < 20000 && !done) {
-                    numRetries += 1;
-                    meshTetrahedron.position = new BABYLON.Vector3(
-                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE),
-                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE / 2, this.CUBE_DISTANCE / 2),
-                        Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE)
-                    );
-                    done = true;
-                    for (const mesh of this.meshes) {
-                        const distance = mesh.position.subtract(meshTetrahedron.position).length();
-                        if (distance < this.MIN_CUBE_SEPARATION) {
-                            done = false;
-                        }
-                    }
-                }
-                if (numRetries === 0) {
-                    console.log('Unable to place tetrahedron MIN_CUBE_SEPARATION form all others.');
-                }
-
+                meshTetrahedron.position = this._getNewObjectLocation();
                 meshTetrahedron.rotation.x = Flynn.Util.randomFromInterval(0, Math.PI);
                 meshTetrahedron.rotation.y = Flynn.Util.randomFromInterval(0, Math.PI);
 
@@ -192,6 +141,32 @@ var Game = Game || {}; // Create namespace
             // Spin the center cube a bit
             this.meshes[0].rotation.x = Math.PI / 8;
             this.meshes[0].rotation.y = Math.PI / 8;
+        },
+
+        _getNewObjectLocation: function() {
+            // Find a location at least MIN_OBJECT_SEPARATION form all existing objects.
+            let position;
+            let numRetries = 0;
+            let done = false;
+            while (numRetries < 10000 && !done) {
+                numRetries += 1;
+                position = new BABYLON.Vector3(
+                    Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE),
+                    Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE / 2, this.CUBE_DISTANCE / 2),
+                    Flynn.Util.randomFromInterval(-this.CUBE_DISTANCE, this.CUBE_DISTANCE)
+                );
+                done = true;
+                for (const mesh of this.meshes) {
+                    const distance = mesh.position.subtract(position).length();
+                    if (distance < this.MIN_OBJECT_SEPARATION) {
+                        done = false;
+                    }
+                }
+            }
+            if (numRetries === 0) {
+                console.log('Unable to place object at least MIN_OBJECT_SEPARATION form all others.');
+            }
+            return position;
         },
 
         handleInputs: function (input, elapsed_ticks) {
