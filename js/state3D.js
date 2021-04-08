@@ -23,7 +23,7 @@ var Game = Game || {}; // Create namespace
         NUM_CUBES: 30,
 
         NUM_TETRAHEDRONS: 15,
-        TETRAHEDRON_SIZE: 2,
+        TETRAHEDRON_HEIGHT: 2,
 
         // Text meshes
         TEXT_SIZE: 0.5,
@@ -117,7 +117,7 @@ var Game = Game || {}; // Create namespace
             for (i = 0; i < this.NUM_TETRAHEDRONS; i++) {
                 color = Flynn.Util.randomChoice(this.TETRAHEDRON_COLORS);
                 const meshTetrahedron = new Flynn._3DMeshTetrahedron(
-                    'Tetrahedron', this.TETRAHEDRON_SIZE, color);
+                    'Tetrahedron', this.TETRAHEDRON_HEIGHT, color);
 
                 // -------------------------
                 // Position new tetrahedron at least MIN_CUBE_SEPARATION from all others.
@@ -156,7 +156,7 @@ var Game = Game || {}; // Create namespace
 
             this.renderers = [
                 {
-                    name: 'FOG (GRADUAL), BACK-FACE CULLING',
+                    name: 'FOG (GRADUAL), BACK-FACE CULLING, HIDDEN LINE REMOVAL',
                     renderer: new Flynn._3DRenderer(
                         { fog_distance: { near: 70, far: 100 }, enable_backface_culling: true })
                 },

@@ -149,7 +149,7 @@
     });
 
     Flynn._3DMeshTetrahedron = Flynn._3DMesh.extend({
-        init: function (name, size, color) {
+        init: function (name, height, color) {
             //
             //             3
             //            /|\
@@ -167,12 +167,13 @@
             //   | /
             //   +--> X
             //
+            const scale = height / (4 / 3);
 
             const vertices = [
-                (new BABYLON.Vector3(-Math.sqrt(2 / 3), -1 / 3, Math.sqrt(2 / 9))).scale(size), // 0
-                (new BABYLON.Vector3(Math.sqrt(2 / 3), -1 / 3, Math.sqrt(2 / 9))).scale(size), // 1
-                (new BABYLON.Vector3(0, -1 / 3, -Math.sqrt(8 / 9))).scale(size), // 2
-                (new BABYLON.Vector3(0, 1, 0)).scale(size), // 3
+                (new BABYLON.Vector3(-Math.sqrt(2 / 3), -1 / 3, Math.sqrt(2 / 9))).scale(scale), // 0
+                (new BABYLON.Vector3(Math.sqrt(2 / 3), -1 / 3, Math.sqrt(2 / 9))).scale(scale), // 1
+                (new BABYLON.Vector3(0, -1 / 3, -Math.sqrt(8 / 9))).scale(scale), // 2
+                (new BABYLON.Vector3(0, 1, 0)).scale(scale), // 3
             ];
 
             const lines = [
