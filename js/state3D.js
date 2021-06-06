@@ -29,11 +29,18 @@ var Game = Game || {}; // Create namespace
         TEXT_SIZE: 0.5,
         TEXT_DISTANCE: 15,
 
+        // Explosions
+        EXPLOSION_PROBABILITY: 0.05,
+        EXPLOSION_PARTICLE_NUM: 10,
+        EXPLOSION_PARTICLE_LENGTH: 4,
+        EXPLOSION_MAX_VELOCITY: 0.5,
+
         init: function () {
             let i, j, color, meshBox, meshText;
             this._super();
 
             this.meshes = [];
+            this.particles3d = new Flynn._3DParticles();
 
             // --------------------
             // Add cubes
@@ -173,7 +180,7 @@ var Game = Game || {}; // Create namespace
             return position;
         },
 
-        handleInputs: function (input, elapsed_ticks) {
+        handleInputs: function (input, elapsedTicks) {
             Game.handleInputs_common(input);
 
             if (input.virtualButtonWasPressed('up')) {
@@ -186,13 +193,25 @@ var Game = Game || {}; // Create namespace
             }
         },
 
-        update: function (elapsed_ticks) {
-            let i;
-            this.camera_angle += this.CAMERA_SPEED * elapsed_ticks;
+        update: function (elapsedTicks) {
+            this.particles3d.update(elapsedTicks);
+            this.camera_angle += this.CAMERA_SPEED * elapsedTicks;
             this.camera.position = new BABYLON.Vector3(
                 Math.sin(this.camera_angle) * this.CAMERA_DISTANCE,
                 0,
                 Math.cos(this.camera_angle) * this.CAMERA_DISTANCE);
+
+            // Spawn new explosion
+            if (Math.random() < this.EXPLOSION_PROBABILITY) {
+                this.particles3d.explosion(
+                    this._getNewObjectLocation(),
+                    this.EXPLOSION_PARTICLE_NUM,
+                    this.EXPLOSION_PARTICLE_LENGTH,
+                    this.EXPLOSION_MAX_VELOCITY,
+                    Flynn.Colors.YELLOW,
+                    new BABYLON.Vector3(0, 0, 0), // Initial velocity
+                );
+            }
         },
 
         render: function (ctx) {
@@ -201,7 +220,10 @@ var Game = Game || {}; // Create namespace
             const heading_color = Flynn.Colors.YELLOW;
 
             // Do 3D Rendering
-            this.renderers[this.index_renderer].renderer.render(ctx, this.camera, this.meshes);
+            const particleMeshes = this.particles3d.getRenderMeshes();
+            const renderMeshes = this.meshes.concat(particleMeshes);
+
+            this.renderers[this.index_renderer].renderer.render(ctx, this.camera, renderMeshes);
 
             Game.render_page_frame(ctx);
 

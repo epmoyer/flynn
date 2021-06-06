@@ -11,7 +11,7 @@ var Game = Game || {};
 
         init: function (mesh, velocityV3, angularVelocityV3, life) {
             this.mesh = mesh;
-            this.velocityV = velocityV3;
+            this.velocityV3 = velocityV3;
             this.angularVelocityV3 = angularVelocityV3;
             if (typeof (life) === 'undefined') {
                 this.life = this.PARTICLE_LIFE + (Math.random() - 0.5) * this.PARTICLE_LIFE_VARIATION;
@@ -55,7 +55,7 @@ var Game = Game || {};
             max: Math.PI / 120,
         },
 
-        init: function (meshes) {
+        init: function () {
             this.particles = [];
             this.timer = 0;
         },
@@ -63,12 +63,12 @@ var Game = Game || {};
         explosion: function (positionV3, quantity, length, maxVelocity, color, sourceVelocityV3) {
             const points = [-length/2, 0, length/2, 0];
             for (let i = 0; i < quantity; i++) {
-                const mesh = Flynn._3DMeshFromPoints('line', points, 1.0, color);
+                const mesh = new Flynn._3DMeshFromPoints('line', points, 1.0, color);
                 mesh.position = BABYLON.Vector3.Copy(positionV3);
                 mesh.rotation = new BABYLON.Vector3(
                     0,
-                    Math.random * Math.PI * 2,
-                    Math.random * Math.PI * 2,
+                    Math.random() * Math.PI * 2,
+                    Math.random() * Math.PI * 2,
                 );
                 const angularVelocityV3 = new BABYLON.Vector3(
                     0,
