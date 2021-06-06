@@ -1,0 +1,168 @@
+var Game = Game || {};
+
+(function () {
+    'use strict';
+
+    Flynn._3DParticle = Class.extend({
+
+        PARTICLE_LIFE_VARIATION: 20,
+        PARTICLE_LIFE: 50,
+        PARTICLE_FRICTION: 0.99,
+
+        init: function (mesh, velocityV, angularVelocityV, life) {
+            this.mesh = mesh;
+            this.velocityV = velocityV;
+            this.angularVelocityV = angularVelocityV;
+            if (typeof (life) === 'undefined') {
+                this.life = this.PARTICLE_LIFE + (Math.random() - 0.5) * this.PARTICLE_LIFE_VARIATION;
+            } else {
+                this.life = life;
+            }
+        },
+
+        update: function (elapsedTicks) {
+            let isAlive = true;
+            // Decay and die
+            this.life -= elapsedTicks;
+            if (this.life <= 0) {
+                // Kill particle
+                isAlive = false;
+            } else {
+                // Add impulse
+                this.mesh.position = this.mesh.position.add(this.velocityV.scale(elapsedTicks));
+                // Decay impulse
+                this.velocityV = this.velocityV.scale(Math.pow(this.PARTICLE_FRICTION, elapsedTicks));
+                this.mesh.rotation = this.mesh.rotation.add(this.angularVelocityV);
+            }
+            return isAlive;
+        },
+    });
+
+    Flynn._3DParticles = Class.extend({
+
+        flashSpeed: 16,
+
+        init: function (meshes) {
+            this.meshes = meshes;
+            this.collection = [];
+            this.timer = 0;
+        },
+
+        randomVectorWithin: function (min, max, options) {
+            const randomValueFor = function () {
+                return (min + (Math.random() * max)) * (Math.floor(Math.random() * 2) === 0 ? 1 : -1);
+            };
+
+            const x = !(options || {}).skipX ? randomValueFor(min, max) : 0;
+            const y = !(options || {}).skipY ? randomValueFor(min, max) : 0;
+            const z = !(options || {}).skipZ ? randomValueFor(min, max) : 0;
+
+            return new BABYLON.Vector3(x, y, z);
+        },
+
+        shatter: function (polygon, options) {
+            this.removeFromMeshes(polygon);
+            const meshes = this.meshesFor(polygon);
+            const velocities = [];
+            const rotations = [];
+
+            for (let i = 0, length = meshes.length; i < length; i++) {
+                this.meshes.push(meshes[i]);
+                velocities.push(this.randomVectorWithin(options.minVelocity, options.maxVelocity));
+                rotations.push(this.randomVectorWithin(options.minRotation, options.maxRotation, { skipZ: true }));
+            }
+
+            this.collection.push({
+                shatteredAt: this.timer,
+                expireAt: this.timer + options.duration,
+                flashAt: this.timer + (options.duration * 0.5),
+                velocities: velocities,
+                rotations: rotations,
+                meshes: meshes,
+                removed: false,
+                visible: true,
+                color: polygon.color,
+            });
+        },
+
+        meshesFor: function (polygon) {
+            const meshes = [];
+            const baseName = polygon.name + '_particle_';
+            for (let i = 0, length = polygon.lines.length - 1; i < length; i++) {
+                const pointA = polygon.lines[i];
+                const pointB = polygon.lines[i + 1];
+                if (pointA === Flynn.PEN_UP || pointB === Flynn.PEN_UP) continue;
+
+                const lines = [0, 1];
+                const vertices = [polygon.vertices[pointA], polygon.vertices[pointB]];
+                const mesh = new Flynn._3DMesh(baseName + i, vertices, lines, polygon.color, null, polygon.alpha, null, null);
+
+                mesh.position.x = polygon.position.x;
+                mesh.position.y = polygon.position.y;
+                mesh.position.z = polygon.position.z;
+                mesh.rotation.x = polygon.rotation.x;
+                mesh.rotation.y = polygon.rotation.y;
+                mesh.rotation.z = polygon.rotation.z;
+
+                meshes.push(mesh);
+            }
+            return meshes;
+        },
+
+        removeFromMeshes: function (mesh) {
+            this.meshes.splice(this.meshes.indexOf(mesh), 1);
+        },
+
+        removeMeshesFor: function (item) {
+            for (let i = 0, length = item.meshes.length; i < length; i++) {
+                this.removeFromMeshes(item.meshes[i]);
+            }
+        },
+
+        adjustRotationAndPositionFor: function (item, paceFactor) {
+            for (let i = 0, length = item.meshes.length; i < length; i++) {
+                const mesh = item.meshes[i];
+                mesh.position.x += paceFactor * item.velocities[i].x;
+                mesh.position.y += paceFactor * item.velocities[i].y;
+                mesh.position.z += paceFactor * item.velocities[i].z;
+                mesh.rotation.x += paceFactor * item.rotations[i].x;
+                mesh.rotation.y += paceFactor * item.rotations[i].y;
+                mesh.rotation.z += paceFactor * item.rotations[i].z;
+            }
+        },
+
+        updateVisibilityFor: function (item, visible) {
+            for (let i = 0, length = item.meshes.length; i < length; i++) {
+                item.meshes[i].color = visible ? item.color : Flynn.Colors.BLACK;
+            }
+        },
+
+        update: function (paceFactor) {
+            this.timer += (Game.constants.SECOND_FRACTION * paceFactor);
+
+            let i, length, visible;
+            let allRemoved = true;
+            for (i = 0, length = this.collection.length; i < length; i++) {
+                const item = this.collection[i];
+                if (item.removed) continue;
+
+                if (this.timer < item.expireAt) {
+                    if (this.timer >= item.flashAt) {
+                        visible = Math.floor(this.timer * this.flashSpeed) % 2;
+                        if (visible !== item.visible) {
+                            item.visible = visible;
+                            this.updateVisibilityFor(item, visible);
+                        }
+                    }
+                    this.adjustRotationAndPositionFor(item, paceFactor);
+                    allRemoved = false;
+                } else {
+                    this.removeMeshesFor(item);
+                    item.removed = true;
+                }
+            }
+
+            if (allRemoved) this.collection = [];
+        },
+    });
+}());
