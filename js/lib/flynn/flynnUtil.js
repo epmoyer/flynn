@@ -268,6 +268,13 @@
             );
         },
 
+        randomNegate: function (value) {
+            if (Math.random() > 0.5) {
+                return -value;
+            }
+            return value;
+        },
+
         randomAngle: function () {
             return Math.random() * Math.PI * 2;
         },
@@ -304,6 +311,20 @@
             }
 
             return array;
+        },
+
+        randomUnitV3: function () {
+            // Return a unit vector (Vector3 object) in a random direction.
+            // TODO: This is a naive implementation for prototyping and does not have
+            //       a uniform distribution.
+            //       See https://towardsdatascience.com/the-best-way-to-pick-a-unit-vector-7bd0cc54f9b
+            //       for details of how to do this properly later.
+            const v3 = new BABYLON.Vector3(
+                Math.random * 2 - 1,
+                Math.random * 2 - 1,
+                Math.random * 2 - 1
+            );
+            return v3.normalize();
         },
 
         // Color shade / blend transformation
