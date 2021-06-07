@@ -6,7 +6,7 @@ var Game = Game || {};
     Flynn._3DParticle = Class.extend({
 
         PARTICLE_LIFE_VARIATION: 20,
-        PARTICLE_LIFE: 50,
+        PARTICLE_LIFE: 80,
         PARTICLE_FRICTION: 0.99,
 
         init: function (mesh, velocityV3, angularVelocityV3, life) {
@@ -51,8 +51,8 @@ var Game = Game || {};
             max: 1.1
         },
         SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE: {
-            min: Math.PI / 600,
-            max: Math.PI / 120,
+            min: Math.PI / 400,
+            max: Math.PI / 30,
         },
 
         init: function () {

@@ -31,9 +31,9 @@ var Game = Game || {}; // Create namespace
 
         // Explosions
         EXPLOSION_PROBABILITY: 0.05,
-        EXPLOSION_PARTICLE_NUM: 10,
-        EXPLOSION_PARTICLE_LENGTH: 4,
-        EXPLOSION_MAX_VELOCITY: 0.5,
+        EXPLOSION_PARTICLE_NUM: 20,
+        EXPLOSION_PARTICLE_LENGTH: 0.5,
+        EXPLOSION_MAX_VELOCITY: 0.04,
 
         init: function () {
             let i, j, color, meshBox, meshText;
@@ -203,12 +203,14 @@ var Game = Game || {}; // Create namespace
 
             // Spawn new explosion
             if (Math.random() < this.EXPLOSION_PROBABILITY) {
+                let color = Flynn.Util.randomChoice(this.TETRAHEDRON_COLORS.concat(this.CUBE_COLORS));
                 this.particles3d.explosion(
                     this._getNewObjectLocation(),
                     this.EXPLOSION_PARTICLE_NUM,
                     this.EXPLOSION_PARTICLE_LENGTH,
                     this.EXPLOSION_MAX_VELOCITY,
-                    Flynn.Colors.YELLOW,
+                    // Flynn.Colors.YELLOW,
+                    color,
                     new BABYLON.Vector3(0, 0, 0), // Initial velocity
                 );
             }
@@ -222,7 +224,6 @@ var Game = Game || {}; // Create namespace
             // Do 3D Rendering
             const particleMeshes = this.particles3d.getRenderMeshes();
             const renderMeshes = this.meshes.concat(particleMeshes);
-
             this.renderers[this.index_renderer].renderer.render(ctx, this.camera, renderMeshes);
 
             Game.render_page_frame(ctx);
