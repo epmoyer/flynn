@@ -203,16 +203,18 @@ var Game = Game || {}; // Create namespace
 
             // Spawn new explosion
             if (Math.random() < this.EXPLOSION_PROBABILITY) {
-                let color = Flynn.Util.randomChoice(this.TETRAHEDRON_COLORS.concat(this.CUBE_COLORS));
-                this.particles3d.explosion(
-                    this._getNewObjectLocation(),
-                    this.EXPLOSION_PARTICLE_NUM,
-                    this.EXPLOSION_PARTICLE_LENGTH,
-                    this.EXPLOSION_MAX_VELOCITY,
-                    // Flynn.Colors.YELLOW,
-                    color,
-                    new BABYLON.Vector3(0, 0, 0), // Initial velocity
-                );
+                const mesh = Flynn.Util.randomChoice(this.meshes);
+                this.particles3d.shatter(mesh);
+                // let color = Flynn.Util.randomChoice(this.TETRAHEDRON_COLORS.concat(this.CUBE_COLORS));
+                // this.particles3d.explosion(
+                //     this._getNewObjectLocation(),
+                //     this.EXPLOSION_PARTICLE_NUM,
+                //     this.EXPLOSION_PARTICLE_LENGTH,
+                //     this.EXPLOSION_MAX_VELOCITY,
+                //     // Flynn.Colors.YELLOW,
+                //     color,
+                //     new BABYLON.Vector3(0, 0, 0), // Initial velocity
+                // );
             }
         },
 

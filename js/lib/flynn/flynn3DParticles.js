@@ -61,7 +61,7 @@ var Game = Game || {};
         },
 
         explosion: function (positionV3, quantity, length, maxVelocity, color, sourceVelocityV3) {
-            const points = [-length/2, 0, length/2, 0];
+            const points = [-length / 2, 0, length / 2, 0];
             for (let i = 0; i < quantity; i++) {
                 const mesh = new Flynn._3DMeshFromPoints('line', points, 1.0, color);
                 mesh.position = BABYLON.Vector3.Copy(positionV3);
@@ -85,13 +85,67 @@ var Game = Game || {};
                         )
                     )
                 );
-                const particleVelocity = Flynn.Util.randomUnitV3().scale(
+                const particleVelocityV3 = Flynn.Util.randomUnitV3().scale(
                     maxVelocity * (1.0 - this.EXPLOSION__VELOCITY_VARIATION + Math.random() * this.EXPLOSION__VELOCITY_VARIATION)
                 );
 
                 this.particles.push(new Flynn._3DParticle(
                     mesh,
-                    sourceVelocityV3.add(particleVelocity),
+                    sourceVelocityV3.add(particleVelocityV3),
+                    angularVelocityV3
+                ));
+            }
+        },
+
+        shatter: function (mesh, opts) {
+            // TODO: Add to opts
+            const maxVelocity = 0.04;
+            const sourceVelocityV3 = new BABYLON.Vector3(0, 0, 0);
+
+            const segments = mesh.to_segments();
+            for (const segment of segments) {
+                const segmentCenterV3 = new BABYLON.Vector3(
+                    (segment.from.x + segment.to.x) / 2,
+                    (segment.from.y + segment.to.y) / 2,
+                    (segment.from.z + segment.to.z) / 2
+                );
+                const shiftedFromV3 = segment.from.subtract(segmentCenterV3);
+                const shiftedToV3 = segment.to.subtract(segmentCenterV3);
+                const segmentMesh = new Flynn._3DMeshFromSegments(
+                    'line',
+                    [{
+                        from: shiftedFromV3,
+                        to: shiftedToV3
+                    }],
+                    mesh.color
+                );
+                segmentMesh.position = mesh.position.add(segmentCenterV3);
+                const angularVelocityV3 = new BABYLON.Vector3(
+                    0,
+                    Flynn.Util.randomNegate(
+                        Flynn.Util.randomFromInterval(
+                            this.SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE.min,
+                            this.SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE.max,
+                        )
+                    ),
+                    Flynn.Util.randomNegate(
+                        Flynn.Util.randomFromInterval(
+                            this.SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE.min,
+                            this.SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE.max,
+                        )
+                    )
+                );
+                // TODO: Protect against error normalizing an initial position of (0, 0, 0)
+
+                let particleVelocityV3 = BABYLON.Vector3.Copy(segmentCenterV3);
+                particleVelocityV3.normalize();
+                particleVelocityV3 = particleVelocityV3.scale(
+                    maxVelocity * (1.0 - this.EXPLOSION__VELOCITY_VARIATION + Math.random() * this.EXPLOSION__VELOCITY_VARIATION)
+                );
+
+                this.particles.push(new Flynn._3DParticle(
+                    segmentMesh,
+                    sourceVelocityV3.add(particleVelocityV3),
                     angularVelocityV3
                 ));
             }
