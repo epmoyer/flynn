@@ -203,9 +203,10 @@ var Game = Game || {}; // Create namespace
                 Math.cos(this.camera_angle) * this.CAMERA_DISTANCE);
 
             // Spawn new explosion
-            if (Math.random() < this.EXPLOSION_PROBABILITY) {
+            if (Math.random() < this.EXPLOSION_PROBABILITY && this.meshes.length > 0) {
                 const mesh = Flynn.Util.randomChoice(this.meshes);
                 this.particles3d.shatter(mesh);
+                this.meshes.splice(this.meshes.indexOf(mesh), 1);
                 // let color = Flynn.Util.randomChoice(this.TETRAHEDRON_COLORS.concat(this.CUBE_COLORS));
                 // this.particles3d.explosion(
                 //     this._getNewObjectLocation(),
