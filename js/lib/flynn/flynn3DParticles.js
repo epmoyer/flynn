@@ -50,9 +50,13 @@ var Game = Game || {};
             min: 0.1,
             max: 1.1
         },
+        // SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE: {
+        //     min: Math.PI / 400,
+        //     max: Math.PI / 30,
+        // },
         SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE: {
-            min: Math.PI / 400,
-            max: Math.PI / 30,
+            min: Math.PI / 600,
+            max: Math.PI / 400,
         },
 
         init: function () {
@@ -99,16 +103,19 @@ var Game = Game || {};
 
         shatter: function (mesh, opts) {
             // TODO: Add to opts
-            const maxVelocity = 0.04;
+            const maxVelocity = 0.02;
             const sourceVelocityV3 = new BABYLON.Vector3(0, 0, 0);
 
             const segments = mesh.to_segments();
             for (const segment of segments) {
+                // Center of line segment
                 const segmentCenterV3 = new BABYLON.Vector3(
                     (segment.from.x + segment.to.x) / 2,
                     (segment.from.y + segment.to.y) / 2,
                     (segment.from.z + segment.to.z) / 2
                 );
+                // Offset from center of mesh (mesh position) to center of line segment
+                const segmentCenterOffsetV3 = segmentCenterV3.subtract(mesh.position);
                 const shiftedFromV3 = segment.from.subtract(segmentCenterV3);
                 const shiftedToV3 = segment.to.subtract(segmentCenterV3);
                 const segmentMesh = new Flynn._3DMeshFromSegments(
@@ -119,7 +126,7 @@ var Game = Game || {};
                     }],
                     mesh.color
                 );
-                segmentMesh.position = mesh.position.add(segmentCenterV3);
+                segmentMesh.position = mesh.position.add(segmentCenterOffsetV3);
                 const angularVelocityV3 = new BABYLON.Vector3(
                     0,
                     Flynn.Util.randomNegate(
@@ -137,7 +144,7 @@ var Game = Game || {};
                 );
                 // TODO: Protect against error normalizing an initial position of (0, 0, 0)
 
-                let particleVelocityV3 = BABYLON.Vector3.Copy(segmentCenterV3);
+                let particleVelocityV3 = BABYLON.Vector3.Copy(segmentCenterOffsetV3);
                 particleVelocityV3.normalize();
                 particleVelocityV3 = particleVelocityV3.scale(
                     maxVelocity * (1.0 - this.EXPLOSION__VELOCITY_VARIATION + Math.random() * this.EXPLOSION__VELOCITY_VARIATION)

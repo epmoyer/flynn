@@ -68,7 +68,8 @@ var Game = Game || {}; // Create namespace
                     color,
                     'TEXT',
                     Flynn.Font.Normal);
-                this.meshes.push(meshText);
+                // TODO: Bring meshText back. Figure out how to reconcile with shatter
+                // this.meshes.push(meshText);
 
                 // Determine the offset vector (vOffset) from the center of the box
                 // to the surface where the text will appear.
