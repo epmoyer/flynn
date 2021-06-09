@@ -7,9 +7,16 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## TODO
 - TODO: 3.20.0 breaks invisible touch regions.  See TODO: in flynnInput.js.
 - TODO: Generation of world_vertices (for 3D) does some of the same math as projection. Optimize performance.
+- TODO: Update Flynn.Util.randomUnitV3() to have a normal distribution.
+- TODO: Bring meshText back. Figure out how to reconcile with shatter.
 
 ## Unreleased
 **(None)**
+
+## 3.22.0u 2021-06-06
+### Added
+- flynn3DParticles
+    - Created Flynn._3DParticles
 
 ## 3.21.0u 2021-04-06
 ### Added

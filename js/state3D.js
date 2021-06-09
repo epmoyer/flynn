@@ -29,11 +29,18 @@ var Game = Game || {}; // Create namespace
         TEXT_SIZE: 0.5,
         TEXT_DISTANCE: 15,
 
+        // Explosions
+        EXPLOSION_PROBABILITY: 0.05,
+        EXPLOSION_PARTICLE_NUM: 20,
+        EXPLOSION_PARTICLE_LENGTH: 0.5,
+        EXPLOSION_MAX_VELOCITY: 0.04,
+
         init: function () {
             let i, j, color, meshBox, meshText;
             this._super();
 
             this.meshes = [];
+            this.particles3d = new Flynn._3DParticles();
 
             // --------------------
             // Add cubes
@@ -61,7 +68,8 @@ var Game = Game || {}; // Create namespace
                     color,
                     'TEXT',
                     Flynn.Font.Normal);
-                this.meshes.push(meshText);
+                // TODO: Bring meshText back. Figure out how to reconcile with shatter
+                // this.meshes.push(meshText);
 
                 // Determine the offset vector (vOffset) from the center of the box
                 // to the surface where the text will appear.
@@ -173,7 +181,7 @@ var Game = Game || {}; // Create namespace
             return position;
         },
 
-        handleInputs: function (input, elapsed_ticks) {
+        handleInputs: function (input, elapsedTicks) {
             Game.handleInputs_common(input);
 
             if (input.virtualButtonWasPressed('up')) {
@@ -186,13 +194,47 @@ var Game = Game || {}; // Create namespace
             }
         },
 
-        update: function (elapsed_ticks) {
-            let i;
-            this.camera_angle += this.CAMERA_SPEED * elapsed_ticks;
+        update: function (elapsedTicks) {
+            this.particles3d.update(elapsedTicks);
+            this.camera_angle += this.CAMERA_SPEED * elapsedTicks;
             this.camera.position = new BABYLON.Vector3(
                 Math.sin(this.camera_angle) * this.CAMERA_DISTANCE,
                 0,
                 Math.cos(this.camera_angle) * this.CAMERA_DISTANCE);
+
+            // Spawn new explosion
+            if (Math.random() < this.EXPLOSION_PROBABILITY && this.meshes.length > 0) {
+                const mesh = Flynn.Util.randomChoice(this.meshes);
+                this.particles3d.shatter(
+                    mesh,
+                    {
+                        velocityRange: {
+                            min: 0.03,
+                            max: 0.03
+                        },
+                        angularVelocityRange: {
+                            min: Math.PI / 600,
+                            max: Math.PI / 400
+                        },
+                        lifetimeTicksRange: {
+                            min: 50,
+                            max: 70
+                        },
+                        // baseVelocityV3: new BABYLON.Vector3(0, -0.1, 0),
+                    }
+                );
+                this.meshes.splice(this.meshes.indexOf(mesh), 1);
+                // let color = Flynn.Util.randomChoice(this.TETRAHEDRON_COLORS.concat(this.CUBE_COLORS));
+                // this.particles3d.explosion(
+                //     this._getNewObjectLocation(),
+                //     this.EXPLOSION_PARTICLE_NUM,
+                //     this.EXPLOSION_PARTICLE_LENGTH,
+                //     this.EXPLOSION_MAX_VELOCITY,
+                //     // Flynn.Colors.YELLOW,
+                //     color,
+                //     new BABYLON.Vector3(0, 0, 0), // Initial velocity
+                // );
+            }
         },
 
         render: function (ctx) {
@@ -201,7 +243,9 @@ var Game = Game || {}; // Create namespace
             const heading_color = Flynn.Colors.YELLOW;
 
             // Do 3D Rendering
-            this.renderers[this.index_renderer].renderer.render(ctx, this.camera, this.meshes);
+            const particleMeshes = this.particles3d.getRenderMeshes();
+            const renderMeshes = this.meshes.concat(particleMeshes);
+            this.renderers[this.index_renderer].renderer.render(ctx, this.camera, renderMeshes);
 
             Game.render_page_frame(ctx);
 
