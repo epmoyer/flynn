@@ -100,7 +100,6 @@ var Game = Game || {};
         },
 
         shatter: function (mesh, opts) {
-            // TODO: Add to opts
             //
             //  Args:
             //      polygon: The polygon object to shatter
