@@ -56,6 +56,8 @@ var Game = Game || {};
             max: Math.PI / 400,
         },
 
+        ZERO_V3: new BABYLON.Vector3.Zero(),
+
         init: function () {
             this.particles = [];
             this.timer = 0;
@@ -179,7 +181,15 @@ var Game = Game || {};
                 // TODO: Protect against error normalizing an initial position of (0, 0, 0)
 
                 let particleVelocityV3 = BABYLON.Vector3.Copy(segmentCenterOffsetV3);
-                particleVelocityV3.normalize();
+                if (particleVelocityV3.equals(this.ZERO_V3)) {
+                    // If the center of the line segment is the center of the mesh then
+                    // particleVelocityV3 will be zero, so we cannot normalize it.
+                    // Instead, just assign a random direction for the
+                    // segment to fly off in.
+                    particleVelocityV3 = Flynn.Util.randomUnitV3();
+                } else {
+                    particleVelocityV3.normalize();
+                }
                 const velocityScalar = Flynn.Util.randomFromInterval(
                     opts.velocityRange.min,
                     opts.velocityRange.max
