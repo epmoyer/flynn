@@ -47,8 +47,8 @@ var Game = Game || {};
             max: 60,
         },
         SHATTER__DEFAULT_VELOCITY_RANGE: {
-            min: 0.1,
-            max: 1.1
+            min: 0.005,
+            max: 0.02
         },
         // SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE: {
         //     min: Math.PI / 400,
@@ -64,7 +64,8 @@ var Game = Game || {};
             this.timer = 0;
         },
 
-        explosion: function (positionV3, quantity, length, maxVelocity, color, sourceVelocityV3) {
+        explosion: function (positionV3, quantity, length, maxVelocity, color, baseVelocityV3) {
+            // TODO: Use opts object instead of argument list.  Pass min/max velocity.
             const points = [-length / 2, 0, length / 2, 0];
             for (let i = 0; i < quantity; i++) {
                 const mesh = new Flynn._3DMeshFromPoints('line', points, 1.0, color);
@@ -95,7 +96,7 @@ var Game = Game || {};
 
                 this.particles.push(new Flynn._3DParticle(
                     mesh,
-                    sourceVelocityV3.add(particleVelocityV3),
+                    baseVelocityV3.add(particleVelocityV3),
                     angularVelocityV3
                 ));
             }
@@ -103,6 +104,37 @@ var Game = Game || {};
 
         shatter: function (mesh, opts) {
             // TODO: Add to opts
+            //
+            //  Args:
+            //      polygon: The polygon object to shatter
+            //      opts: Options object.  Can be omitted to use defaults.
+            //      {
+            //          lifeRange: {
+            //              min: <min particle life, in ticks>,
+            //              max: <max particle life, in ticks>
+            //          },
+            //          velocityRange: {
+            //              min: <min particle velocity (pixels/tick)>,
+            //              max: <max particle velocity (pixels/tick)>
+            //          },
+            //          angularVelocityRange: {
+            //              min: <min particle rotation velocity (radians/tick)>,
+            //              max: <max particle rotation velocity (radians/tick)>
+            //              // NOTE: Regardless of the range given, the resulting rotation
+            //              //       velocity will be randomly (50%) negated, resulting in a mix
+            //              //       of clockwise and counter-clockwise spins.
+            //              // NOTE: Two independent, random, angular velocities will be assigned;
+            //              //       one around the Y axis and the other around the Z axis.
+            //          },
+            //          baseVelocityV3: A Babylon.Vector3 object. If supplied, all particles will
+            //              have this velocity added to their initial velocity. If omitted,
+            //              a velocity of zero will be assumed.
+            //      }
+            //
+            opts.velocityRange = Flynn.Util.defaultArg(
+                opts.velocityRange,
+                this.SHATTER__DEFAULT_VELOCITY_RANGE);
+
             const maxVelocity = 0.02;
             const sourceVelocityV3 = new BABYLON.Vector3(0, 0, 0);
 
@@ -146,9 +178,11 @@ var Game = Game || {};
 
                 let particleVelocityV3 = BABYLON.Vector3.Copy(segmentCenterOffsetV3);
                 particleVelocityV3.normalize();
-                particleVelocityV3 = particleVelocityV3.scale(
-                    maxVelocity * (1.0 - this.EXPLOSION__VELOCITY_VARIATION + Math.random() * this.EXPLOSION__VELOCITY_VARIATION)
+                let velocityScalar = Flynn.Util.randomFromInterval(
+                    opts.velocityRange.min,
+                    opts.velocityRange.max
                 );
+                particleVelocityV3 = particleVelocityV3.scale(velocityScalar);
 
                 this.particles.push(new Flynn._3DParticle(
                     segmentMesh,

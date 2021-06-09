@@ -205,7 +205,15 @@ var Game = Game || {}; // Create namespace
             // Spawn new explosion
             if (Math.random() < this.EXPLOSION_PROBABILITY && this.meshes.length > 0) {
                 const mesh = Flynn.Util.randomChoice(this.meshes);
-                this.particles3d.shatter(mesh);
+                this.particles3d.shatter(
+                    mesh,
+                    {
+                        velocityRange: {
+                            min: 0.03,
+                            max: 0.03
+                        },
+                    }
+                );
                 this.meshes.splice(this.meshes.indexOf(mesh), 1);
                 // let color = Flynn.Util.randomChoice(this.TETRAHEDRON_COLORS.concat(this.CUBE_COLORS));
                 // this.particles3d.explosion(
