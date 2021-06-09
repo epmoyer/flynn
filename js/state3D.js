@@ -220,6 +220,7 @@ var Game = Game || {}; // Create namespace
                             min: 50,
                             max: 70
                         },
+                        // baseVelocityV3: new BABYLON.Vector3(0, -0.1, 0),
                     }
                 );
                 this.meshes.splice(this.meshes.indexOf(mesh), 1);

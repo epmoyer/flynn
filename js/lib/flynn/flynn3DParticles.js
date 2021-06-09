@@ -137,8 +137,9 @@ var Game = Game || {};
             opts.angularVelocityRange = Flynn.Util.defaultArg(
                 opts.angularVelocityRange,
                 this.SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE);
-
-            const sourceVelocityV3 = new BABYLON.Vector3(0, 0, 0);
+            opts.baseVelocityV3 = Flynn.Util.defaultArg(
+                opts.baseVelocityV3,
+                new BABYLON.Vector3.Zero());
 
             const segments = mesh.to_segments();
             for (const segment of segments) {
@@ -192,7 +193,7 @@ var Game = Game || {};
 
                 this.particles.push(new Flynn._3DParticle(
                     segmentMesh,
-                    sourceVelocityV3.add(particleVelocityV3),
+                    opts.baseVelocityV3.add(particleVelocityV3),
                     angularVelocityV3,
                     lifetimeTicks
                 ));
