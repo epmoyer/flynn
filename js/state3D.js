@@ -216,6 +216,10 @@ var Game = Game || {}; // Create namespace
                             min: Math.PI / 600,
                             max: Math.PI / 400
                         },
+                        lifetimeTicksRange: {
+                            min: 50,
+                            max: 70
+                        },
                     }
                 );
                 this.meshes.splice(this.meshes.indexOf(mesh), 1);

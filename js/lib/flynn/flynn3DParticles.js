@@ -9,22 +9,23 @@ var Game = Game || {};
         PARTICLE_LIFE: 80,
         PARTICLE_FRICTION: 0.99,
 
-        init: function (mesh, velocityV3, angularVelocityV3, life) {
+        init: function (mesh, velocityV3, angularVelocityV3, lifetimeTicks) {
             this.mesh = mesh;
             this.velocityV3 = velocityV3;
             this.angularVelocityV3 = angularVelocityV3;
-            if (typeof (life) === 'undefined') {
-                this.life = this.PARTICLE_LIFE + (Math.random() - 0.5) * this.PARTICLE_LIFE_VARIATION;
+            // TODO: Require this parameter
+            if (typeof (lifetimeTicks) === 'undefined') {
+                this.lifetimeTicks = this.PARTICLE_LIFE + (Math.random() - 0.5) * this.PARTICLE_LIFE_VARIATION;
             } else {
-                this.life = life;
+                this.lifetimeTicks = lifetimeTicks;
             }
         },
 
         update: function (elapsedTicks) {
             let isAlive = true;
             // Decay and die
-            this.life -= elapsedTicks;
-            if (this.life <= 0) {
+            this.lifetimeTicks -= elapsedTicks;
+            if (this.lifetimeTicks <= 0) {
                 // Kill particle
                 isAlive = false;
             } else {
@@ -42,7 +43,7 @@ var Game = Game || {};
 
         EXPLOSION__VELOCITY_VARIATION: 0.8,
 
-        SHATTER__DEFAULT_LIFE_RANGE: {
+        SHATTER__DEFAULT_LIFETIME_TICKS_RANGE: {
             min: 50,
             max: 60,
         },
@@ -105,7 +106,7 @@ var Game = Game || {};
             //      polygon: The polygon object to shatter
             //      opts: Options object.  Can be omitted to use defaults.
             //      {
-            //          lifeRange: {
+            //          lifetimeTicksRange: {
             //              min: <min particle life, in ticks>,
             //              max: <max particle life, in ticks>
             //          },
@@ -127,13 +128,15 @@ var Game = Game || {};
             //              a velocity of zero will be assumed.
             //      }
             //
+            opts.lifetimeTicksRange = Flynn.Util.defaultArg(
+                opts.lifetimeTicksRange,
+                this.SHATTER__DEFAULT_LIFETIME_TICKS_RANGE);
             opts.velocityRange = Flynn.Util.defaultArg(
                 opts.velocityRange,
                 this.SHATTER__DEFAULT_VELOCITY_RANGE);
             opts.angularVelocityRange = Flynn.Util.defaultArg(
                 opts.angularVelocityRange,
                 this.SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE);
-
 
             const sourceVelocityV3 = new BABYLON.Vector3(0, 0, 0);
 
@@ -177,16 +180,21 @@ var Game = Game || {};
 
                 let particleVelocityV3 = BABYLON.Vector3.Copy(segmentCenterOffsetV3);
                 particleVelocityV3.normalize();
-                let velocityScalar = Flynn.Util.randomFromInterval(
+                const velocityScalar = Flynn.Util.randomFromInterval(
                     opts.velocityRange.min,
                     opts.velocityRange.max
                 );
                 particleVelocityV3 = particleVelocityV3.scale(velocityScalar);
+                const lifetimeTicks = Flynn.Util.randomFromInterval(
+                    opts.lifetimeTicksRange.min,
+                    opts.lifetimeTicksRange.max
+                );
 
                 this.particles.push(new Flynn._3DParticle(
                     segmentMesh,
                     sourceVelocityV3.add(particleVelocityV3),
-                    angularVelocityV3
+                    angularVelocityV3,
+                    lifetimeTicks
                 ));
             }
         },
