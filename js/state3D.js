@@ -209,16 +209,16 @@ var Game = Game || {}; // Create namespace
                     mesh,
                     {
                         velocityRange: {
-                            min: 0.03,
-                            max: 0.03
+                            min: 0.003,
+                            max: 0.01
                         },
                         angularVelocityRange: {
                             min: Math.PI / 600,
                             max: Math.PI / 400
                         },
                         lifetimeTicksRange: {
-                            min: 50,
-                            max: 70
+                            min: 100,
+                            max: 125
                         },
                         // baseVelocityV3: new BABYLON.Vector3(0, -0.1, 0),
                     }
