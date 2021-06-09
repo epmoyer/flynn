@@ -50,10 +50,6 @@ var Game = Game || {};
             min: 0.005,
             max: 0.02
         },
-        // SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE: {
-        //     min: Math.PI / 400,
-        //     max: Math.PI / 30,
-        // },
         SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE: {
             min: Math.PI / 600,
             max: Math.PI / 400,
@@ -134,8 +130,11 @@ var Game = Game || {};
             opts.velocityRange = Flynn.Util.defaultArg(
                 opts.velocityRange,
                 this.SHATTER__DEFAULT_VELOCITY_RANGE);
+            opts.angularVelocityRange = Flynn.Util.defaultArg(
+                opts.angularVelocityRange,
+                this.SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE);
 
-            const maxVelocity = 0.02;
+
             const sourceVelocityV3 = new BABYLON.Vector3(0, 0, 0);
 
             const segments = mesh.to_segments();
@@ -163,14 +162,14 @@ var Game = Game || {};
                     0,
                     Flynn.Util.randomNegate(
                         Flynn.Util.randomFromInterval(
-                            this.SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE.min,
-                            this.SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE.max,
+                            opts.angularVelocityRange.min,
+                            opts.angularVelocityRange.max,
                         )
                     ),
                     Flynn.Util.randomNegate(
                         Flynn.Util.randomFromInterval(
-                            this.SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE.min,
-                            this.SHATTER__DEFAULT_ANGULAR_VELOCITY_RANGE.max,
+                            opts.angularVelocityRange.min,
+                            opts.angularVelocityRange.max,
                         )
                     )
                 );

@@ -212,6 +212,10 @@ var Game = Game || {}; // Create namespace
                             min: 0.03,
                             max: 0.03
                         },
+                        angularVelocityRange: {
+                            min: Math.PI / 600,
+                            max: Math.PI / 400
+                        },
                     }
                 );
                 this.meshes.splice(this.meshes.indexOf(mesh), 1);
