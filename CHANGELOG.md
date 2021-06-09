@@ -9,6 +9,7 @@ to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - TODO: Generation of world_vertices (for 3D) does some of the same math as projection. Optimize performance.
 - TODO: Update Flynn.Util.randomUnitV3() to have a normal distribution.
 - TODO: Bring meshText back. Figure out how to reconcile with shatter.
+- TODO: Require lifetimeTicks parameter in ._3DParticle init().
 
 ## Unreleased
 **(None)**

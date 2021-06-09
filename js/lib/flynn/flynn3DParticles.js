@@ -178,7 +178,6 @@ var Game = Game || {};
                         )
                     )
                 );
-                // TODO: Protect against error normalizing an initial position of (0, 0, 0)
 
                 let particleVelocityV3 = BABYLON.Vector3.Copy(segmentCenterOffsetV3);
                 if (particleVelocityV3.equals(this.ZERO_V3)) {
